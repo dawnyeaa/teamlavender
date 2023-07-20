@@ -30,7 +30,6 @@ public class ColorPicker : UIBehaviour, IDragHandler {
     uv = pos + new Vector2(width/2f, height/2f);
     uv /= new Vector2(width, height);
     uv.y = Mathf.Lerp(0.625f, 0.875f, uv.y);
-    Debug.Log(uv);
     return uv;
   }
 
