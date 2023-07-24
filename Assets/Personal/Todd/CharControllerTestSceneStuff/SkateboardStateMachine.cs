@@ -1,7 +1,6 @@
 using UnityEngine;
 
 [RequireComponent(typeof(InputController))]
-[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(WheelController))]
 public class SkateboardStateMachine : StateMachine {
   public float CurrentSpeed;
@@ -14,6 +13,7 @@ public class SkateboardStateMachine : StateMachine {
   public float PushCooldown = 0.7f;
   public float Drag = 0.2f;
   public float Mass = 2f;
+  public float BodyMass = 75f;
   public float TruckSpacing = 0.205f;
   public float MaxTruckTurnDeg = 8.34f;
   public float WheelRadius = 0.03f;
@@ -31,19 +31,27 @@ public class SkateboardStateMachine : StateMachine {
   public float CoastSpeed;
   public float ProjectOffset = 0.75f;
   public float ProjectRadius = 0.72f;
-  public Transform bALL;
+  public float GradientProjectOffset = 0.01f;
+  public Vector3 BodyAcceleration;
+  public Vector3 BodyVelocity;
+  public Transform BodyPosition;
+  // public Transform bALL;
+  public bool shovey = false;
   public Transform gROUNDY;
+  public Transform FrontGradientTrack, BackGradientTrack;
+  public Transform FrontGradientOrigin, BackGradientOrigin;
+  public Animator Animator;
+  public Transform SkateboardMeshTransform;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
-  public Animator Animator { get; private set; }
   public WheelController Wheels { get; private set; }
 
   private void Start() {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
-    Animator = GetComponent<Animator>();
     Wheels = GetComponent<WheelController>();
+    BodyPosition.position = transform.position + ProjectOffset * Vector3.up;
 
     SwitchState(new SkateboardMoveState(this));
   }

@@ -62,14 +62,14 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void ApplyGravity() {
-    stateMachine.FallingSpeed += 9.8f * Time.deltaTime;
+    stateMachine.FallingSpeed += Physics.gravity.magnitude * Time.deltaTime;
     stateMachine.transform.position += stateMachine.FallingSpeed * Vector3.down * Time.deltaTime;
   }
 
   protected void MatchGround() {
     Vector3 projectOrigin = stateMachine.transform.position + Vector3.up * stateMachine.ProjectOffset;
-    stateMachine.bALL.localPosition = Vector3.up * stateMachine.ProjectOffset;
-    stateMachine.bALL.localScale = Vector3.one * stateMachine.ProjectRadius;
+    // stateMachine.bALL.localPosition = Vector3.up * stateMachine.ProjectOffset;
+    // stateMachine.bALL.localScale = Vector3.one * stateMachine.ProjectRadius;
     RaycastHit hit;
     bool itHit = Physics.SphereCast(projectOrigin, stateMachine.ProjectRadius, -Vector3.up, out hit, stateMachine.ProjectOffset, LayerMask.GetMask("Ground"));
     Vector3 newNormal = Vector3.up;
@@ -86,15 +86,54 @@ public abstract class SkateboardBaseState : State {
     // Debug.DrawRay(stateMachine.transform.position, newRight, Color.red, 5f);
     // Debug.DrawRay(stateMachine.transform.position, newForward, Color.black, 5f);
     stateMachine.transform.rotation = Quaternion.LookRotation(newForward, newNormal);
+
+    stateMachine.FrontGradientOrigin.localPosition = new Vector3(stateMachine.FrontGradientOrigin.localPosition.x, stateMachine.GradientProjectOffset, stateMachine.FrontGradientOrigin.localPosition.z);
+    stateMachine.BackGradientOrigin.localPosition = new Vector3(stateMachine.BackGradientOrigin.localPosition.x, stateMachine.GradientProjectOffset, stateMachine.BackGradientOrigin.localPosition.z);
+    
+    Vector3 frontPos = Vector3.zero;
+    Vector3 backPos = Vector3.zero;
+    bool frontHit = Physics.Raycast(stateMachine.FrontGradientOrigin.position, -stateMachine.transform.up, out hit, 2f*stateMachine.GradientProjectOffset, LayerMask.GetMask("Ground"));
+    if (frontHit) {
+      frontPos = hit.point;
+      stateMachine.FrontGradientTrack.position = frontPos;
+    }
+    
+    bool backHit = Physics.Raycast(stateMachine.BackGradientOrigin.position, -stateMachine.transform.up, out hit, 2f*stateMachine.GradientProjectOffset, LayerMask.GetMask("Ground"));
+    if (backHit) {
+      backPos = hit.point;
+      stateMachine.BackGradientTrack.position = backPos;
+    }
+
+    if (frontHit && backHit) {
+      Vector3 newFacing = frontPos - backPos;
+      stateMachine.SkateboardMeshTransform.rotation = Quaternion.LookRotation(newFacing, newNormal);
+    }
   }
 
   protected void Move() {
     stateMachine.transform.rotation = Quaternion.AngleAxis(stateMachine.Facing*360f, stateMachine.transform.up);
-    stateMachine.transform.position += stateMachine.CurrentSpeed * Time.deltaTime * stateMachine.transform.forward;
+    stateMachine.transform.position += stateMachine.CurrentSpeed * Time.fixedDeltaTime * stateMachine.transform.forward;
   }
 
   protected void SpinWheels() {
     float circum = ThisIsJustTau.TAU*stateMachine.WheelRadius;
     stateMachine.Wheels.AddRotation(((Time.deltaTime*stateMachine.CurrentSpeed)/circum)*360f);
+  }
+
+  protected void ResetBodyAccel() {
+    stateMachine.BodyAcceleration = Vector3.zero;
+  }
+
+  protected void AddForce(Vector3 force) {
+    stateMachine.BodyAcceleration += force;
+  }
+
+  protected void BodyPhysicsUpdate() {
+    stateMachine.BodyVelocity += stateMachine.BodyAcceleration * Time.fixedDeltaTime;
+    stateMachine.BodyPosition.position += stateMachine.BodyVelocity * Time.fixedDeltaTime;
+  }
+
+  protected void Shove() {
+    AddForce(new Vector3(1000000, 0, 0));
   }
 }
