@@ -10,19 +10,17 @@ public class SkateboardMoveState : SkateboardBaseState {
   }
 
   public override void Tick() {
-    ResetBodyAccel();
     Accelerate();
     CalculateTurn();
+    Brake();
     Move();
     SpinWheels();
     ApplyGravity();
     MatchGround();
-    BodyPhysicsUpdate();
+    BodyRotationDamp();
 
-    if (stateMachine.shovey) {
-      Shove();
-      stateMachine.shovey = false;
-    }
+    stateMachine.SpringBodController.squatT = Mathf.Pow(Mathf.InverseLerp(0, stateMachine.MaxSpeed, stateMachine.CurrentSpeed), 8f);
+
     stateMachine.Animator.SetFloat(TurnHash, stateMachine.Turning);
   }
 

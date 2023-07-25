@@ -53,6 +53,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""brake"",
+                    ""type"": ""Button"",
+                    ""id"": ""0c56de17-4ed7-4434-9c95-0b6656e6a271"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -143,6 +152,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ba19ec0-699e-4d3b-90f6-f82969743aed"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""brake"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""019a8676-99bf-4cc0-95df-f64619e53bfa"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""brake"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -182,6 +213,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_move = m_player.FindAction("move", throwIfNotFound: true);
         m_player_push = m_player.FindAction("push", throwIfNotFound: true);
         m_player_look = m_player.FindAction("look", throwIfNotFound: true);
+        m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -244,6 +276,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_move;
     private readonly InputAction m_player_push;
     private readonly InputAction m_player_look;
+    private readonly InputAction m_player_brake;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -251,6 +284,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @move => m_Wrapper.m_player_move;
         public InputAction @push => m_Wrapper.m_player_push;
         public InputAction @look => m_Wrapper.m_player_look;
+        public InputAction @brake => m_Wrapper.m_player_brake;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -269,6 +303,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @look.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
                 @look.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
                 @look.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
+                @brake.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
+                @brake.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
+                @brake.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -282,6 +319,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @look.started += instance.OnLook;
                 @look.performed += instance.OnLook;
                 @look.canceled += instance.OnLook;
+                @brake.started += instance.OnBrake;
+                @brake.performed += instance.OnBrake;
+                @brake.canceled += instance.OnBrake;
             }
         }
     }
@@ -309,5 +349,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnPush(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+        void OnBrake(InputAction.CallbackContext context);
     }
 }

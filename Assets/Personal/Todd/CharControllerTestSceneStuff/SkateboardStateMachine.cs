@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(InputController))]
+[RequireComponent(typeof(SpringyBody))]
 [RequireComponent(typeof(WheelController))]
 public class SkateboardStateMachine : StateMachine {
   public float CurrentSpeed;
@@ -23,35 +24,41 @@ public class SkateboardStateMachine : StateMachine {
   public float TurnSlowdown = 1f;
   public float DecelTime = 0f;
   public bool Decelerating = false;
+  public bool Braking = false;
   public float PushTime = 0f;
   public bool Pushing = false;
   public AnimationCurve PushSpeedFalloff;
   //public float ExcessPushStrength = 0.1f;
   public float DragMultiplier = 1.0f;
+  public float BrakingStrength = 1.0f;
   public float CoastSpeed;
   public float ProjectOffset = 0.75f;
   public float ProjectRadius = 0.72f;
   public float GradientProjectOffset = 0.01f;
   public Vector3 BodyAcceleration;
   public Vector3 BodyVelocity;
-  public Transform BodyPosition;
+  public Transform Body;
+  public Transform RotationTarget;
   // public Transform bALL;
-  public bool shovey = false;
+  public Quaternion LastFrameRotation;
   public Transform gROUNDY;
   public Transform FrontGradientTrack, BackGradientTrack;
   public Transform FrontGradientOrigin, BackGradientOrigin;
   public Animator Animator;
   public Transform SkateboardMeshTransform;
+  public float RotationSpeed = 0.01f;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public WheelController Wheels { get; private set; }
+  public SpringyBody SpringBodController { get; private set; }
 
   private void Start() {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
     Wheels = GetComponent<WheelController>();
-    BodyPosition.position = transform.position + ProjectOffset * Vector3.up;
+    SpringBodController = GetComponent<SpringyBody>();
+    LastFrameRotation = RotationTarget.rotation;
 
     SwitchState(new SkateboardMoveState(this));
   }

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public float turn;
+  public bool braking;
   public Vector2 mouseDelta;
 
   public Action OnPushPerformed;
@@ -36,6 +37,15 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       return;
 
     OnPushPerformed?.Invoke();
+  }
+
+  public void OnBrake(InputAction.CallbackContext context) {
+    if (context.performed) {
+      braking = true;
+    }
+    else if (context.canceled) {
+      braking = false;
+    }
   }
 
   public void OnLook(InputAction.CallbackContext context) {

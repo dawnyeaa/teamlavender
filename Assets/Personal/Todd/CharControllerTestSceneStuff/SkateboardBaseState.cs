@@ -50,6 +50,13 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void Brake() {
+    // if (stateMachine.Input.braking) {
+    //   stateMachine.CurrentSpeed -= stateMachine.BrakingStrength;
+    //   stateMachine.CurrentSpeed = stateMachine.CurrentSpeed <= 0 ? 0 : stateMachine.CurrentSpeed;
+    // }
+  }
+
   protected void CalculateTurn() {
     if (stateMachine.CurrentSpeed > 0) {
       stateMachine.Turning = Mathf.SmoothDamp(stateMachine.Turning, stateMachine.Input.turn, ref TurnSpeed, stateMachine.TurnSpeedDamping);
@@ -120,20 +127,11 @@ public abstract class SkateboardBaseState : State {
     stateMachine.Wheels.AddRotation(((Time.deltaTime*stateMachine.CurrentSpeed)/circum)*360f);
   }
 
-  protected void ResetBodyAccel() {
-    stateMachine.BodyAcceleration = Vector3.zero;
-  }
-
-  protected void AddForce(Vector3 force) {
-    stateMachine.BodyAcceleration += force;
-  }
-
-  protected void BodyPhysicsUpdate() {
-    stateMachine.BodyVelocity += stateMachine.BodyAcceleration * Time.fixedDeltaTime;
-    stateMachine.BodyPosition.position += stateMachine.BodyVelocity * Time.fixedDeltaTime;
-  }
-
-  protected void Shove() {
-    AddForce(new Vector3(1000000, 0, 0));
+  protected void BodyRotationDamp() {
+    stateMachine.Body.rotation = stateMachine.LastFrameRotation;
+    Quaternion targetRotation = stateMachine.RotationTarget.rotation;
+    float catchupMultiplier = Mathf.Pow(2f-Vector3.Dot(stateMachine.Body.forward, stateMachine.RotationTarget.forward), 4f);
+    stateMachine.Body.rotation = Quaternion.RotateTowards(stateMachine.Body.rotation, targetRotation, stateMachine.RotationSpeed * catchupMultiplier * Time.deltaTime);
+    stateMachine.LastFrameRotation = stateMachine.Body.rotation;
   }
 }
