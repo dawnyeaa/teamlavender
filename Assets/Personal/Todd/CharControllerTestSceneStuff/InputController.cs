@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class InputController : MonoBehaviour, Controls.IPlayerActions {
@@ -10,6 +11,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Vector2 mouseDelta;
 
   public Action OnPushPerformed;
+  public Action OnResetPerformed;
 
   private Controls controls;
 
@@ -50,6 +52,13 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnLook(InputAction.CallbackContext context) {
     mouseDelta = context.ReadValue<Vector2>();
+  }
+
+  public void OnDebugreset(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+
+    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
   }
   
 }

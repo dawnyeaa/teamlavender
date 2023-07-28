@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "debug.reset",
+                    "type": "Button",
+                    "id": "7fe96717-757f-4620-a12e-71f4cc6f6422",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -150,6 +159,17 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "brake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c3ba339-daeb-42ad-9783-c57ac7f13633",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB + M",
+                    "action": "debug.reset",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

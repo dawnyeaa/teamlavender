@@ -62,6 +62,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""debug.reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -174,6 +183,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""brake"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c3ba339-daeb-42ad-9783-c57ac7f13633"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""debug.reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -214,6 +234,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_push = m_player.FindAction("push", throwIfNotFound: true);
         m_player_look = m_player.FindAction("look", throwIfNotFound: true);
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
+        m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -277,6 +298,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_push;
     private readonly InputAction m_player_look;
     private readonly InputAction m_player_brake;
+    private readonly InputAction m_player_debugreset;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -285,6 +307,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @push => m_Wrapper.m_player_push;
         public InputAction @look => m_Wrapper.m_player_look;
         public InputAction @brake => m_Wrapper.m_player_brake;
+        public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -306,6 +329,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @brake.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
                 @brake.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
                 @brake.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
+                @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -322,6 +348,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @brake.started += instance.OnBrake;
                 @brake.performed += instance.OnBrake;
                 @brake.canceled += instance.OnBrake;
+                @debugreset.started += instance.OnDebugreset;
+                @debugreset.performed += instance.OnDebugreset;
+                @debugreset.canceled += instance.OnDebugreset;
             }
         }
     }
@@ -350,5 +379,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnPush(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
+        void OnDebugreset(InputAction.CallbackContext context);
     }
 }
