@@ -33,26 +33,28 @@ public abstract class PhysxSkateboardBaseState : State {
         Vector3 newNormal = hit.normal;
         Vector3 newRight = Vector3.Cross(newNormal, stateMachine.transform.forward);
         Vector3 newForward = Vector3.Cross(newRight, newNormal);
+        // var rot = Quaternion.FromToRotation(stateMachine.transform.up, newNormal);
+        // stateMachine.PhysxBody.AddTorque(new Vector3(rot.x, rot.y, rot.z)*10);
+
         stateMachine.transform.rotation = Quaternion.LookRotation(newForward, newNormal);
-        Debug.DrawRay(stateMachine.transform.position, stateMachine.transform.up, Color.red, 10);
 
         // smooth boards visual transform to not snap
-        Vector3 frontPos = Vector3.zero;
-        Vector3 backPos = Vector3.zero;
-        bool frontHit = Physics.Raycast(stateMachine.FrontGroundedChecker.position, -stateMachine.transform.up, out hit, LayerMask.GetMask("Ground"));
-        if (frontHit) {
-          frontPos = hit.point;
-        }
+        // Vector3 frontPos = Vector3.zero;
+        // Vector3 backPos = Vector3.zero;
+        // bool frontHit = Physics.Raycast(stateMachine.FrontGroundedChecker.position, -stateMachine.transform.up, out hit, LayerMask.GetMask("Ground"));
+        // if (frontHit) {
+        //   frontPos = hit.point;
+        // }
         
-        bool backHit = Physics.Raycast(stateMachine.BackGroundedChecker.position, -stateMachine.transform.up, out hit, LayerMask.GetMask("Ground"));
-        if (backHit) {
-          backPos = hit.point;
-        }
+        // bool backHit = Physics.Raycast(stateMachine.BackGroundedChecker.position, -stateMachine.transform.up, out hit, LayerMask.GetMask("Ground"));
+        // if (backHit) {
+        //   backPos = hit.point;
+        // }
 
-        if (frontHit && backHit) {
-          Vector3 newFacing = frontPos - backPos;
-          stateMachine.SkateboardMeshTransform.rotation = Quaternion.LookRotation(newFacing, newNormal);
-        }
+        // if (frontHit && backHit) {
+        //   Vector3 newFacing = frontPos - backPos;
+        //   stateMachine.SkateboardMeshTransform.rotation = Quaternion.LookRotation(newFacing, newNormal);
+        // }
       }
     }
   }
