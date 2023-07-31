@@ -14,21 +14,28 @@ public abstract class Skateboard3BaseState : State {
     stateMachine.BoardRb.AddForce(stateMachine.PushForce*pushDirection);
   }
 
-  protected Vector3 GetForwards() {
-    return stateMachine.BoardRb.transform.forward * (stateMachine.FacingForward ? 1 : -1);
-  }
+  protected Vector3 GetForwards() => stateMachine.BoardRb.transform.forward * (stateMachine.FacingForward ? 1 : -1);
 
   protected void CalculateTurn() {
-    Vector3 forwardVelocity = Vector3.Project(stateMachine.BoardRb.velocity, GetForwards());
-    if (forwardVelocity.magnitude > Mathf.Epsilon && stateMachine.Grounded) {
-      stateMachine.Turning = Mathf.SmoothDamp(stateMachine.Turning, stateMachine.Input.turn, ref TurnSpeed, stateMachine.TurnSpeedDamping);
-      float rad = stateMachine.TruckSpacing/Mathf.Sin(Mathf.Deg2Rad*stateMachine.Turning*stateMachine.MaxTruckTurnDeg);
-      float forceMag = stateMachine.BoardRb.mass * ((forwardVelocity.magnitude*forwardVelocity.magnitude)/rad);
-      Vector3 right = Vector3.Cross(GetForwards(), stateMachine.BoardRb.transform.up);
-      Vector3 centriForce = forceMag * -right;
-      stateMachine.BoardRb.AddForce(centriForce);
-      //*********************** DO TORQUE TOMORROW *******************************
-      // stateMachine.BoardRb.AddTorque(forceMag*stateMachine.BoardRb.transform.up);
+    stateMachine.TruckTurnPercent = Mathf.SmoothDamp(stateMachine.TruckTurnPercent, stateMachine.Input.turn, ref TurnSpeed, stateMachine.TruckTurnDamping);
+    for (int i = 0; i < 2; ++i) {
+      Transform truckTransform = i == 0 ? stateMachine.frontAxis : stateMachine.backAxis;
+      float truckTurnPercent = stateMachine.TruckTurnPercent * (i == 0 ? 1 : -1);
+      // get the new forward for the truck
+      Vector3 accelDir = Quaternion.AngleAxis(truckTurnPercent*stateMachine.MaxTruckTurnDeg, truckTransform.up) * truckTransform.parent.forward;
+      // rotate the truck transforms - can easily see from debug axes
+      truckTransform.rotation = Quaternion.LookRotation(accelDir, truckTransform.up);
+      // get the truck's steering axis (right-left)
+      Vector3 steeringDir = Quaternion.AngleAxis(truckTurnPercent*stateMachine.MaxTruckTurnDeg, truckTransform.up) * truckTransform.parent.right * (i == 0 ? 1 : -1);
+      // get the current velocity of the truck
+      Vector3 truckWorldVel = stateMachine.BoardRb.GetPointVelocity(truckTransform.position);
+      // get the speed in the trucks steering direction (right-left)
+      float steeringVel = Vector3.Dot(steeringDir, truckWorldVel);
+      // get the desired change in velocity (that would cancel sliding)
+      float desiredVelChange = -steeringVel * stateMachine.TruckGripFactor;
+      // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
+      float desirecAccel = desiredVelChange / Time.fixedDeltaTime;
+      stateMachine.BoardRb.AddForceAtPosition(steeringDir * stateMachine.TruckMass * desirecAccel, truckTransform.position);
     }
   }
 
