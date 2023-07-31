@@ -17,6 +17,7 @@ public class PhysxSkateboardStateMachine : StateMachine {
   public PhysicMaterial PhysxMat;
   public Animator Board;
   public Transform FrontGroundedChecker, BackGroundedChecker;
+  public Transform[] WheelPoints;
   public float GroundedCheckRaycastDistance = 0.05f;
   public float GroundAngleRaycastOffset = 0.5f;
   public float GroundAngleRaycastDistance = 0.65f;

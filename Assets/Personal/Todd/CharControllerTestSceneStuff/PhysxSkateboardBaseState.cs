@@ -16,8 +16,6 @@ public abstract class PhysxSkateboardBaseState : State {
   protected void CheckGrounded() {
     bool frontOnGround = Physics.Raycast(stateMachine.FrontGroundedChecker.position, -stateMachine.transform.up, stateMachine.GroundedCheckRaycastDistance, LayerMask.GetMask("Ground"));
     bool backOnGround = Physics.Raycast(stateMachine.BackGroundedChecker.position, -stateMachine.transform.up, stateMachine.GroundedCheckRaycastDistance, LayerMask.GetMask("Ground"));
-    Debug.DrawRay(stateMachine.FrontGroundedChecker.position, -stateMachine.transform.up, Color.blue);
-    Debug.Log("front: " + frontOnGround + ", back: " + backOnGround);
     stateMachine.Grounded = frontOnGround && backOnGround;
   }
 
