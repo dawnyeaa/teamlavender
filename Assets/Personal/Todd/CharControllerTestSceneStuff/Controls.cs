@@ -64,6 +64,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""fakie"",
+                    ""type"": ""Button"",
+                    ""id"": ""a3203d16-d2d6-4010-8687-ecb7eac347e7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""debug.reset"",
                     ""type"": ""Button"",
                     ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
@@ -194,6 +203,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""debug.reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b38bb221-c96f-48bc-83bb-c8bb9534b12f"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""fakie"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e2176e7-e048-4738-8436-234430c8e915"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""fakie"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -234,6 +265,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_push = m_player.FindAction("push", throwIfNotFound: true);
         m_player_look = m_player.FindAction("look", throwIfNotFound: true);
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
+        m_player_fakie = m_player.FindAction("fakie", throwIfNotFound: true);
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
     }
 
@@ -298,6 +330,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_push;
     private readonly InputAction m_player_look;
     private readonly InputAction m_player_brake;
+    private readonly InputAction m_player_fakie;
     private readonly InputAction m_player_debugreset;
     public struct PlayerActions
     {
@@ -307,6 +340,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @push => m_Wrapper.m_player_push;
         public InputAction @look => m_Wrapper.m_player_look;
         public InputAction @brake => m_Wrapper.m_player_brake;
+        public InputAction @fakie => m_Wrapper.m_player_fakie;
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
@@ -329,6 +363,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @brake.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
                 @brake.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
                 @brake.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
+                @fakie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFakie;
+                @fakie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFakie;
+                @fakie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFakie;
                 @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
@@ -348,6 +385,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @brake.started += instance.OnBrake;
                 @brake.performed += instance.OnBrake;
                 @brake.canceled += instance.OnBrake;
+                @fakie.started += instance.OnFakie;
+                @fakie.performed += instance.OnFakie;
+                @fakie.canceled += instance.OnFakie;
                 @debugreset.started += instance.OnDebugreset;
                 @debugreset.performed += instance.OnDebugreset;
                 @debugreset.canceled += instance.OnDebugreset;
@@ -379,6 +419,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnPush(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
+        void OnFakie(InputAction.CallbackContext context);
         void OnDebugreset(InputAction.CallbackContext context);
     }
 }
