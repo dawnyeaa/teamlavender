@@ -27,7 +27,7 @@ public abstract class Skateboard3BaseState : State {
 
   protected void CalculateTurn() {
     stateMachine.TruckTurnPercent = Mathf.SmoothDamp(stateMachine.TruckTurnPercent, stateMachine.Input.turn, ref TurnSpeed, stateMachine.TruckTurnDamping);
-    float localTruckTurnPercent = stateMachine.TurningEase.Evaluate(stateMachine.TruckTurnPercent)*Mathf.Sign(stateMachine.TruckTurnPercent);
+    float localTruckTurnPercent = stateMachine.TurningEase.Evaluate(Mathf.Abs(stateMachine.TruckTurnPercent))*Mathf.Sign(stateMachine.TruckTurnPercent);
     for (int i = 0; i < 2; ++i) {
       Transform truckTransform = i == 0 ? stateMachine.frontAxis : stateMachine.backAxis;
       localTruckTurnPercent *= (i == 0 ? 1 : -1);
