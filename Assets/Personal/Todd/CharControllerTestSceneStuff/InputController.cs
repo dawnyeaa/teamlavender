@@ -54,6 +54,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     mouseDelta = context.ReadValue<Vector2>();
   }
 
+  public void OnFakie(InputAction.CallbackContext context) {
+    
+  }
+
   public void OnDebugreset(InputAction.CallbackContext context) {
     if (!context.performed)
       return;
