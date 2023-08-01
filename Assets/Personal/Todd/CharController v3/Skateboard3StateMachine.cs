@@ -1,19 +1,55 @@
 using UnityEngine;
+using UnityEditor;
+
+#region ReadonlyAttribute
+public class ReadOnlyAttribute : PropertyAttribute
+{
+
+}
+
+[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+public class ReadOnlyDrawer : PropertyDrawer
+{
+    public override float GetPropertyHeight(SerializedProperty property,
+                                            GUIContent label)
+    {
+        return EditorGUI.GetPropertyHeight(property, label, true);
+    }
+
+    public override void OnGUI(Rect position,
+                               SerializedProperty property,
+                               GUIContent label)
+    {
+        GUI.enabled = false;
+        EditorGUI.PropertyField(position, property, label, true);
+        GUI.enabled = true;
+    }
+}
+#endregion
 
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(WheelController))]
 public class Skateboard3StateMachine : StateMachine {
-  public float PushForce = 1000f;
-  public float WheelFriction = 0.5f;
-  public float BrakingFriction = 0.6f;
-  public bool FacingForward = true;
-  public bool Grounded = true;
+  // User Constants - Runtime only
+  // [Header("Constants - Only read at runtime")]
+  // User Constants - Live update
+  [Header("Constants - Live update")]
+  public float PushForce = 7000f;
+  public float WheelFriction = 0.01f;
+  public float BrakingFriction = 0.4f;
   public float MaxTruckTurnDeg = 8.34f;
   public float TruckSpacing = 0.205f;
   public float TruckMass = 7.5f;
   public float TruckTurnDamping = 0.3f;
-  public float TruckTurnPercent;
+  public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
+  // Internal State Processing
+  [Header("Internal State")]
+  [ReadOnly] public bool FacingForward = true;
+  [ReadOnly] public bool Grounded = true;
+  [ReadOnly] public float TruckTurnPercent;
+  // Objects to link
+  [Header("Link Slot Objects")]
   public PhysicMaterial PhysMat;
   public Rigidbody BoardRb;
   public Transform frontAxis, backAxis;
