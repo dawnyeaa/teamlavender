@@ -206,6 +206,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""d9adc694-0751-4227-8775-d67dbb3b2deb"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""debug.reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""b38bb221-c96f-48bc-83bb-c8bb9534b12f"",
                     ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
