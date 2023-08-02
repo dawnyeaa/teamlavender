@@ -11,6 +11,8 @@ public class Skateboard4MoveState : Skateboard4BaseState {
 
   public override void Tick() {
     VertBodySpring();
+    BodyUprightCorrect();
+    AdjustSpringConstant();
     SetFriction();
     ApplyFrictionForce();
     // sm.Board.SetFloat(TurnHash, sm.Turning);

@@ -14,10 +14,16 @@ public class Skateboard4StateMachine : StateMachine {
   public float TruckSpacing = 0.205f;
   public float TruckMass = 7.5f;
   public float TruckTurnDamping = 0.3f;
-  public float SpringConstant = 10f;
+  public float SpringConstant = 40f;
+  public float SpringMultiplierMin = 0.5f;
+  public float SpringMultiplierMax = 1f;
   public float SpringDamping = 1f;
   public float ProjectRadius = 0.25f;
   public float ProjectLength = 1.5f;
+  public float RightingStrength = 1f;
+  public float EdgeSafeSpeedEpsilon = 0.1f;
+  public float EdgeSafeAngle = 60f;
+  public float GoingDownThreshold = -0.1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   // Internal State Processing
@@ -25,12 +31,14 @@ public class Skateboard4StateMachine : StateMachine {
   [ReadOnly] public bool FacingForward = true;
   [ReadOnly] public bool Grounded = true;
   [ReadOnly] public float TruckTurnPercent;
+  [ReadOnly] public float SpringMultiplier;
   [ReadOnly] public Vector3 Down = Vector3.down;
   // Objects to link
   [Header("Link Slot Objects")]
   public PhysicMaterial PhysMat;
   public Rigidbody BoardRb;
   public Transform frontAxis, backAxis;
+  public Transform alignPivot;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   // public WheelController Wheels { get; private set; }

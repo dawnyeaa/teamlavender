@@ -7055,10 +7055,16 @@ MonoBehaviour:
   TruckSpacing: 0.205
   TruckMass: 7.5
   TruckTurnDamping: 0.3
-  SpringConstant: 30
-  SpringDamping: 5
+  SpringConstant: 200
+  SpringMultiplierMin: 0.5
+  SpringMultiplierMax: 1
+  SpringDamping: 20
   ProjectRadius: 0.25
   ProjectLength: 1.5
+  RightingStrength: 0.1
+  EdgeSafeSpeedEpsilon: 0.1
+  EdgeSafeAngle: 20
+  GoingDownThreshold: -5
   TurningEase:
     serializedVersion: 2
     m_Curve: []
@@ -7069,11 +7075,13 @@ MonoBehaviour:
   FacingForward: 1
   Grounded: 1
   TruckTurnPercent: 0
+  SpringMultiplier: 0
   Down: {x: 0, y: -1, z: 0}
   PhysMat: {fileID: 13400000, guid: 1342056bc9bfa8a4495be1035f8519d5, type: 2}
   BoardRb: {fileID: 1725512517}
   frontAxis: {fileID: 0}
   backAxis: {fileID: 0}
+  alignPivot: {fileID: 0}
   footRepresentation: {fileID: 1196203955}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
