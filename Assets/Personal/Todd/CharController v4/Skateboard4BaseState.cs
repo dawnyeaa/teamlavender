@@ -4,35 +4,12 @@ using Unity.Mathematics;
 public abstract class Skateboard4BaseState : State {
   protected readonly Skateboard4StateMachine sm;
   protected float TurnSpeed = 0.0f;
-  // protected Vector3 RayTurnSpeed = Vector3.zero;
 
   protected Skateboard4BaseState(Skateboard4StateMachine stateMachine) {
     this.sm = stateMachine;
   }
 
   protected void BodyUprightCorrect() {
-    // float bodyFloorPivotRatio = 0.5f;
-    // Vector3 pivotPoint = Vector3.Lerp(sm.transform.position, sm.footRepresentation.position, bodyFloorPivotRatio);
-
-    // Vector3 inwardRadiusVector = pivotPoint - sm.transform.position;
-
-    // Vector3 relativeTargetPosition = (pivotPoint + Vector3.up*inwardRadiusVector.magnitude) - sm.transform.position;
-
-    // Vector3 rotationAxis = Vector3.Cross(relativeTargetPosition.normalized, inwardRadiusVector.normalized);
-    // Vector3 forceTangent = Vector3.Cross(inwardRadiusVector.normalized, rotationAxis);
-
-    // Vector3 currentUp = sm.transform.TransformDirection(-sm.Down);
-    // Debug.DrawRay(sm.transform.position, currentUp, Color.red);
-    // Debug.Log(Vector3.Dot(currentUp, Vector3.up));
-    // float uprightAlignment = math.remap(-1, 1, 0, 1, Vector3.Dot(currentUp, Vector3.up));
-
-    // Vector3 forceVector = forceTangent * ((1-uprightAlignment) * sm.RightingStrength - );
-
-    // Vector3 bodyCounterForcePoint = pivotPoint + inwardRadiusVector;
-    // sm.alignPivot.position = pivotPoint;
-    
-    // sm.BoardRb.AddForceAtPosition(forceVector, sm.transform.position, ForceMode.Acceleration);
-    // sm.BoardRb.AddForceAtPosition(-forceVector, bodyCounterForcePoint, ForceMode.Acceleration);
     bool goingDown = Vector3.Dot(Vector3.up, sm.BoardRb.velocity) < sm.GoingDownThreshold;
 
     if (goingDown) {
@@ -45,23 +22,17 @@ public abstract class Skateboard4BaseState : State {
     // set sphere collision visualiser size
     sm.footRepresentation.localScale = new Vector3(sm.ProjectRadius, sm.ProjectRadius, sm.ProjectRadius) * 2f;
 
+    sm.CurrentProjectLength = sm.ProjectLength;
+
     // sphere cast from body down - sphere does not need to be the same radius as the collider
     RaycastHit hit;
     if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
-      // // if (sm.BoardRb.velocity.magnitude < sm.EdgeSafeSpeedEpsilon) {
-      // if (Vector3.Angle(-sm.Down, hit.normal.normalized) > sm.EdgeSafeAngle) {
-      //   return;
-      // }
-      // // }
-
-      // body is now magnetised to surface (match angle)
-      // sm.Down = -hit.normal.normalized;
-      // sm.Down = Vector3.SmoothDamp(sm.Down, Vector3.down, ref RayTurnSpeed, 1f);
-      // these both have problems lmao
       Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
+
       RaycastHit rayHit;
       Vector3 frontHitPos = Vector3.zero, backHitPos = Vector3.zero;
       float bonusDistance = 0.3f;
+
       bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.Down, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
       if (frontHit) {
         // front truck hit!!!
@@ -78,26 +49,50 @@ public abstract class Skateboard4BaseState : State {
       }
 
       // add a force to push the body away from the surface - stronger if closer (like buoyancy)
-      float length = hit.distance;
-      float compression = sm.ProjectLength - length;
+      sm.CurrentProjectLength = hit.distance;
+      float compression = sm.ProjectLength - sm.CurrentProjectLength;
 
       sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
-
-      // set the sphere collision visualiser where it collides 
-      sm.footRepresentation.localPosition = sm.Down * hit.distance;
-      // sm.footRepresentation.position = hit.point;
-      return;
     }
     
     // the visualiser will be positioned at the max length if it hits nothing
-    sm.footRepresentation.localPosition = sm.Down * sm.ProjectLength;
+    sm.footRepresentation.localPosition = sm.Down * sm.CurrentProjectLength;
   }
 
-  protected void AdjustSpringConstant() {
-    // sm.SpringConstant = Mathf.Lerp(sm.CrouchingSpringConstant, sm.DefaultSpringConstant, Mathf.Abs(Vector3.Dot(Vector3.up, -sm.Down)));
-    // sm.SpringConstant = Mathf.Lerp(sm.CrouchingSpringConstant, sm.DefaultSpringConstant, Mathf.Abs(Vector3.Dot(Vector3.up, sm.BoardRb.velocity)));
+  protected void AdjustSpringMultiplier() {
     sm.SpringMultiplier = Mathf.Abs(Vector3.Dot(Vector3.up, -sm.Down));
     sm.SpringMultiplier = math.remap(0, 1, sm.SpringMultiplierMin, sm.SpringMultiplierMax, sm.SpringMultiplier);
+  }
+
+  protected void CalculateTurn() {
+    sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, sm.Input.turn, ref TurnSpeed, sm.TruckTurnDamping);
+    float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
+    for (int i = 0; i < 2; ++i) {
+      Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
+      Vector3 newLeft = Vector3.Cross(sm.transform.forward, sm.Down);
+      Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
+      Vector3 turnForceApplicationY = sm.transform.position + (sm.CurrentProjectLength * (1-sm.TurnForceApplicationHeight) * sm.Down);
+      Debug.DrawRay(turnForceApplicationY, truckOffset, Color.magenta);
+      Vector3 turnForcePosition = turnForceApplicationY + truckOffset * (i == 0 ? 1 : -1);
+      truckTransform.position = turnForcePosition;
+      truckTransform.rotation = Quaternion.LookRotation(truckOffset, -sm.Down);
+      localTruckTurnPercent *= (i == 0 ? 1 : -1);
+      // get the new forward for the truck
+      Vector3 accelDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * truckOffset.normalized;
+      // rotate the truck transforms - can easily see from debug axes
+      truckTransform.rotation = Quaternion.LookRotation(accelDir, truckTransform.up);
+      // get the truck's steering axis (right-left)
+      Vector3 steeringDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * -newLeft * (i == 0 ? 1 : -1);
+      // get the current velocity of the truck
+      Vector3 truckWorldVel = sm.BoardRb.GetPointVelocity(turnForcePosition);
+      // get the speed in the trucks steering direction (right-left)
+      float steeringVel = Vector3.Dot(steeringDir, truckWorldVel);
+      // get the desired change in velocity (that would cancel sliding)
+      float desiredVelChange = -steeringVel * sm.TruckGripFactor;
+      // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
+      float desirecAccel = desiredVelChange / Time.fixedDeltaTime;
+      sm.BoardRb.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
+    }
   }
 
   protected void OnPush() {

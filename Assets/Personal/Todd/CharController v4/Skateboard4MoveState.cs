@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using UnityEditor;
+
 public class Skateboard4MoveState : Skateboard4BaseState {
   private readonly int TurnHash = Animator.StringToHash("dir");
 
@@ -10,11 +12,15 @@ public class Skateboard4MoveState : Skateboard4BaseState {
   }
 
   public override void Tick() {
-    VertBodySpring();
     BodyUprightCorrect();
-    AdjustSpringConstant();
+    AdjustSpringMultiplier();
     SetFriction();
+    VertBodySpring();
+    CalculateTurn();
     ApplyFrictionForce();
+    // if (Vector3.Dot(Vector3.up, -sm.Down) < (1-Mathf.Epsilon)) {
+    //   EditorApplication.isPaused = true;
+    // }
     // sm.Board.SetFloat(TurnHash, sm.Turning);
   }
 

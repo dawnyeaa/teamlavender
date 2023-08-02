@@ -24,6 +24,7 @@ public class Skateboard4StateMachine : StateMachine {
   public float EdgeSafeSpeedEpsilon = 0.1f;
   public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
+  [Range(0, 1)] public float TurnForceApplicationHeight = 0.5f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   // Internal State Processing
@@ -33,6 +34,7 @@ public class Skateboard4StateMachine : StateMachine {
   [ReadOnly] public float TruckTurnPercent;
   [ReadOnly] public float SpringMultiplier;
   [ReadOnly] public Vector3 Down = Vector3.down;
+  [ReadOnly] public float CurrentProjectLength;
   // Objects to link
   [Header("Link Slot Objects")]
   public PhysicMaterial PhysMat;

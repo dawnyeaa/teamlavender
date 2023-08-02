@@ -14,4 +14,14 @@ public class TruckGizmo : MonoBehaviour {
     Gizmos.color = Color.green;
     Gizmos.DrawRay(transform.position, transform.up*RayLength);
   }
+  void DrawMeGizmos() {
+    Gizmos.color = Color.blue;
+    Gizmos.DrawRay(transform.position, transform.forward*RayLength);
+    
+    Gizmos.color = Color.red;
+    Gizmos.DrawRay(transform.position, transform.right*RayLength);
+    
+    Gizmos.color = Color.green;
+    Gizmos.DrawRay(transform.position, transform.up*RayLength);
+  }
 }
