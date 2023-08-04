@@ -40,7 +40,7 @@ public class Skateboard4StateMachine : StateMachine {
   public PhysicMaterial PhysMat;
   public Rigidbody BoardRb;
   public Transform frontAxis, backAxis;
-  public Transform alignPivot;
+  public Rigidbody FacingParentRB, FacingRB;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   // public WheelController Wheels { get; private set; }
