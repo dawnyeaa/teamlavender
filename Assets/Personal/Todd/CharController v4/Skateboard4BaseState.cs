@@ -25,20 +25,18 @@ public abstract class Skateboard4BaseState : State {
     sm.CurrentProjectLength = sm.ProjectLength;
 
     // sphere cast from body down - sphere does not need to be the same radius as the collider
-    RaycastHit hit;
-    if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+    if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
       sm.Grounded = true;
       Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
 
-      RaycastHit rayHit;
-      Vector3 frontHitPos = Vector3.zero, backHitPos = Vector3.zero;
-      Vector3 tempNormal = Vector3.zero;
+      Vector3 frontHitPos, backHitPos;
+      Vector3 tempNormal;
       float bonusDistance = 0.25f;
 
       Debug.DrawRay(sm.transform.position + truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
       Debug.DrawRay(sm.transform.position - truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
 
-      bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.Down, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
+      bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.Down, out RaycastHit rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
       if (frontHit) {
         // front truck hit!!!
         frontHitPos = rayHit.point;
@@ -88,9 +86,8 @@ public abstract class Skateboard4BaseState : State {
         // Vector3 turnForceApplicationY = sm.transform.position + (sm.CurrentProjectLength * (1-sm.TurnForceApplicationHeight) * sm.Down);
         // Debug.DrawRay(turnForceApplicationY, truckOffset, Color.magenta);
         Vector3 turnForcePosition = sm.FacingRB.position + truckOffset * (i == 0 ? 1 : -1);
-        truckTransform.position = turnForcePosition;
-        truckTransform.rotation = Quaternion.LookRotation(truckOffset, -sm.Down);
-        localTruckTurnPercent *= (i == 0 ? 1 : -1);
+        truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
+        localTruckTurnPercent *= i == 0 ? 1 : -1;
         // get the new forward for the truck
         Vector3 accelDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * truckOffset.normalized;
         // rotate the truck transforms - can easily see from debug axes
