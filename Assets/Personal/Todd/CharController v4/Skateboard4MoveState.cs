@@ -8,7 +8,7 @@ public class Skateboard4MoveState : Skateboard4BaseState {
   public Skateboard4MoveState(Skateboard4StateMachine stateMachine) : base(stateMachine) {}
 
   public override void Enter() {
-    sm.Input.OnPushPerformed += OnPush;
+    sm.Input.OnPushPerformed += StartPush;
   }
 
   public override void Tick() {
@@ -17,6 +17,7 @@ public class Skateboard4MoveState : Skateboard4BaseState {
     SetFriction();
     VertBodySpring();
     CalculateTurn();
+    CalculatePush();
     ApplyFrictionForce();
     // if (Vector3.Dot(Vector3.up, -sm.Down) < (1-Mathf.Epsilon)) {
     //   EditorApplication.isPaused = true;
@@ -25,6 +26,6 @@ public class Skateboard4MoveState : Skateboard4BaseState {
   }
 
   public override void Exit() {
-    sm.Input.OnPushPerformed -= OnPush;
+    sm.Input.OnPushPerformed -= StartPush;
   }
 }

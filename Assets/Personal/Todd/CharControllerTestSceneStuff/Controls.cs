@@ -80,6 +80,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""rightStick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2b5fdc0f-4303-4b92-a6a6-29bba3fd010f"",
+                    ""expectedControlType"": ""Stick"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -225,6 +234,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""fakie"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1d43e8e9-c993-43e8-b961-73d5511b98da"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""rightStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -267,6 +287,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
         m_player_fakie = m_player.FindAction("fakie", throwIfNotFound: true);
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
+        m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -332,6 +353,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_brake;
     private readonly InputAction m_player_fakie;
     private readonly InputAction m_player_debugreset;
+    private readonly InputAction m_player_rightStick;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -342,6 +364,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @brake => m_Wrapper.m_player_brake;
         public InputAction @fakie => m_Wrapper.m_player_fakie;
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
+        public InputAction @rightStick => m_Wrapper.m_player_rightStick;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -369,6 +392,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @rightStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
+                @rightStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
+                @rightStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -391,6 +417,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugreset.started += instance.OnDebugreset;
                 @debugreset.performed += instance.OnDebugreset;
                 @debugreset.canceled += instance.OnDebugreset;
+                @rightStick.started += instance.OnRightStick;
+                @rightStick.performed += instance.OnRightStick;
+                @rightStick.canceled += instance.OnRightStick;
             }
         }
     }
@@ -421,5 +450,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnBrake(InputAction.CallbackContext context);
         void OnFakie(InputAction.CallbackContext context);
         void OnDebugreset(InputAction.CallbackContext context);
+        void OnRightStick(InputAction.CallbackContext context);
     }
 }

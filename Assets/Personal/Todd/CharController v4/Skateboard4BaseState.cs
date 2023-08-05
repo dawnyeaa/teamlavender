@@ -4,6 +4,7 @@ using Unity.Mathematics;
 public abstract class Skateboard4BaseState : State {
   protected readonly Skateboard4StateMachine sm;
   protected float TurnSpeed = 0.0f;
+  protected float VisFollowSpeed = 0.0f;
 
   protected Skateboard4BaseState(Skateboard4StateMachine stateMachine) {
     this.sm = stateMachine;
@@ -63,9 +64,8 @@ public abstract class Skateboard4BaseState : State {
 
       sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
     }
-    
-    // the visualiser will be positioned at the max length if it hits nothing
-    sm.footRepresentation.localPosition = sm.Down * sm.CurrentProjectLength;
+    sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
+    sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
   }
 
   protected void AdjustSpringMultiplier() {
@@ -81,10 +81,6 @@ public abstract class Skateboard4BaseState : State {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
         Vector3 newLeft = Vector3.Cross(sm.FacingRB.transform.forward, sm.Down);
         Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
-        // sm.FacingParentRB.MovePosition(sm.transform.position);
-        // sm.FacingParentRB.MoveRotation(Quaternion.LookRotation(truckOffset.normalized, -sm.Down));
-        // Vector3 turnForceApplicationY = sm.transform.position + (sm.CurrentProjectLength * (1-sm.TurnForceApplicationHeight) * sm.Down);
-        // Debug.DrawRay(turnForceApplicationY, truckOffset, Color.magenta);
         Vector3 turnForcePosition = sm.FacingRB.position + truckOffset * (i == 0 ? 1 : -1);
         truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
         localTruckTurnPercent *= i == 0 ? 1 : -1;
@@ -109,8 +105,25 @@ public abstract class Skateboard4BaseState : State {
     }
   }
 
-  protected void OnPush() {
-    sm.BoardRb.AddForce(sm.FacingRB.transform.forward * sm.PushForce, ForceMode.Acceleration);
+  protected void StartPush() {
+    if (sm.CurrentPushT <= Mathf.Epsilon) {
+      // we can start a new push
+      sm.CurrentPushT = 1;
+    }
+  }
+
+  protected void CalculatePush() {
+    if (sm.CurrentPushT > Mathf.Epsilon) {
+      if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope) {
+        // we're pushing
+        float t = 1-sm.CurrentPushT;
+        sm.BoardRb.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.FacingRB.transform.forward, ForceMode.Acceleration);
+        sm.CurrentPushT -= Time.fixedDeltaTime / sm.MaxPushDuration;
+      }
+      else {
+        sm.CurrentPushT = 0;
+      }
+    }
   }
   
   protected void SetFriction() {
@@ -122,7 +135,7 @@ public abstract class Skateboard4BaseState : State {
 
   protected void ApplyFrictionForce() {
     Vector3 slidingVelocity = Vector3.ProjectOnPlane(sm.BoardRb.velocity, sm.Down);
-    float frictionMag = sm.PhysMat.dynamicFriction * Physics.gravity.magnitude;
+    float frictionMag = sm.PhysMat.dynamicFriction * Vector3.Dot(Physics.gravity, sm.Down);
     sm.BoardRb.AddForce(-slidingVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 }

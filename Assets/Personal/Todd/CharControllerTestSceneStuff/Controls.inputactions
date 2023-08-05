@@ -58,6 +58,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "rightStick",
+                    "type": "PassThrough",
+                    "id": "2b5fdc0f-4303-4b92-a6a6-29bba3fd010f",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -201,6 +210,17 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "fakie",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1d43e8e9-c993-43e8-b961-73d5511b98da",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "rightStick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
