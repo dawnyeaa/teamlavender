@@ -9,6 +9,7 @@ public class Skateboard4MoveState : Skateboard4BaseState {
 
   public override void Enter() {
     sm.Input.OnPushPerformed += StartPush;
+    sm.Input.OnSwitchPerformed += OnSwitch;
   }
 
   public override void Tick() {
@@ -27,5 +28,6 @@ public class Skateboard4MoveState : Skateboard4BaseState {
 
   public override void Exit() {
     sm.Input.OnPushPerformed -= StartPush;
+    sm.Input.OnSwitchPerformed -= OnSwitch;
   }
 }

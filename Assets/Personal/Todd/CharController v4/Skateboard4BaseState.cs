@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Mathematics;
 
+using UnityEditor;
+
 public abstract class Skateboard4BaseState : State {
   protected readonly Skateboard4StateMachine sm;
   protected float TurnSpeed = 0.0f;
@@ -110,6 +112,10 @@ public abstract class Skateboard4BaseState : State {
       // we can start a new push
       sm.CurrentPushT = 1;
     }
+  }
+
+  protected void OnSwitch() {
+    sm.FacingParentRB.transform.rotation *= Quaternion.AngleAxis(180f, sm.FacingParentRB.transform.up);
   }
 
   protected void CalculatePush() {

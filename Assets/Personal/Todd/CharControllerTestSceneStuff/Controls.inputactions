@@ -42,7 +42,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "fakie",
+                    "name": "switch",
                     "type": "Button",
                     "id": "a3203d16-d2d6-4010-8687-ecb7eac347e7",
                     "expectedControlType": "Button",
@@ -193,12 +193,23 @@
                 },
                 {
                     "name": "",
+                    "id": "3313ee40-49ae-401c-a59a-cb7912aab2e2",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "debug.reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b38bb221-c96f-48bc-83bb-c8bb9534b12f",
                     "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB + M",
-                    "action": "fakie",
+                    "action": "switch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -209,7 +220,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "gamepad",
-                    "action": "fakie",
+                    "action": "switch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
