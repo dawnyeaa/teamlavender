@@ -7,6 +7,8 @@ public class Skateboard4StateMachine : StateMachine {
   // [Header("Constants - Only read at runtime")]
   // User Constants - Live update
   [Header("Constants - Live update")]
+  public float MaxSpeed = 20f;
+  public float TurnLockSpeed = 30f;
   public float PushForce = 10f;
   public AnimationCurve PushForceCurve;
   public float MaxPushDuration = 1f;
@@ -29,6 +31,7 @@ public class Skateboard4StateMachine : StateMachine {
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
   public float PushingMaxSlope = 5f;
+  public float OllieForce = 1f;
   // Internal State Processing
   [Header("Internal State")]
   [ReadOnly] public bool FacingForward = true;

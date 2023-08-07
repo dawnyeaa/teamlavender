@@ -5,9 +5,25 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
+public enum Input {
+  Push,
+  Brake,
+  Switch,
+  rs1,
+  rs2,
+  rs3,
+  rs4,
+  rs5,
+  rs6,
+  rs7,
+  rs8,
+  rs9
+}
+
 public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public float turn;
   public bool braking;
+  public bool crouching;
   public Vector2 mouseDelta;
   public Vector2 rightStick;
   public Vector2 rightStickDigital;
@@ -17,6 +33,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnPushPerformed;
   public Action OnSwitchPerformed;
   public Action OnResetPerformed;
+  public Action OnOlliePerformed;
 
   private Controls controls;
 
@@ -98,6 +115,21 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
         rightStickDigital.Set(-1, 0);
       }
     }
+  }
+
+  public void OnCrouch(InputAction.CallbackContext context) {
+    if (context.performed) {
+      crouching = true;
+    }
+    else if (context.canceled) {
+      crouching = false;
+    }
+  }
+
+  public void OnOllie(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnOlliePerformed?.Invoke();
   }
 
   public void OnDebugreset(InputAction.CallbackContext context) {
