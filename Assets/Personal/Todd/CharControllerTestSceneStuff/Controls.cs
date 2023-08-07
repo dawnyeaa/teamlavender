@@ -73,19 +73,19 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""debug.reset"",
-                    ""type"": ""Button"",
-                    ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
-                    ""expectedControlType"": ""Button"",
+                    ""name"": ""rightStick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2b5fdc0f-4303-4b92-a6a6-29bba3fd010f"",
+                    ""expectedControlType"": ""Stick"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""rightStick"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""2b5fdc0f-4303-4b92-a6a6-29bba3fd010f"",
-                    ""expectedControlType"": ""Stick"",
+                    ""name"": ""debug.reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -170,15 +170,37 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""9cd1c8f2-d6e5-48b6-b962-72d564dc3455"",
+                    ""name"": ""secondary look"",
+                    ""id"": ""80991ccc-9ddb-44d4-b213-35b27031e915"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""look"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""0006dda7-9b17-4d3a-9489-0428356e820d"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""60f9244a-246b-4353-acba-e6deb1af0a75"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""look"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -199,28 +221,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""brake"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2c3ba339-daeb-42ad-9783-c57ac7f13633"",
-                    ""path"": ""<Keyboard>/backspace"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB + M"",
-                    ""action"": ""debug.reset"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3313ee40-49ae-401c-a59a-cb7912aab2e2"",
-                    ""path"": ""<Gamepad>/select"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""debug.reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -254,6 +254,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""rightStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c3ba339-daeb-42ad-9783-c57ac7f13633"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""debug.reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3313ee40-49ae-401c-a59a-cb7912aab2e2"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""debug.reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -297,8 +319,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_look = m_player.FindAction("look", throwIfNotFound: true);
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
-        m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
+        m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -363,8 +385,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_look;
     private readonly InputAction m_player_brake;
     private readonly InputAction m_player_switch;
-    private readonly InputAction m_player_debugreset;
     private readonly InputAction m_player_rightStick;
+    private readonly InputAction m_player_debugreset;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -374,8 +396,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @look => m_Wrapper.m_player_look;
         public InputAction @brake => m_Wrapper.m_player_brake;
         public InputAction @switch => m_Wrapper.m_player_switch;
-        public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
+        public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -400,12 +422,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @switch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
                 @switch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
                 @switch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
-                @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
-                @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
-                @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @rightStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
+                @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -425,12 +447,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @switch.started += instance.OnSwitch;
                 @switch.performed += instance.OnSwitch;
                 @switch.canceled += instance.OnSwitch;
-                @debugreset.started += instance.OnDebugreset;
-                @debugreset.performed += instance.OnDebugreset;
-                @debugreset.canceled += instance.OnDebugreset;
                 @rightStick.started += instance.OnRightStick;
                 @rightStick.performed += instance.OnRightStick;
                 @rightStick.canceled += instance.OnRightStick;
+                @debugreset.started += instance.OnDebugreset;
+                @debugreset.performed += instance.OnDebugreset;
+                @debugreset.canceled += instance.OnDebugreset;
             }
         }
     }
@@ -460,7 +482,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
-        void OnDebugreset(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
+        void OnDebugreset(InputAction.CallbackContext context);
     }
 }

@@ -136,6 +136,9 @@ MonoBehaviour:
   turn: 0
   braking: 0
   mouseDelta: {x: 0, y: 0}
+  rightStick: {x: 0, y: 0}
+  rightStickDigital: {x: 0, y: 0}
+  rightStickDead: 0.2
 --- !u!114 &3832982824073343646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,8 +186,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   MaxPushDuration: 0.5
-  WheelFriction: 0.03
-  BrakingFriction: 0.4
+  WheelFriction: 0.1
+  BrakingFriction: 1.2
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
   TruckTurnDamping: 0.3

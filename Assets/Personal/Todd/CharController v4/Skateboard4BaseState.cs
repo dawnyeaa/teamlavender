@@ -140,8 +140,8 @@ public abstract class Skateboard4BaseState : State {
   }
 
   protected void ApplyFrictionForce() {
-    Vector3 slidingVelocity = Vector3.ProjectOnPlane(sm.BoardRb.velocity, sm.Down);
-    float frictionMag = sm.PhysMat.dynamicFriction * Vector3.Dot(Physics.gravity, sm.Down);
+    Vector3 slidingVelocity = Vector3.Project(sm.BoardRb.velocity, sm.FacingRB.transform.forward);
+    float frictionMag = sm.PhysMat.dynamicFriction * slidingVelocity.magnitude;
     sm.BoardRb.AddForce(-slidingVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 }
