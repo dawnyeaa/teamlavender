@@ -29,6 +29,7 @@ public class Skateboard4StateMachine : StateMachine {
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
   public float PushingMaxSlope = 5f;
+  public float OllieForce = 1f;
   // Internal State Processing
   [Header("Internal State")]
   [ReadOnly] public bool FacingForward = true;

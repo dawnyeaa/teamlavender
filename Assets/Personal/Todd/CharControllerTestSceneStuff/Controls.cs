@@ -89,6 +89,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""crouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""c1e794bd-ab4a-40cd-b0ac-8ba0b7cc842f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ollie"",
+                    ""type"": ""Button"",
+                    ""id"": ""ecd1b5fc-f94b-45e4-956a-b332c5a2cc42"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -278,6 +296,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""debug.reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9191e409-ffea-4065-8605-771b209ab411"",
+                    ""path"": ""<Gamepad>/rightStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9313f699-0839-4aed-831a-555ed45236f8"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""ollie"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -321,6 +361,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
+        m_player_crouch = m_player.FindAction("crouch", throwIfNotFound: true);
+        m_player_ollie = m_player.FindAction("ollie", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -387,6 +429,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_switch;
     private readonly InputAction m_player_rightStick;
     private readonly InputAction m_player_debugreset;
+    private readonly InputAction m_player_crouch;
+    private readonly InputAction m_player_ollie;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -398,6 +442,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @switch => m_Wrapper.m_player_switch;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
+        public InputAction @crouch => m_Wrapper.m_player_crouch;
+        public InputAction @ollie => m_Wrapper.m_player_ollie;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -428,6 +474,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @crouch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
+                @crouch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
+                @crouch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
+                @ollie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
+                @ollie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
+                @ollie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -453,6 +505,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugreset.started += instance.OnDebugreset;
                 @debugreset.performed += instance.OnDebugreset;
                 @debugreset.canceled += instance.OnDebugreset;
+                @crouch.started += instance.OnCrouch;
+                @crouch.performed += instance.OnCrouch;
+                @crouch.canceled += instance.OnCrouch;
+                @ollie.started += instance.OnOllie;
+                @ollie.performed += instance.OnOllie;
+                @ollie.canceled += instance.OnOllie;
             }
         }
     }
@@ -484,5 +542,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnSwitch(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
         void OnDebugreset(InputAction.CallbackContext context);
+        void OnCrouch(InputAction.CallbackContext context);
+        void OnOllie(InputAction.CallbackContext context);
     }
 }

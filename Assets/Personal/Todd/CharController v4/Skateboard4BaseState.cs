@@ -66,6 +66,9 @@ public abstract class Skateboard4BaseState : State {
 
       sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
     }
+    else {
+      sm.Grounded = false;
+    }
     sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
   }
@@ -115,7 +118,8 @@ public abstract class Skateboard4BaseState : State {
   }
 
   protected void OnSwitch() {
-    sm.FacingParentRB.transform.rotation *= Quaternion.AngleAxis(180f, sm.FacingParentRB.transform.up);
+    if (sm.Grounded)
+      sm.FacingParentRB.transform.rotation *= Quaternion.AngleAxis(180f, sm.FacingParentRB.transform.up);
   }
 
   protected void CalculatePush() {
@@ -137,6 +141,11 @@ public abstract class Skateboard4BaseState : State {
       sm.PhysMat.dynamicFriction = sm.BrakingFriction;
     else
       sm.PhysMat.dynamicFriction = sm.WheelFriction;
+  }
+
+  protected void OnOllie() {
+    if (sm.Grounded)
+      sm.BoardRb.AddForce((Vector3.up - sm.Down).normalized*sm.OllieForce, ForceMode.Acceleration);
   }
 
   protected void ApplyFrictionForce() {
