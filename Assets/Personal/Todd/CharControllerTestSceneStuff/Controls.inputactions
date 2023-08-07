@@ -42,7 +42,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "fakie",
+                    "name": "switch",
                     "type": "Button",
                     "id": "a3203d16-d2d6-4010-8687-ecb7eac347e7",
                     "expectedControlType": "Button",
@@ -55,6 +55,15 @@
                     "type": "Button",
                     "id": "7fe96717-757f-4620-a12e-71f4cc6f6422",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "rightStick",
+                    "type": "PassThrough",
+                    "id": "2b5fdc0f-4303-4b92-a6a6-29bba3fd010f",
+                    "expectedControlType": "Stick",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -184,12 +193,23 @@
                 },
                 {
                     "name": "",
+                    "id": "3313ee40-49ae-401c-a59a-cb7912aab2e2",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "debug.reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b38bb221-c96f-48bc-83bb-c8bb9534b12f",
                     "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB + M",
-                    "action": "fakie",
+                    "action": "switch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -200,7 +220,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "gamepad",
-                    "action": "fakie",
+                    "action": "switch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1d43e8e9-c993-43e8-b961-73d5511b98da",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "rightStick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
