@@ -9,8 +9,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public float turn;
   public bool braking;
   public Vector2 mouseDelta;
+  public Vector2 rightStick;
 
   public Action OnPushPerformed;
+  public Action OnSwitchPerformed;
   public Action OnResetPerformed;
 
   private Controls controls;
@@ -54,8 +56,15 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     mouseDelta = context.ReadValue<Vector2>();
   }
 
-  public void OnFakie(InputAction.CallbackContext context) {
-    
+  public void OnSwitch(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+
+    OnSwitchPerformed?.Invoke();
+  }
+
+  public void OnRightStick(InputAction.CallbackContext context) {
+    rightStick = context.ReadValue<Vector2>();
   }
 
   public void OnDebugreset(InputAction.CallbackContext context) {
