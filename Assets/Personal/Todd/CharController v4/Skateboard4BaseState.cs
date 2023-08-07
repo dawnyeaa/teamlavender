@@ -71,6 +71,7 @@ public abstract class Skateboard4BaseState : State {
     }
     sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
+    sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
   }
 
   protected void AdjustSpringMultiplier() {
@@ -104,9 +105,10 @@ public abstract class Skateboard4BaseState : State {
         float desiredVelChange = -steeringVel * sm.TruckGripFactor;
         // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
         float desirecAccel = desiredVelChange / Time.fixedDeltaTime;
-        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.Down);
+        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.DampedDown);
         sm.FacingRB.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
         sm.BoardRb.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
+        sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
       }
     }
   }

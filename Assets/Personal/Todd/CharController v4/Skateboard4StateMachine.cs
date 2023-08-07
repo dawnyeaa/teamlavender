@@ -53,6 +53,8 @@ public class Skateboard4StateMachine : StateMachine {
   // public WheelController Wheels { get; private set; }
 
   public Transform footRepresentation;
+  public Transform BodyMesh;
+  public Animator CharacterAnimator;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
