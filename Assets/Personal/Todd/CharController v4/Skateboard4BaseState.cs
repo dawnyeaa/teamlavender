@@ -79,7 +79,8 @@ public abstract class Skateboard4BaseState : State {
   }
 
   protected void CalculateTurn() {
-    sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, sm.Input.turn, ref TurnSpeed, sm.TruckTurnDamping);
+    float turnTarget = sm.Input.turn * (1-(sm.BoardRb.velocity.magnitude/sm.TurnLockSpeed));
+    sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
     if (sm.Grounded) {
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
@@ -141,6 +142,11 @@ public abstract class Skateboard4BaseState : State {
       sm.PhysMat.dynamicFriction = sm.BrakingFriction;
     else
       sm.PhysMat.dynamicFriction = sm.WheelFriction;
+  }
+
+  protected void CapSpeed() {
+    if (sm.BoardRb.velocity.magnitude > sm.MaxSpeed)
+      sm.BoardRb.velocity = sm.BoardRb.velocity.normalized * sm.MaxSpeed;
   }
 
   protected void OnOllie() {

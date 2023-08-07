@@ -7,6 +7,8 @@ public class Skateboard4StateMachine : StateMachine {
   // [Header("Constants - Only read at runtime")]
   // User Constants - Live update
   [Header("Constants - Live update")]
+  public float MaxSpeed = 20f;
+  public float TurnLockSpeed = 30f;
   public float PushForce = 10f;
   public AnimationCurve PushForceCurve;
   public float MaxPushDuration = 1f;
