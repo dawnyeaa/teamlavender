@@ -51,19 +51,19 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "debug.reset",
-                    "type": "Button",
-                    "id": "7fe96717-757f-4620-a12e-71f4cc6f6422",
-                    "expectedControlType": "Button",
+                    "name": "rightStick",
+                    "type": "PassThrough",
+                    "id": "2b5fdc0f-4303-4b92-a6a6-29bba3fd010f",
+                    "expectedControlType": "Stick",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "rightStick",
-                    "type": "PassThrough",
-                    "id": "2b5fdc0f-4303-4b92-a6a6-29bba3fd010f",
-                    "expectedControlType": "Stick",
+                    "name": "debug.reset",
+                    "type": "Button",
+                    "id": "7fe96717-757f-4620-a12e-71f4cc6f6422",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -148,15 +148,37 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "9cd1c8f2-d6e5-48b6-b962-72d564dc3455",
+                    "name": "secondary look",
+                    "id": "80991ccc-9ddb-44d4-b213-35b27031e915",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "look",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "0006dda7-9b17-4d3a-9489-0428356e820d",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "look",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "60f9244a-246b-4353-acba-e6deb1af0a75",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
                     "groups": "gamepad",
                     "action": "look",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -177,28 +199,6 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "brake",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2c3ba339-daeb-42ad-9783-c57ac7f13633",
-                    "path": "<Keyboard>/backspace",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "KB + M",
-                    "action": "debug.reset",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3313ee40-49ae-401c-a59a-cb7912aab2e2",
-                    "path": "<Gamepad>/select",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "debug.reset",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -232,6 +232,28 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "rightStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c3ba339-daeb-42ad-9783-c57ac7f13633",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB + M",
+                    "action": "debug.reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3313ee40-49ae-401c-a59a-cb7912aab2e2",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "debug.reset",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -8,7 +8,7 @@ public class StickDisplay : MonoBehaviour {
   public Vector2 newpos = Vector2.zero;
   // Update is called once per frame
   void Update() {
-    newpos = input.rightStick*movementScale;
+    newpos = input.rightStickDigital.normalized*movementScale;
     transform.localPosition = new Vector3 (newpos.x, newpos.y, transform.localPosition.z);
   }
 }
