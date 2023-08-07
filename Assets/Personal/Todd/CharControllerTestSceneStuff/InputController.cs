@@ -10,6 +10,9 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public bool braking;
   public Vector2 mouseDelta;
   public Vector2 rightStick;
+  public Vector2 rightStickDigital;
+
+  public float rightStickDead = 0.2f;
 
   public Action OnPushPerformed;
   public Action OnSwitchPerformed;
@@ -65,6 +68,36 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnRightStick(InputAction.CallbackContext context) {
     rightStick = context.ReadValue<Vector2>();
+    if (rightStick.magnitude < rightStickDead)
+      rightStickDigital.Set(0, 0);
+    else {
+      Vector2 stickNormed = rightStick.normalized;
+      float stickDeg = Vector2.SignedAngle(Vector2.right, stickNormed);
+      if (stickDeg <= 22.5f && stickDeg > -22.5f) {
+        rightStickDigital.Set(1, 0);
+      }
+      else if (stickDeg <= 67.5f && stickDeg > 22.5f) {
+        rightStickDigital.Set(1, 1);
+      }
+      else if (stickDeg <= 112.5f && stickDeg > 67.5f) {
+        rightStickDigital.Set(0, 1);
+      }
+      else if (stickDeg <= 157.5f && stickDeg > 112.5f) {
+        rightStickDigital.Set(-1, 1);
+      }
+      else if (stickDeg > -67.5f && stickDeg <= -22.5f) {
+        rightStickDigital.Set(1, -1);
+      }
+      else if (stickDeg > -112.5f && stickDeg <= -67.5f) {
+        rightStickDigital.Set(0, -1);
+      }
+      else if (stickDeg > -157.5f && stickDeg <= -112.5f) {
+        rightStickDigital.Set(-1, -1);
+      }
+      else if (stickDeg <= -157.5f || stickDeg > 157.5f) {
+        rightStickDigital.Set(-1, 0);
+      }
+    }
   }
 
   public void OnDebugreset(InputAction.CallbackContext context) {
