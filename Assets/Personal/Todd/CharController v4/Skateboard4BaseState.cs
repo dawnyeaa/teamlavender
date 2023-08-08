@@ -72,6 +72,8 @@ public abstract class Skateboard4BaseState : State {
     sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
     sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
+    sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.BoardRb.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
+    sm.HeadSensZone.SetShow(sm.ShowHeadZone);
   }
 
   protected void AdjustSpringMultiplier() {
@@ -157,8 +159,30 @@ public abstract class Skateboard4BaseState : State {
   }
 
   protected void ApplyFrictionForce() {
-    Vector3 slidingVelocity = Vector3.Project(sm.BoardRb.velocity, sm.FacingRB.transform.forward);
-    float frictionMag = sm.PhysMat.dynamicFriction * slidingVelocity.magnitude;
-    sm.BoardRb.AddForce(-slidingVelocity.normalized*frictionMag, ForceMode.Acceleration);
+    Vector3 forwardVelocity = Vector3.Project(sm.BoardRb.velocity, sm.FacingRB.transform.forward);
+    float frictionMag = sm.PhysMat.dynamicFriction * forwardVelocity.magnitude;
+    sm.BoardRb.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
+  }
+
+  public void Spawn() {
+    // find the nearest spawn point
+    (Vector3 pos, Quaternion rot) = sm.SpawnPointManager.GetNearestSpawnPoint(sm.transform.position);
+    // reset any necessary properties
+    sm.BoardRb.velocity = Vector3.zero;
+    sm.FacingRB.velocity = Vector3.zero;
+    sm.BoardRb.angularVelocity = Vector3.zero;
+    sm.FacingRB.angularVelocity = Vector3.zero;
+
+    sm.FacingParentRB.rotation = Quaternion.identity;
+    sm.FacingRB.MoveRotation(Quaternion.identity);
+
+    sm.Down = Vector3.down;
+    sm.DampedDown = Vector3.down;
+    sm.Grounded = false;
+    sm.TruckTurnPercent = 0;
+    sm.HeadSensZone.SetT(0);
+    // move to that nearest spawn point;
+    sm.BoardRb.MovePosition(pos);
+    sm.FacingParentRB.rotation = rot;
   }
 }

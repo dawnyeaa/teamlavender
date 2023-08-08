@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Animations;
+using System.Threading.Tasks;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -32,6 +34,11 @@ public class Skateboard4StateMachine : StateMachine {
   public float BoardPositionDamping = 1f;
   public float PushingMaxSlope = 5f;
   public float OllieForce = 1f;
+  public float DeadTime = 3f;
+  public float MinHeadZoneSize = 2.4f;
+  public float MaxHeadZoneSize = 6f;
+  [Range(0, 1)] public float HeadZoneSpeedToHorizontalRatio = 0.5f;
+  public bool ShowHeadZone = false;
   // Internal State Processing
   [Header("Internal State")]
   [ReadOnly] public bool FacingForward = true;
@@ -55,6 +62,12 @@ public class Skateboard4StateMachine : StateMachine {
   public Transform footRepresentation;
   public Transform BodyMesh;
   public Animator CharacterAnimator;
+  public Transform RegularModel, RagdollModel;
+  public Rigidbody[] RagdollTransformsToPush;
+  public ParentConstraint LookatConstraint;
+  public TransformHeirarchyMatch RagdollMatcher;
+  public SpawnPointManager SpawnPointManager;
+  public HeadSensWrapper HeadSensZone;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -64,6 +77,16 @@ public class Skateboard4StateMachine : StateMachine {
     Input = GetComponent<InputController>();
     // Wheels = GetComponent<WheelController>();
 
+    SwitchState(new Skateboard4MoveState(this));
+
+    HeadSensZone.AddCallback(EnterDead);
+
+    Input.OnSlamPerformed += EnterDead;
+  }
+
+  private async void EnterDead() {
+    SwitchState(new Skateboard4DeadState(this));
+    await Task.Delay((int)(DeadTime*1000));
     SwitchState(new Skateboard4MoveState(this));
   }
 }
