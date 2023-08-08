@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxSpeed: 20
-  TurnLockSpeed: 20
-  PushForce: 10
+  TurnLockSpeed: 30
+  PushForce: 12
   PushForceCurve:
     serializedVersion: 2
     m_Curve:
@@ -168,13 +168,13 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.67413604
     - serializedVersion: 3
-      time: 0.49994108
-      value: 1.0000331
-      inSlope: 0.00011241436
-      outSlope: 0.00011241436
-      tangentMode: 34
+      time: 0.7069113
+      value: 0.83719134
+      inSlope: -0.2819732
+      outSlope: -0.2819732
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.17426571
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
@@ -188,47 +188,56 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  MaxPushDuration: 0.5
-  WheelFriction: 0.1
-  BrakingFriction: 1.2
+  MaxPushDuration: 0.4
+  WheelFriction: 0.07
+  BrakingFriction: 0.5
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
-  TruckTurnDamping: 0.3
+  TruckTurnDamping: 0.7
   SpringConstant: 150
-  SpringMultiplierMin: 0.5
+  SpringMultiplierMin: 0.6
   SpringMultiplierMax: 1
   SpringDamping: 20
   ProjectRadius: 0.25
   ProjectLength: 1.2
-  RightingStrength: 0.02
-  GoingDownThreshold: -5
+  RightingStrength: 0.015
+  GoingDownThreshold: -4
   TurningEase:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
+      inSlope: 0.3253485
+      outSlope: 0.3253485
+      tangentMode: 0
+      weightedMode: 3
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.5438559
+    - serializedVersion: 3
+      time: 0.59722155
+      value: 0.5389373
+      inSlope: 0.08208548
+      outSlope: 0.08208548
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.5054619
+      outWeight: 0.734403
     - serializedVersion: 3
       time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
+      value: 0.83908045
+      inSlope: 0.22339194
+      outSlope: 0.22339194
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.340657
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   TruckGripFactor: 1
-  BoardPositionDamping: 3
-  PushingMaxSlope: 30
+  BoardPositionDamping: 4
+  PushingMaxSlope: 90
   OllieForce: 180
   FacingForward: 1
   Grounded: 1
