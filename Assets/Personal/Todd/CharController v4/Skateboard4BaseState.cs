@@ -29,7 +29,6 @@ public abstract class Skateboard4BaseState : State {
 
     // sphere cast from body down - sphere does not need to be the same radius as the collider
     if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
-      sm.Grounded = true;
       Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
 
       Vector3 frontHitPos, backHitPos;
@@ -54,9 +53,14 @@ public abstract class Skateboard4BaseState : State {
           var newForward = backHitPos - frontHitPos;
           var newNormal = Vector3.Cross(newForward, Vector3.Cross(newForward, -tempNormal)).normalized;
           sm.Down = -newNormal;
+          if (!sm.Grounded && sm.AirTimeCounter > sm.MinimumAirTime)
+            sm.PointManager.Validate();
+          sm.Grounded = true;
         }
       }
       else {
+        if (sm.Grounded)
+          sm.AirTimeCounter = 0;
         sm.Grounded = false;
       }
 
@@ -67,7 +71,14 @@ public abstract class Skateboard4BaseState : State {
       sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
     }
     else {
+      if (sm.Grounded)
+        sm.AirTimeCounter = 0;
       sm.Grounded = false;
+    }
+    if (!sm.Grounded) {
+      if (sm.AirTimeCounter > sm.MinimumAirTime)
+        sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
+      sm.AirTimeCounter += Time.fixedDeltaTime;
     }
     sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;

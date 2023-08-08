@@ -39,6 +39,8 @@ public class Skateboard4StateMachine : StateMachine {
   public float MaxHeadZoneSize = 6f;
   [Range(0, 1)] public float HeadZoneSpeedToHorizontalRatio = 0.5f;
   public bool ShowHeadZone = false;
+  public float MinimumAirTime = 0.5f;
+  public float PointsPerAirTimeSecond = 100f;
   // Internal State Processing
   [Header("Internal State")]
   [ReadOnly] public bool FacingForward = true;
@@ -49,6 +51,7 @@ public class Skateboard4StateMachine : StateMachine {
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float CurrentPushT = 0;
+  [ReadOnly] public float AirTimeCounter = 0;
   // Objects to link
   [Header("Link Slot Objects")]
   public PhysicMaterial PhysMat;
@@ -68,6 +71,7 @@ public class Skateboard4StateMachine : StateMachine {
   public TransformHeirarchyMatch RagdollMatcher;
   public SpawnPointManager SpawnPointManager;
   public HeadSensWrapper HeadSensZone;
+  public PointManager PointManager;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 

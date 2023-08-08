@@ -21,6 +21,7 @@ public class Skateboard4DeadState : Skateboard4BaseState {
       rb.AddForce(targetVelocity/Time.fixedDeltaTime, ForceMode.Acceleration);
     }
     sm.BoardRb.velocity = Vector3.zero;
+    sm.PointManager.TrashPending();
   }
 
   public override void Tick() {
