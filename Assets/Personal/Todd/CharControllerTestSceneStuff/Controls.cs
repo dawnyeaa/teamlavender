@@ -107,6 +107,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""debug.die"",
+                    ""type"": ""Button"",
+                    ""id"": ""de8f906f-b125-4de3-9875-bf93861ae5e2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -318,6 +327,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""ollie"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c2eea51-ccf6-43b1-89c3-ef5d42a1c68a"",
+                    ""path"": ""<Keyboard>/delete"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""debug.die"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -363,6 +383,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
         m_player_crouch = m_player.FindAction("crouch", throwIfNotFound: true);
         m_player_ollie = m_player.FindAction("ollie", throwIfNotFound: true);
+        m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -431,6 +452,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_debugreset;
     private readonly InputAction m_player_crouch;
     private readonly InputAction m_player_ollie;
+    private readonly InputAction m_player_debugdie;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -444,6 +466,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputAction @crouch => m_Wrapper.m_player_crouch;
         public InputAction @ollie => m_Wrapper.m_player_ollie;
+        public InputAction @debugdie => m_Wrapper.m_player_debugdie;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -480,6 +503,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @ollie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
                 @ollie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
                 @ollie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
+                @debugdie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
+                @debugdie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
+                @debugdie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -511,6 +537,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @ollie.started += instance.OnOllie;
                 @ollie.performed += instance.OnOllie;
                 @ollie.canceled += instance.OnOllie;
+                @debugdie.started += instance.OnDebugdie;
+                @debugdie.performed += instance.OnDebugdie;
+                @debugdie.canceled += instance.OnDebugdie;
             }
         }
     }
@@ -544,5 +573,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnDebugreset(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnOllie(InputAction.CallbackContext context);
+        void OnDebugdie(InputAction.CallbackContext context);
     }
 }

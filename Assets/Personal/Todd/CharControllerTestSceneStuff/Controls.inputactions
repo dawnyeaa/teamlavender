@@ -85,6 +85,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "debug.die",
+                    "type": "Button",
+                    "id": "de8f906f-b125-4de3-9875-bf93861ae5e2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -294,6 +303,17 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "ollie",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8c2eea51-ccf6-43b1-89c3-ef5d42a1c68a",
+                    "path": "<Keyboard>/delete",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB + M",
+                    "action": "debug.die",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

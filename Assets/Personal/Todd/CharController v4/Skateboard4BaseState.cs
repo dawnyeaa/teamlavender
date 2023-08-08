@@ -29,7 +29,6 @@ public abstract class Skateboard4BaseState : State {
 
     // sphere cast from body down - sphere does not need to be the same radius as the collider
     if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
-      sm.Grounded = true;
       Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
 
       Vector3 frontHitPos, backHitPos;
@@ -54,9 +53,14 @@ public abstract class Skateboard4BaseState : State {
           var newForward = backHitPos - frontHitPos;
           var newNormal = Vector3.Cross(newForward, Vector3.Cross(newForward, -tempNormal)).normalized;
           sm.Down = -newNormal;
+          if (!sm.Grounded && sm.AirTimeCounter > sm.MinimumAirTime)
+            sm.PointManager.Validate();
+          sm.Grounded = true;
         }
       }
       else {
+        if (sm.Grounded)
+          sm.AirTimeCounter = 0;
         sm.Grounded = false;
       }
 
@@ -67,10 +71,20 @@ public abstract class Skateboard4BaseState : State {
       sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
     }
     else {
+      if (sm.Grounded)
+        sm.AirTimeCounter = 0;
       sm.Grounded = false;
+    }
+    if (!sm.Grounded) {
+      if (sm.AirTimeCounter > sm.MinimumAirTime)
+        sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
+      sm.AirTimeCounter += Time.fixedDeltaTime;
     }
     sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
+    sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
+    sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.BoardRb.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
+    sm.HeadSensZone.SetShow(sm.ShowHeadZone);
   }
 
   protected void AdjustSpringMultiplier() {
@@ -104,9 +118,10 @@ public abstract class Skateboard4BaseState : State {
         float desiredVelChange = -steeringVel * sm.TruckGripFactor;
         // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
         float desirecAccel = desiredVelChange / Time.fixedDeltaTime;
-        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.Down);
+        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.DampedDown);
         sm.FacingRB.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
         sm.BoardRb.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
+        sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
       }
     }
   }
@@ -155,8 +170,30 @@ public abstract class Skateboard4BaseState : State {
   }
 
   protected void ApplyFrictionForce() {
-    Vector3 slidingVelocity = Vector3.Project(sm.BoardRb.velocity, sm.FacingRB.transform.forward);
-    float frictionMag = sm.PhysMat.dynamicFriction * slidingVelocity.magnitude;
-    sm.BoardRb.AddForce(-slidingVelocity.normalized*frictionMag, ForceMode.Acceleration);
+    Vector3 forwardVelocity = Vector3.Project(sm.BoardRb.velocity, sm.FacingRB.transform.forward);
+    float frictionMag = sm.PhysMat.dynamicFriction * forwardVelocity.magnitude;
+    sm.BoardRb.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
+  }
+
+  public void Spawn() {
+    // find the nearest spawn point
+    (Vector3 pos, Quaternion rot) = sm.SpawnPointManager.GetNearestSpawnPoint(sm.transform.position);
+    // reset any necessary properties
+    sm.BoardRb.velocity = Vector3.zero;
+    sm.FacingRB.velocity = Vector3.zero;
+    sm.BoardRb.angularVelocity = Vector3.zero;
+    sm.FacingRB.angularVelocity = Vector3.zero;
+
+    sm.FacingParentRB.rotation = Quaternion.identity;
+    sm.FacingRB.MoveRotation(Quaternion.identity);
+
+    sm.Down = Vector3.down;
+    sm.DampedDown = Vector3.down;
+    sm.Grounded = false;
+    sm.TruckTurnPercent = 0;
+    sm.HeadSensZone.SetT(0);
+    // move to that nearest spawn point;
+    sm.BoardRb.MovePosition(pos);
+    sm.FacingParentRB.rotation = rot;
   }
 }
