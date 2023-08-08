@@ -34,6 +34,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnSwitchPerformed;
   public Action OnResetPerformed;
   public Action OnOlliePerformed;
+  public Action OnSlamPerformed;
 
   private Controls controls;
 
@@ -130,6 +131,12 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     if (!context.performed)
       return;
     OnOlliePerformed?.Invoke();
+  }
+
+  public void OnDebugdie(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnSlamPerformed?.Invoke();
   }
 
   public void OnDebugreset(InputAction.CallbackContext context) {
