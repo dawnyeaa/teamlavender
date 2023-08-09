@@ -13,12 +13,39 @@ public abstract class Skateboard4BaseState : State {
   }
 
   protected void BodyUprightCorrect() {
-    bool goingDown = Vector3.Dot(Vector3.up, sm.BoardRb.velocity) < sm.GoingDownThreshold;
+    float vertVelocity = Vector3.Dot(Vector3.up, sm.BoardRb.velocity);
+    bool goingDown = vertVelocity < sm.GoingDownThreshold;
 
-    if (goingDown) {
-      sm.Down = Vector3.Slerp(sm.Down, Vector3.down, sm.RightingStrength);
-      sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+    // if (!sm.Grounded) {
+    //   sm.FacingRB.angularDrag = sm.AirTurningDrag;
+    // }
+    // else {
+    //   sm.FacingRB.angularDrag = 0.05f;
+    // }
+
+    if (!sm.Grounded && vertVelocity <= 0) {
+      float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
+      if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
+        Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
+        Vector3 normal = hit.normal;
+        float distance = hit.distance;
+        sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
+        sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+
+        sm.FacingParentRB.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.Down), -sm.Down);
+        
+        sm.BodyMesh.rotation = sm.FacingParentRB.rotation;
+        sm.BodyMesh.localPosition = sm.Down * sm.BodyMesh.localPosition.magnitude;
+        // EditorApplication.isPaused = true;
+      }
     }
+    // if (goingDown)
+    //   EditorApplication.isPaused = true;
+
+    // if (goingDown) {
+    //   sm.Down = Vector3.Slerp(sm.Down, Vector3.down, sm.RightingStrength);
+    //   sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+    // }
   }
 
   protected void VertBodySpring() {
@@ -53,15 +80,7 @@ public abstract class Skateboard4BaseState : State {
           var newForward = backHitPos - frontHitPos;
           var newNormal = Vector3.Cross(newForward, Vector3.Cross(newForward, -tempNormal)).normalized;
           sm.Down = -newNormal;
-          if (!sm.Grounded && sm.AirTimeCounter > sm.MinimumAirTime)
-            sm.PointManager.Validate();
-          sm.Grounded = true;
         }
-      }
-      else {
-        if (sm.Grounded)
-          sm.AirTimeCounter = 0;
-        sm.Grounded = false;
       }
 
       // add a force to push the body away from the surface - stronger if closer (like buoyancy)
@@ -69,6 +88,20 @@ public abstract class Skateboard4BaseState : State {
       float compression = sm.ProjectLength - sm.CurrentProjectLength;
 
       sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
+      if (!sm.Grounded) {
+        Vector3 flatMovement = Vector3.ProjectOnPlane(sm.BoardRb.velocity, -sm.Down).normalized;
+        if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.FacingRB.transform.forward)) < sm.LandingAngleGive) {
+          // sm.EnterDead();
+        }
+        else {
+          sm.FacingRB.transform.localRotation = Quaternion.identity;
+        }
+
+        if (sm.AirTimeCounter > sm.MinimumAirTime) {
+          sm.PointManager.Validate();
+        }
+      }
+      sm.Grounded = true;
     }
     else {
       if (sm.Grounded)
@@ -76,6 +109,7 @@ public abstract class Skateboard4BaseState : State {
       sm.Grounded = false;
     }
     if (!sm.Grounded) {
+      sm.FacingRB.transform.localRotation = Quaternion.identity;
       if (sm.AirTimeCounter > sm.MinimumAirTime)
         sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
       sm.AirTimeCounter += Time.fixedDeltaTime;
@@ -84,7 +118,7 @@ public abstract class Skateboard4BaseState : State {
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
     sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
     sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.BoardRb.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
-    sm.HeadSensZone.SetShow(sm.ShowHeadZone);
+    // sm.HeadSensZone.SetShow(sm.ShowHeadZone);
   }
 
   protected void AdjustSpringMultiplier() {
@@ -117,13 +151,13 @@ public abstract class Skateboard4BaseState : State {
         // get the desired change in velocity (that would cancel sliding)
         float desiredVelChange = -steeringVel * sm.TruckGripFactor;
         // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
-        float desirecAccel = desiredVelChange / Time.fixedDeltaTime;
+        float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
         sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.DampedDown);
-        sm.FacingRB.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
-        sm.BoardRb.AddForceAtPosition(steeringDir * desirecAccel, turnForcePosition, ForceMode.Acceleration);
-        sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
+        sm.FacingRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
+        sm.BoardRb.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       }
     }
+    sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
   }
 
   protected void StartPush() {

@@ -10,18 +10,18 @@ public class HeadSensWrapper : MonoBehaviour {
   public Transform vis;
   [ReadOnly] public float zoneSize = 0.24f;
   private float zoneSizeT = 0;
-  private SphereCollider coll;
+  private CapsuleCollider coll;
   private MeshRenderer mesh;
 
   public void Start() {
-    coll = GetComponent<SphereCollider>();
+    coll = GetComponent<CapsuleCollider>();
     mesh = vis.GetComponent<MeshRenderer>();
   }
 
   public void FixedUpdate() {
     zoneSize = Mathf.Lerp(minZoneSize, maxZoneSize, zoneSizeT);
-    coll.radius = zoneSize;
-    vis.localScale = zoneSize*2f * Vector3.one;
+    coll.height = zoneSize;
+    // vis.localScale = zoneSize*2f * Vector3.one;
   }
 
   public void SetT(float t) {

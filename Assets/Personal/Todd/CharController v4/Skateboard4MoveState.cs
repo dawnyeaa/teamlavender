@@ -14,16 +14,13 @@ public class Skateboard4MoveState : Skateboard4BaseState {
   }
 
   public override void Tick() {
-    BodyUprightCorrect();
     AdjustSpringMultiplier();
     SetFriction();
     VertBodySpring();
     CalculateTurn();
     CalculatePush();
+    BodyUprightCorrect();
     ApplyFrictionForce();
-    // if (Vector3.Dot(Vector3.up, -sm.Down) < (1-Mathf.Epsilon)) {
-    //   EditorApplication.isPaused = true;
-    // }
     // sm.Board.SetFloat(TurnHash, sm.Turning);
   }
 

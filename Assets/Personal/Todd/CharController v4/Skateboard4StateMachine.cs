@@ -29,6 +29,8 @@ public class Skateboard4StateMachine : StateMachine {
   // public float EdgeSafeSpeedEpsilon = 0.1f;
   // public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
+  public float LandingAngleGive = 0.8f;
+  public float AirTurningDrag = 1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
@@ -38,7 +40,7 @@ public class Skateboard4StateMachine : StateMachine {
   public float MinHeadZoneSize = 2.4f;
   public float MaxHeadZoneSize = 6f;
   [Range(0, 1)] public float HeadZoneSpeedToHorizontalRatio = 0.5f;
-  public bool ShowHeadZone = false;
+  // public bool ShowHeadZone = false;
   public float MinimumAirTime = 0.5f;
   public float PointsPerAirTimeSecond = 100f;
   // Internal State Processing
@@ -88,7 +90,7 @@ public class Skateboard4StateMachine : StateMachine {
     Input.OnSlamPerformed += EnterDead;
   }
 
-  private async void EnterDead() {
+  public async void EnterDead() {
     SwitchState(new Skateboard4DeadState(this));
     await Task.Delay((int)(DeadTime*1000));
     SwitchState(new Skateboard4MoveState(this));

@@ -524,6 +524,7 @@ Transform:
   - {fileID: 3655732055300598260}
   - {fileID: 4673520724108896951}
   - {fileID: 3832982824695889956}
+  - {fileID: 6944044871824210907}
   m_Father: {fileID: 3832982824073343637}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -716,9 +717,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6944044871824210907}
-  - component: {fileID: 3844001006321302532}
   - component: {fileID: 1434834486946796888}
   - component: {fileID: 5858372948550401881}
+  - component: {fileID: 5346404523342230214}
+  - component: {fileID: 9131202192249428332}
   m_Layer: 7
   m_Name: headSensZone
   m_TagString: Untagged
@@ -734,27 +736,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 582516496117375250}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.0011877046, y: 1.651052, z: 0.011930658}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3145129531186101503}
-  m_Father: {fileID: 1092766584500416676}
-  m_RootOrder: 0
+  m_Father: {fileID: 6165387340348967196}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3844001006321302532
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582516496117375250}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.24
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1434834486946796888
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -783,10 +772,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2f21cc68177ac4ba45e6029b0b4ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minZoneSize: 0.24
-  maxZoneSize: 0.6
+  minZoneSize: 1.3
+  maxZoneSize: 2
   vis: {fileID: 3145129531186101503}
   zoneSize: 0.24
+--- !u!1818360608 &5346404523342230214
+PositionConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582516496117375250}
+  m_Enabled: 1
+  m_Weight: 1
+  m_TranslationAtRest: {x: -0.0011877046, y: 1.651052, z: 0.011930658}
+  m_TranslationOffset: {x: 0, y: 0, z: 0}
+  m_AffectTranslationX: 1
+  m_AffectTranslationY: 1
+  m_AffectTranslationZ: 1
+  m_IsContraintActive: 1
+  m_IsLocked: 1
+  m_Sources:
+  - sourceTransform: {fileID: 1092766584500416676}
+    weight: 1
+--- !u!136 &9131202192249428332
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582516496117375250}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.24
+  m_Height: 1.3
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &659428257861509056
 GameObject:
   m_ObjectHideFlags: 0
@@ -3228,6 +3250,8 @@ MonoBehaviour:
   ProjectLength: 1.2
   RightingStrength: 0.015
   GoingDownThreshold: -4
+  LandingAngleGive: 0.8
+  AirTurningDrag: 1
   TurningEase:
     serializedVersion: 2
     m_Curve:
@@ -3261,15 +3285,16 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  TruckGripFactor: 0.8
   BoardPositionDamping: 4
   PushingMaxSlope: 90
-  TruckGripFactor: 0.8
   OllieForce: 180
   DeadTime: 3
   MinHeadZoneSize: 2.4
   MaxHeadZoneSize: 6
   HeadZoneSpeedToHorizontalRatio: 0.5
-  ShowHeadZone: 0
+  MinimumAirTime: 0.5
+  PointsPerAirTimeSecond: 100
   FacingForward: 1
   Grounded: 1
   TruckTurnPercent: 0
@@ -3278,6 +3303,7 @@ MonoBehaviour:
   DampedDown: {x: 0, y: -1, z: 0}
   CurrentProjectLength: 0
   CurrentPushT: 0
+  AirTimeCounter: 0
   PhysMat: {fileID: 13400000, guid: 1342056bc9bfa8a4495be1035f8519d5, type: 2}
   BoardRb: {fileID: 3832982824073343641}
   frontAxis: {fileID: 3832982825911100688}
@@ -3313,6 +3339,7 @@ MonoBehaviour:
   RagdollMatcher: {fileID: 6585111928105942522}
   SpawnPointManager: {fileID: 0}
   HeadSensZone: {fileID: 5858372948550401881}
+  PointManager: {fileID: 0}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
@@ -3361,6 +3388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RayLength: 1
+  offset: 0
 --- !u!1 &3832982824583626811
 GameObject:
   m_ObjectHideFlags: 0
@@ -3829,6 +3857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RayLength: 1
+  offset: 0
 --- !u!1 &3878984955037549616
 GameObject:
   m_ObjectHideFlags: 0
@@ -4425,7 +4454,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3145129531186101503
 Transform:
   m_ObjectHideFlags: 0
