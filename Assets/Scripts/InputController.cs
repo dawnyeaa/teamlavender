@@ -155,7 +155,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       namey = "CharControllerTest4";
     }
 
-    SceneManager.LoadScene(SceneManager.GetSceneByName(namey).buildIndex);
+    SceneManager.LoadScene(namey);
   }
   
 }
