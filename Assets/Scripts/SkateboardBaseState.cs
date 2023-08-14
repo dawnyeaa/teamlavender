@@ -29,13 +29,13 @@ public abstract class SkateboardBaseState : State {
         Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
         Vector3 normal = hit.normal;
         float distance = hit.distance;
-        sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
-        sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+        sm.DampedDown = Vector3.Slerp(sm.DampedDown, -normal, sm.RightingStrength);
+        sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.DampedDown;
 
-        sm.FacingParentRB.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.Down), -sm.Down);
+        sm.FacingParentRB.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.DampedDown), -sm.DampedDown);
         
         sm.BodyMesh.rotation = sm.FacingParentRB.rotation;
-        sm.BodyMesh.localPosition = sm.Down * sm.BodyMesh.localPosition.magnitude;
+        sm.BodyMesh.localPosition = sm.DampedDown * sm.BodyMesh.localPosition.magnitude;
         // EditorApplication.isPaused = true;
       }
     }
@@ -55,22 +55,24 @@ public abstract class SkateboardBaseState : State {
     sm.CurrentProjectLength = sm.ProjectLength;
 
     // sphere cast from body down - sphere does not need to be the same radius as the collider
-    if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
-      Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
+    if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.DampedDown, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+      Vector3 truckRelative = Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.FacingRB.transform.forward, sm.DampedDown)).normalized*sm.TruckSpacing;
+
+      // sm.Down = -hit.normal;
 
       Vector3 frontHitPos, backHitPos;
       Vector3 tempNormal;
-      float bonusDistance = 0.25f;
+      float bonusDistance = 0.1f;
 
-      Debug.DrawRay(sm.transform.position + truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
-      Debug.DrawRay(sm.transform.position - truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
+      // Debug.DrawRay(sm.transform.position + truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
+      // Debug.DrawRay(sm.transform.position - truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
 
-      bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.Down, out RaycastHit rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
+      bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.DampedDown, out RaycastHit rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
       if (frontHit) {
         // front truck hit!!!
         frontHitPos = rayHit.point;
         tempNormal = rayHit.normal;
-        bool backHit = Physics.Raycast(sm.transform.position - truckRelative, sm.Down, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
+        bool backHit = Physics.Raycast(sm.transform.position - truckRelative, sm.DampedDown, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
         if (backHit) {
           // back truck hit!!!
           backHitPos = rayHit.point;
@@ -86,10 +88,11 @@ public abstract class SkateboardBaseState : State {
       // add a force to push the body away from the surface - stronger if closer (like buoyancy)
       sm.CurrentProjectLength = hit.distance;
       float compression = sm.ProjectLength - sm.CurrentProjectLength;
+      float vertVelocity = Vector3.Dot(sm.DampedDown, sm.BoardRb.velocity);
 
-      sm.BoardRb.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.BoardRb.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
+      sm.BoardRb.AddForce((-sm.DampedDown * (compression * sm.SpringConstant + (vertVelocity > 0 ? 1 : 1) * vertVelocity * sm.SpringDamping))*sm.SpringMultiplier);
       if (!sm.Grounded) {
-        Vector3 flatMovement = Vector3.ProjectOnPlane(sm.BoardRb.velocity, -sm.Down).normalized;
+        Vector3 flatMovement = Vector3.ProjectOnPlane(sm.BoardRb.velocity, -sm.DampedDown).normalized;
         if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.FacingRB.transform.forward)) < sm.LandingAngleGive) {
           // sm.EnterDead();
         }
@@ -114,7 +117,8 @@ public abstract class SkateboardBaseState : State {
         sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
       sm.AirTimeCounter += Time.fixedDeltaTime;
     }
-    sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
+    // 1f/Mathf.Pow(2, sm.BoardPositionDamping)
+    sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, sm.BoardPositionDamping);
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
     sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
     sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.BoardRb.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
@@ -133,10 +137,10 @@ public abstract class SkateboardBaseState : State {
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
-        Vector3 newLeft = Vector3.Cross(sm.FacingRB.transform.forward, sm.Down);
-        Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
+        Vector3 newLeft = Vector3.Cross(sm.FacingRB.transform.forward, sm.DampedDown);
+        Vector3 truckOffset = Vector3.Cross(sm.DampedDown, newLeft) * sm.TruckSpacing;
         Vector3 turnForcePosition = sm.FacingRB.position + truckOffset * (i == 0 ? 1 : -1);
-        truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
+        truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.DampedDown));
         localTruckTurnPercent *= i == 0 ? 1 : -1;
         // get the new forward for the truck
         Vector3 accelDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * truckOffset.normalized;
@@ -152,7 +156,7 @@ public abstract class SkateboardBaseState : State {
         float desiredVelChange = -steeringVel * sm.TruckGripFactor;
         // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
         float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
-        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.DampedDown);
+        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.Down);
         sm.FacingRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
         sm.BoardRb.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       }
@@ -174,7 +178,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void CalculatePush() {
     if (sm.CurrentPushT > Mathf.Epsilon) {
-      if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope) {
+      if (sm.Grounded && Vector3.Angle(Vector3.down, sm.DampedDown) < sm.PushingMaxSlope) {
         // we're pushing
         float t = 1-sm.CurrentPushT;
         sm.BoardRb.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.FacingRB.transform.forward, ForceMode.Acceleration);
@@ -200,7 +204,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void OnOllie() {
     if (sm.Grounded)
-      sm.BoardRb.AddForce((Vector3.up - sm.Down).normalized*sm.OllieForce, ForceMode.Acceleration);
+      sm.BoardRb.AddForce((Vector3.up - sm.DampedDown).normalized*sm.OllieForce, ForceMode.Acceleration);
   }
 
   protected void ApplyFrictionForce() {
