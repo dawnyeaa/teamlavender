@@ -3205,36 +3205,90 @@ MonoBehaviour:
   PushForce: 10
   PushForceCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.00011905789
+      inSlope: 0.0044300663
+      outSlope: 0.0044300663
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.67413604
+    - serializedVersion: 3
+      time: 0.7069113
+      value: 0.83719134
+      inSlope: -0.2819732
+      outSlope: -0.2819732
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.17426571
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: -0.00000422413
+      inSlope: -0.01078067
+      outSlope: -0.01078067
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.3255111
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   MaxPushDuration: 1
-  WheelFriction: 0.01
+  WheelFriction: 0.07
   BrakingFriction: 0.4
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
   TruckTurnDamping: 0.3
-  SpringConstant: 40
-  SpringMultiplierMin: 0.5
+  SpringConstant: 150
+  SpringMultiplierMin: 0.6
   SpringMultiplierMax: 1
-  SpringDamping: 1
+  SpringDamping: 20
   ProjectRadius: 0.25
-  ProjectLength: 1.5
+  ProjectLength: 1.2
   RightingStrength: 1
-  GoingDownThreshold: -0.1
+  GoingDownThreshold: -4
   LandingAngleGive: 0.8
   AirTurningDrag: 1
   TurningEase:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.3253485
+      outSlope: 0.3253485
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.5438559
+    - serializedVersion: 3
+      time: 0.59722155
+      value: 0.5389373
+      inSlope: 0.08208548
+      outSlope: 0.08208548
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.5054619
+      outWeight: 0.734403
+    - serializedVersion: 3
+      time: 1
+      value: 0.83908045
+      inSlope: 0.22339194
+      outSlope: 0.22339194
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.340657
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   TruckGripFactor: 0.8
   BoardPositionDamping: 1
-  PushingMaxSlope: 5
-  OllieForce: 1
+  PushingMaxSlope: 90
+  OllieForce: 180
   DeadTime: 3
   MinHeadZoneSize: 2.4
   MaxHeadZoneSize: 6
@@ -3261,7 +3315,24 @@ MonoBehaviour:
   CharacterAnimator: {fileID: 7231628970856199054}
   RegularModel: {fileID: 3655732055300598260}
   RagdollModel: {fileID: 4673520724108896951}
-  RagdollTransformsToPush: []
+  RagdollTransformsToPush:
+  - {fileID: 1105214245770282587}
+  - {fileID: 503275826114855976}
+  - {fileID: 2936849870879788433}
+  - {fileID: 5550099409789223261}
+  - {fileID: 3501768396746716753}
+  - {fileID: 3099468701814928067}
+  - {fileID: 490261415027124694}
+  - {fileID: 7333205229712562286}
+  - {fileID: 8619642240641423048}
+  - {fileID: 2578022348515734355}
+  - {fileID: 4152763716459724860}
+  - {fileID: 7241752625317585136}
+  - {fileID: 5398187685688002182}
+  - {fileID: 5963490353149975202}
+  - {fileID: 2323229907372599269}
+  - {fileID: 1725194752530345128}
+  - {fileID: 6644132323779019047}
   LookatConstraint: {fileID: 2339936567587507159}
   RagdollMatcher: {fileID: 6585111928105942522}
   SpawnPointManager: {fileID: 0}
@@ -3326,7 +3397,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3832982824583626804}
   - component: {fileID: 3832982824583626805}
-  - component: {fileID: 8360273345024446751}
   m_Layer: 7
   m_Name: facingContainer
   m_TagString: Untagged
@@ -3366,20 +3436,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &8360273345024446751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3832982824583626811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24990a2f30ec6db49868ebcef2a12d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RayLength: 1
-  offset: 0.33
 --- !u!1 &3832982824592812176
 GameObject:
   m_ObjectHideFlags: 0
@@ -3619,7 +3675,6 @@ GameObject:
   - component: {fileID: 3832982824730551215}
   - component: {fileID: 3832982824730551213}
   - component: {fileID: 3832982824730551214}
-  - component: {fileID: 615679646607449078}
   m_Layer: 7
   m_Name: facing
   m_TagString: Untagged
@@ -3755,20 +3810,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &615679646607449078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3832982824730551212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24990a2f30ec6db49868ebcef2a12d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RayLength: 1
-  offset: 0.67
 --- !u!1 &3832982825911100695
 GameObject:
   m_ObjectHideFlags: 0
