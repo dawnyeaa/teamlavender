@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(SpringyBody))]
 [RequireComponent(typeof(WheelController))]
-public class SkateboardStateMachine : StateMachine {
+public class OldSkateboardStateMachine : StateMachine {
   public float CurrentSpeed;
   public float Facing;
   public float Turning;
@@ -45,7 +45,7 @@ public class SkateboardStateMachine : StateMachine {
   public Transform FrontGradientTrack, BackGradientTrack;
   public Transform FrontGradientOrigin, BackGradientOrigin;
   public Animator Animator;
-  public Transform SkateboardMeshTransform;
+  public Transform OldSkateboardMeshTransform;
   public float RotationSpeed = 0.01f;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
@@ -60,6 +60,6 @@ public class SkateboardStateMachine : StateMachine {
     SpringBodController = GetComponent<SpringyBody>();
     LastFrameRotation = RotationTarget.rotation;
 
-    SwitchState(new SkateboardMoveState(this));
+    SwitchState(new OldSkateboardMoveState(this));
   }
 }

@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEditor;
 
-public abstract class SkateboardBaseState : State {
-  protected readonly SkateboardStateMachine stateMachine;
+public abstract class OldSkateboardBaseState : State {
+  protected readonly OldSkateboardStateMachine stateMachine;
   protected float TurnSpeed = 0.0f;
 
-  protected SkateboardBaseState(SkateboardStateMachine stateMachine) {
+  protected OldSkateboardBaseState(OldSkateboardStateMachine stateMachine) {
     this.stateMachine = stateMachine;
   }
 
@@ -113,7 +113,7 @@ public abstract class SkateboardBaseState : State {
 
     if (frontHit && backHit) {
       Vector3 newFacing = frontPos - backPos;
-      stateMachine.SkateboardMeshTransform.rotation = Quaternion.LookRotation(newFacing, newNormal);
+      stateMachine.OldSkateboardMeshTransform.rotation = Quaternion.LookRotation(newFacing, newNormal);
     }
   }
 

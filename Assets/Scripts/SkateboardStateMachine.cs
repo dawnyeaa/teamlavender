@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
-public class Skateboard4StateMachine : StateMachine {
+public class SkateboardStateMachine : StateMachine {
   // User Constants - Runtime only
   // [Header("Constants - Only read at runtime")]
   // User Constants - Live update
@@ -83,7 +83,7 @@ public class Skateboard4StateMachine : StateMachine {
     Input = GetComponent<InputController>();
     // Wheels = GetComponent<WheelController>();
 
-    SwitchState(new Skateboard4MoveState(this));
+    SwitchState(new SkateboardMoveState(this));
 
     HeadSensZone.AddCallback(EnterDead);
 
@@ -91,8 +91,8 @@ public class Skateboard4StateMachine : StateMachine {
   }
 
   public async void EnterDead() {
-    SwitchState(new Skateboard4DeadState(this));
+    SwitchState(new SkateboardDeadState(this));
     await Task.Delay((int)(DeadTime*1000));
-    SwitchState(new Skateboard4MoveState(this));
+    SwitchState(new SkateboardMoveState(this));
   }
 }

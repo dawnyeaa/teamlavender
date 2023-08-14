@@ -2,10 +2,10 @@ using UnityEngine;
 
 using UnityEditor;
 
-public class Skateboard4MoveState : Skateboard4BaseState {
+public class SkateboardMoveState : SkateboardBaseState {
   private readonly int TurnHash = Animator.StringToHash("dir");
 
-  public Skateboard4MoveState(Skateboard4StateMachine stateMachine) : base(stateMachine) {}
+  public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
 
   public override void Enter() {
     sm.Input.OnPushPerformed += StartPush;

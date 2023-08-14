@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class SkateboardMoveState : SkateboardBaseState {
+public class OldSkateboardMoveState : OldSkateboardBaseState {
   private readonly int TurnHash = Animator.StringToHash("dir");
   
-  public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
+  public OldSkateboardMoveState(OldSkateboardStateMachine stateMachine) : base(stateMachine) {}
 
   public override void Enter() {
     stateMachine.Input.OnPushPerformed += BeginPush;

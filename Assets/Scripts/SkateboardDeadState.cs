@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations;
-public class Skateboard4DeadState : Skateboard4BaseState {
-  public Skateboard4DeadState(Skateboard4StateMachine stateMachine) : base(stateMachine) {}
+public class SkateboardDeadState : SkateboardBaseState {
+  public SkateboardDeadState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
   ConstraintSource CharacterSource, RagdollSource;
   public override void Enter() {
     // change to ragdoll here

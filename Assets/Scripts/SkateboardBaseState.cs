@@ -3,12 +3,12 @@ using Unity.Mathematics;
 
 using UnityEditor;
 
-public abstract class Skateboard4BaseState : State {
-  protected readonly Skateboard4StateMachine sm;
+public abstract class SkateboardBaseState : State {
+  protected readonly SkateboardStateMachine sm;
   protected float TurnSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
 
-  protected Skateboard4BaseState(Skateboard4StateMachine stateMachine) {
+  protected SkateboardBaseState(SkateboardStateMachine stateMachine) {
     this.sm = stateMachine;
   }
 
