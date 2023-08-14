@@ -145,5 +145,17 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
   }
+
+  public void OnDebugchangeScene(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+
+    string namey = "Nudge";
+    if (SceneManager.GetActiveScene().name == "Nudge") {
+      namey = "CharControllerTest4";
+    }
+
+    SceneManager.LoadScene(SceneManager.GetSceneByName(namey).buildIndex);
+  }
   
 }

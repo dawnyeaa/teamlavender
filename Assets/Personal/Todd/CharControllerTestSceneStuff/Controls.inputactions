@@ -94,6 +94,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "debug.changeScene",
+                    "type": "Button",
+                    "id": "1b4cee34-57dc-4095-83ac-5b6911568313",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -314,6 +323,28 @@
                     "processors": "",
                     "groups": "KB + M",
                     "action": "debug.die",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2ba86e53-4462-4df8-946b-dd6ecfab645a",
+                    "path": "<Keyboard>/home",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB + M",
+                    "action": "debug.changeScene",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e206bf34-83bd-4332-8bb5-2a6a0651fa9d",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "debug.changeScene",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

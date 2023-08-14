@@ -116,6 +116,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""debug.changeScene"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b4cee34-57dc-4095-83ac-5b6911568313"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -338,6 +347,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""debug.die"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ba86e53-4462-4df8-946b-dd6ecfab645a"",
+                    ""path"": ""<Keyboard>/home"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""debug.changeScene"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e206bf34-83bd-4332-8bb5-2a6a0651fa9d"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""debug.changeScene"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -384,6 +415,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_crouch = m_player.FindAction("crouch", throwIfNotFound: true);
         m_player_ollie = m_player.FindAction("ollie", throwIfNotFound: true);
         m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
+        m_player_debugchangeScene = m_player.FindAction("debug.changeScene", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -453,6 +485,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_crouch;
     private readonly InputAction m_player_ollie;
     private readonly InputAction m_player_debugdie;
+    private readonly InputAction m_player_debugchangeScene;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -467,6 +500,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @crouch => m_Wrapper.m_player_crouch;
         public InputAction @ollie => m_Wrapper.m_player_ollie;
         public InputAction @debugdie => m_Wrapper.m_player_debugdie;
+        public InputAction @debugchangeScene => m_Wrapper.m_player_debugchangeScene;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -506,6 +540,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugdie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
                 @debugdie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
                 @debugdie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
+                @debugchangeScene.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
+                @debugchangeScene.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
+                @debugchangeScene.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -540,6 +577,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugdie.started += instance.OnDebugdie;
                 @debugdie.performed += instance.OnDebugdie;
                 @debugdie.canceled += instance.OnDebugdie;
+                @debugchangeScene.started += instance.OnDebugchangeScene;
+                @debugchangeScene.performed += instance.OnDebugchangeScene;
+                @debugchangeScene.canceled += instance.OnDebugchangeScene;
             }
         }
     }
@@ -574,5 +614,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnOllie(InputAction.CallbackContext context);
         void OnDebugdie(InputAction.CallbackContext context);
+        void OnDebugchangeScene(InputAction.CallbackContext context);
     }
 }
