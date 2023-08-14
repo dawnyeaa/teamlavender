@@ -20,6 +20,7 @@ public class HeadSensWrapper : MonoBehaviour {
 
   public void FixedUpdate() {
     zoneSize = Mathf.Lerp(minZoneSize, maxZoneSize, zoneSizeT);
+    coll.center = new Vector3(0, 0, zoneSize/2f - coll.radius);
     coll.height = zoneSize;
     // vis.localScale = zoneSize*2f * Vector3.one;
   }

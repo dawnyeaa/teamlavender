@@ -218,7 +218,7 @@ public abstract class SkateboardBaseState : State {
     sm.BoardRb.angularVelocity = Vector3.zero;
     sm.FacingRB.angularVelocity = Vector3.zero;
 
-    sm.FacingParentRB.rotation = Quaternion.identity;
+    sm.FacingParentRB.transform.localRotation = Quaternion.identity;
     sm.FacingRB.MoveRotation(Quaternion.identity);
 
     sm.Down = Vector3.down;
@@ -228,6 +228,6 @@ public abstract class SkateboardBaseState : State {
     sm.HeadSensZone.SetT(0);
     // move to that nearest spawn point;
     sm.BoardRb.MovePosition(pos);
-    sm.FacingParentRB.rotation = rot;
+    sm.FacingParentRB.transform.rotation = rot;
   }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations;
 using System.Threading.Tasks;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -86,13 +87,21 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
 
     HeadSensZone.AddCallback(EnterDead);
+    HeadSensZone.AddCallback(SlamRumble);
 
     Input.OnSlamPerformed += EnterDead;
+    Input.OnSlamPerformed += SlamRumble;
   }
 
   public async void EnterDead() {
     SwitchState(new SkateboardDeadState(this));
     await Task.Delay((int)(DeadTime*1000));
     SwitchState(new SkateboardMoveState(this));
+  }
+
+  public async void SlamRumble() {
+    Gamepad.current.SetMotorSpeeds(0.25f, 0.75f);
+    await Task.Delay((int)(100));
+    Gamepad.current.SetMotorSpeeds(0, 0);
   }
 }
