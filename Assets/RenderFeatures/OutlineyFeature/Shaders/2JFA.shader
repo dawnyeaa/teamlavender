@@ -174,7 +174,7 @@ Shader "OutlineyFeature/2JFA" {
       float4 frag(VertexOutput i) : SV_TARGET {
         float4 seedinfo = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
         float2 seedpos = seedinfo.xy;
-        float3 sobelOSPos = SAMPLE_TEXTURE2D(_OSSobel, sampler_OSSobel, seedpos);
+        float3 sobelOSPos = SAMPLE_TEXTURE2D(_OSSobel, sampler_OSSobel, seedpos).xyz;
         float mask = step(0.1, seedinfo.a);
         float2 pos = i.uv;
         // my output here is gonna be osPos sampled at seedpos for xyz, and ScreenDist(pos - seedpos) in a

@@ -83,17 +83,21 @@ Shader "OutlineyFeature/1Sobelish" {
         return float2(mag, (atan2(y, x)/(2*PI))+0.5);
       }
 
+      float GetDepth(float2 uv) {
+        return Linear01Depth(SampleSceneDepth(uv), _ZBufferParams);
+      }
+
       float4 objectSpacePos(float2 uv, float stepx, float stepy, float sobelValue) {
         float depthValues[9] = {
-          SampleSceneDepth(uv),
-          SampleSceneDepth(uv + half2(-stepx, -stepy)),
-          SampleSceneDepth(uv + half2(0, -stepy)),
-          SampleSceneDepth(uv + half2(stepx, -stepy)),
-          SampleSceneDepth(uv + half2(-stepx, 0)),
-          SampleSceneDepth(uv + half2(stepx, 0)),
-          SampleSceneDepth(uv + half2(-stepx, stepy)),
-          SampleSceneDepth(uv + half2(0, stepy)),
-          SampleSceneDepth(uv + half2(stepx, stepy))
+          GetDepth(uv),
+          GetDepth(uv + half2(-stepx, -stepy)),
+          GetDepth(uv + half2(0, -stepy)),
+          GetDepth(uv + half2(stepx, -stepy)),
+          GetDepth(uv + half2(-stepx, 0)),
+          GetDepth(uv + half2(stepx, 0)),
+          GetDepth(uv + half2(-stepx, stepy)),
+          GetDepth(uv + half2(0, stepy)),
+          GetDepth(uv + half2(stepx, stepy))
         };
 
         // float2 uvOffsetAvg = float2(0, 0);
@@ -117,16 +121,19 @@ Shader "OutlineyFeature/1Sobelish" {
 
         float bestDepth = 1000;
         int bestDepthIndex = 0;
-        for (int i = 1; i < 9; ++i) {
-          if (depthValues[i] > 0 && depthValues[i] < bestDepth) {
-            bestDepth = depthValues[i];
-            bestDepthIndex = i;
+        if (sobelValue > 0) {
+          for (int i = 1; i < 9; ++i) {
+            if (depthValues[i] > 0 && depthValues[i] < bestDepth) {
+              bestDepth = depthValues[i];
+              bestDepthIndex = i;
+            }
           }
         }
 
         float3 osPos = SAMPLE_TEXTURE2D(_OSTex, sampler_OSTex, uv + uvOffset[bestDepthIndex] * float2(stepx, stepy)).xyz;
         
         return float4(osPos, sobelValue);
+        // return float4(depth, 0, 0, 1);
       }
 
       VertexOutput vert(VertexInput i) {

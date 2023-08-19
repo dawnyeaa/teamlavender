@@ -99,8 +99,10 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public async void SlamRumble() {
-    Gamepad.current.SetMotorSpeeds(0.25f, 0.75f);
-    await Task.Delay(100);
-    Gamepad.current.SetMotorSpeeds(0, 0);
+    if (Gamepad.current != null) {
+      Gamepad.current.SetMotorSpeeds(0.25f, 0.75f);
+      await Task.Delay(100);
+      Gamepad.current.SetMotorSpeeds(0, 0);
+    }
   }
 }

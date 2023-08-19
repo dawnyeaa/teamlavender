@@ -47,7 +47,6 @@ public class IDPass : ScriptableRenderPass {
     _renderTargetIdentifiers[0] = new RenderTargetIdentifier(_renderTargetId);
     _renderTargetIdentifiers[1] = new RenderTargetIdentifier(_osRTId);
     _depthBufTemp = new RenderTargetIdentifier(Shader.PropertyToID("_depthBufTemp"));
-    ConfigureClear(ClearFlag.All, Color.clear);
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
@@ -57,7 +56,8 @@ public class IDPass : ScriptableRenderPass {
     var cmd = CommandBufferPool.Get();
     // make sure its shown in its own profiler step
     using (new ProfilingScope(cmd, _profilingSampler)) {
-      ConfigureTarget(_renderTargetIdentifiers);
+      ConfigureTarget(_renderTargetIdentifiers, _depthBufTemp);
+      ConfigureClear(ClearFlag.All, Color.clear);
       cmd.SetRenderTarget(_renderTargetIdentifiers, _depthBufTemp);
       // do the rendering!!!
       context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref _filteringSettings);
