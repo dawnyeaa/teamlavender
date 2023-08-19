@@ -41,7 +41,6 @@ public class SkateboardStateMachine : StateMachine {
   public float MinHeadZoneSize = 2.4f;
   public float MaxHeadZoneSize = 6f;
   [Range(0, 1)] public float HeadZoneSpeedToHorizontalRatio = 0.5f;
-  // public bool ShowHeadZone = false;
   public float MinimumAirTime = 0.5f;
   public float PointsPerAirTimeSecond = 100f;
   // Internal State Processing
@@ -101,7 +100,7 @@ public class SkateboardStateMachine : StateMachine {
 
   public async void SlamRumble() {
     Gamepad.current.SetMotorSpeeds(0.25f, 0.75f);
-    await Task.Delay((int)(100));
+    await Task.Delay(100);
     Gamepad.current.SetMotorSpeeds(0, 0);
   }
 }

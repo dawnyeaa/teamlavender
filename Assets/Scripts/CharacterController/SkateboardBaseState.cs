@@ -9,26 +9,18 @@ public abstract class SkateboardBaseState : State {
   protected float VisFollowSpeed = 0.0f;
 
   protected SkateboardBaseState(SkateboardStateMachine stateMachine) {
-    this.sm = stateMachine;
+    sm = stateMachine;
   }
 
   protected void BodyUprightCorrect() {
     float vertVelocity = Vector3.Dot(Vector3.up, sm.BoardRb.velocity);
     bool goingDown = vertVelocity < sm.GoingDownThreshold;
 
-    // if (!sm.Grounded) {
-    //   sm.FacingRB.angularDrag = sm.AirTurningDrag;
-    // }
-    // else {
-    //   sm.FacingRB.angularDrag = 0.05f;
-    // }
-
     if (!sm.Grounded && vertVelocity <= 0) {
       float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
       if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
         Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
         Vector3 normal = hit.normal;
-        float distance = hit.distance;
         sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
         sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
 
@@ -36,16 +28,13 @@ public abstract class SkateboardBaseState : State {
         
         sm.BodyMesh.rotation = sm.FacingParentRB.rotation;
         sm.BodyMesh.localPosition = sm.Down * sm.BodyMesh.localPosition.magnitude;
-        // EditorApplication.isPaused = true;
       }
     }
-    // if (goingDown)
-    //   EditorApplication.isPaused = true;
 
-    // if (goingDown) {
-    //   sm.Down = Vector3.Slerp(sm.Down, Vector3.down, sm.RightingStrength);
-    //   sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
-    // }
+    if (goingDown) {
+      sm.Down = Vector3.Slerp(sm.Down, Vector3.down, sm.RightingStrength);
+      sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+    }
   }
 
   protected void VertBodySpring() {
@@ -118,7 +107,6 @@ public abstract class SkateboardBaseState : State {
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
     sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
     sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.BoardRb.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
-    // sm.HeadSensZone.SetShow(sm.ShowHeadZone);
   }
 
   protected void AdjustSpringMultiplier() {
