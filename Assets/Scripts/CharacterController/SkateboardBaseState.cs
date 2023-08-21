@@ -162,7 +162,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void CalculatePush() {
     if (sm.CurrentPushT > Mathf.Epsilon) {
-      if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope) {
+      if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope && !sm.Crouching) {
         // we're pushing
         float t = 1-sm.CurrentPushT;
         sm.BoardRb.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.FacingRB.transform.forward, ForceMode.Acceleration);
