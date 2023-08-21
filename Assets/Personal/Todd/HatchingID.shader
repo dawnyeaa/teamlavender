@@ -7,8 +7,10 @@ Shader "Example/HatchingID" {
     _ShadowColor ("Shadow Color", Color) = (1, 1, 1, 1)
     _ShadowHardness ("Shadow Hardness", Range(0, 1)) = 0.9
     _ShadowSize ("Shadow Size", Range(0, 1)) = 0.6
+    _ShadowFillAmount ("Shadow Fill Amount", Range(0, 1)) = 0.3
 
     _HatchingTex ("Hatching Texture", 2D) = "black" {}
+    _CurvatureTex ("Curvature Texture", 2D) = "white" {}
 
     _IDTex ("ID Texture", 2D) = "white" {}
   }
@@ -37,6 +39,7 @@ Shader "Example/HatchingID" {
       half4 _ShadowColor;
       float _ShadowHardness;
       float _ShadowSize;
+      float _ShadowFillAmount;
 
       float4 _GradientTop;
       float4 _GradientBottom;
@@ -46,6 +49,10 @@ Shader "Example/HatchingID" {
       TEXTURE2D(_HatchingTex);
       float4 _HatchingTex_ST;
       SAMPLER(sampler_HatchingTex);
+      
+      TEXTURE2D(_CurvatureTex);
+      float4 _CurvatureTex_ST;
+      SAMPLER(sampler_CurvatureTex);
       CBUFFER_END
 
       struct VertexInput {
@@ -87,10 +94,13 @@ Shader "Example/HatchingID" {
         float shadowSoftnessOffset = (1-_ShadowHardness)/2;
         float lightMask = smoothstep(_ShadowSize-shadowSoftnessOffset, _ShadowSize+shadowSoftnessOffset, lightDot);
 
-        float hatchingTex = SAMPLE_TEXTURE2D(_HatchingTex, sampler_HatchingTex, TRANSFORM_TEX(i.uv, _HatchingTex)).a;
-        float hatching = hatchingTex;
+        float curvTex = SAMPLE_TEXTURE2D(_CurvatureTex, sampler_CurvatureTex, i.uv).a;
 
-        color.rgb = lerp(lerp(gradColor.rgb, _ShadowColor.rgb, _ShadowColor.a*hatching), gradColor.rgb, lightMask);
+        float hatching = SAMPLE_TEXTURE2D(_HatchingTex, sampler_HatchingTex, TRANSFORM_TEX(i.uv, _HatchingTex)).a;
+        float fadedHatching = step(((1-(curvTex*0.9))*(1-(curvTex*0.9)))+lightMask, hatching);
+        fadedHatching += (1-lightMask)*_ShadowFillAmount;
+
+        color.rgb = lerp(gradColor.rgb, _ShadowColor.rgb, _ShadowColor.a*fadedHatching);//, gradColor.rgb, lightMask);
         color.a = 1;
         return color;
       }

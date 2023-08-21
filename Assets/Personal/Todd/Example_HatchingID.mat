@@ -20,9 +20,13 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _HatchingTex:
-        m_Texture: {fileID: 2800000, guid: 0a338521ab0f1db4a8802e8b0495cf4e, type: 3}
+    - _CurvatureTex:
+        m_Texture: {fileID: 2800000, guid: 83a567df69e0ef84a91b7580304e8ad6, type: 3}
         m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HatchingTex:
+        m_Texture: {fileID: 2800000, guid: d523cbdfe0ce3b242a6279932611740d, type: 3}
+        m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _IDTex:
         m_Texture: {fileID: 2800000, guid: 64c3cf7d53a4efb49ae898d5216af7b6, type: 3}
@@ -31,8 +35,9 @@ Material:
     m_Ints: []
     m_Floats:
     - _GradientBalance: 0
-    - _GradientContrast: 1
-    - _ShadowHardness: 0.65
+    - _GradientContrast: 0
+    - _ShadowFillAmount: 0.335
+    - _ShadowHardness: 0.605
     - _ShadowSize: 0.6
     m_Colors:
     - _GradientBottom: {r: 0, g: 0, b: 0, a: 1}
