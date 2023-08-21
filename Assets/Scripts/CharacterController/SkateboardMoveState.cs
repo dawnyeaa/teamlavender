@@ -10,12 +10,13 @@ public class SkateboardMoveState : SkateboardBaseState {
   public override void Enter() {
     sm.Input.OnPushPerformed += StartPush;
     sm.Input.OnSwitchPerformed += OnSwitch;
-    sm.Input.OnOlliePerformed += OnOllie;
+    sm.Input.OnOlliePerformed += OnOllieInput;
   }
 
   public override void Tick() {
     AdjustSpringMultiplier();
     SetFriction();
+    SetCrouching();
     VertBodySpring();
     CalculateTurn();
     CalculatePush();
@@ -27,6 +28,6 @@ public class SkateboardMoveState : SkateboardBaseState {
   public override void Exit() {
     sm.Input.OnPushPerformed -= StartPush;
     sm.Input.OnSwitchPerformed -= OnSwitch;
-    sm.Input.OnOlliePerformed -= OnOllie;
+    sm.Input.OnOlliePerformed -= OnOllieInput;
   }
 }

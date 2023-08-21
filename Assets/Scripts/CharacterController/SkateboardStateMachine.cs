@@ -47,6 +47,7 @@ public class SkateboardStateMachine : StateMachine {
   [Header("Internal State")]
   [ReadOnly] public bool FacingForward = true;
   [ReadOnly] public bool Grounded = true;
+  [ReadOnly] public bool Crouching = false;
   [ReadOnly] public float TruckTurnPercent;
   [ReadOnly] public float SpringMultiplier;
   [ReadOnly] public Vector3 Down = Vector3.down;
@@ -90,6 +91,10 @@ public class SkateboardStateMachine : StateMachine {
 
     Input.OnSlamPerformed += EnterDead;
     Input.OnSlamPerformed += SlamRumble;
+  }
+
+  public void OnOllie() {
+    BoardRb.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
   }
 
   public async void EnterDead() {

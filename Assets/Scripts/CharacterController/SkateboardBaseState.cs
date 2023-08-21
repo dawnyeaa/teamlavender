@@ -186,9 +186,15 @@ public abstract class SkateboardBaseState : State {
       sm.BoardRb.velocity = sm.BoardRb.velocity.normalized * sm.MaxSpeed;
   }
 
-  protected void OnOllie() {
-    if (sm.Grounded)
-      sm.BoardRb.AddForce((Vector3.up - sm.Down).normalized*sm.OllieForce, ForceMode.Acceleration);
+  protected void SetCrouching() {
+    sm.Crouching = sm.Input.crouching && sm.Grounded;
+    sm.CharacterAnimator.SetBool("crouching", sm.Crouching);
+  }
+
+  protected void OnOllieInput() {
+    if (sm.Crouching) {
+      sm.CharacterAnimator.SetTrigger("ollie");
+    }
   }
 
   protected void ApplyFrictionForce() {

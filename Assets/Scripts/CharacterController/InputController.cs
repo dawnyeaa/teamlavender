@@ -117,20 +117,14 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       }
     }
   }
-
-  public void OnCrouch(InputAction.CallbackContext context) {
+  public void OnOllie(InputAction.CallbackContext context) {
     if (context.performed) {
       crouching = true;
     }
     else if (context.canceled) {
+      if (crouching == true) OnOlliePerformed?.Invoke();
       crouching = false;
     }
-  }
-
-  public void OnOllie(InputAction.CallbackContext context) {
-    if (!context.performed)
-      return;
-    OnOlliePerformed?.Invoke();
   }
 
   public void OnDebugdie(InputAction.CallbackContext context) {
