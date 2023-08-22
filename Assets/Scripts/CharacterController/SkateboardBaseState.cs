@@ -150,6 +150,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void StartPush() {
     if (sm.CurrentPushT <= Mathf.Epsilon) {
+      sm.CharacterAnimator.SetTrigger("push");
       // we can start a new push
       sm.CurrentPushT = 1;
     }
