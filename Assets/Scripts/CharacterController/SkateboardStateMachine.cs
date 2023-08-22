@@ -58,7 +58,7 @@ public class SkateboardStateMachine : StateMachine {
   // Objects to link
   [Header("Link Slot Objects")]
   public PhysicMaterial PhysMat;
-  public Rigidbody BoardRb;
+  public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
   public Rigidbody FacingParentRB, FacingRB;
   public Transform MainCamera { get; private set; }
@@ -67,6 +67,7 @@ public class SkateboardStateMachine : StateMachine {
 
   public Transform footRepresentation;
   public Transform BodyMesh;
+  public Transform Board;
   public Animator CharacterAnimator;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
@@ -94,7 +95,7 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void OnOllie() {
-    BoardRb.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
+    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
   }
 
   public async void EnterDead() {

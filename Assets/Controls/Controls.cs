@@ -319,6 +319,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""ab7c3cd8-e37b-4fc8-949a-4b71c4fe71f6"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""ollie"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""8c2eea51-ccf6-43b1-89c3-ef5d42a1c68a"",
                     ""path"": ""<Keyboard>/delete"",
                     ""interactions"": """",
