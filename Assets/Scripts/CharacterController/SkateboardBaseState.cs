@@ -98,8 +98,10 @@ public abstract class SkateboardBaseState : State {
       sm.Grounded = true;
     }
     else {
-      if (sm.Grounded)
+      if (sm.Grounded) {
+        sm.CharacterAnimator.SetTrigger("startAirborne");
         sm.AirTimeCounter = 0;
+      }
       sm.Grounded = false;
     }
     if (!sm.Grounded) {
@@ -155,7 +157,7 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void StartPush() {
-    if (sm.CurrentPushT <= Mathf.Epsilon) {
+    if (sm.CurrentPushT <= Mathf.Epsilon && sm.Grounded) {
       sm.CharacterAnimator.SetTrigger("push");
       // we can start a new push
       sm.CurrentPushT = 1;

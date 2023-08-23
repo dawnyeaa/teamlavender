@@ -77,7 +77,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: crouching
+      name: crouchingPose
       takeName: Take 001
       internalID: -998496362607748373
       firstFrame: 10
@@ -109,8 +109,8 @@ ModelImporter:
       name: ollie
       takeName: Take 001
       internalID: 3060872287085348379
-      firstFrame: 15
-      lastFrame: 39
+      firstFrame: 13
+      lastFrame: 29
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -130,7 +130,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.2920039
+      - time: 0.3408928
         functionName: OnOllie
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -228,11 +228,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: falling
+      name: fallingPose
       takeName: Take 001
       internalID: 6641085478485924818
-      firstFrame: 39
-      lastFrame: 40
+      firstFrame: 30
+      lastFrame: 31
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -245,7 +245,7 @@ ModelImporter:
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0
@@ -346,8 +346,8 @@ ModelImporter:
       name: landing
       takeName: Take 001
       internalID: -5059006814000262888
-      firstFrame: 41
-      lastFrame: 55
+      firstFrame: 37
+      lastFrame: 49
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
