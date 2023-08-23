@@ -17,10 +17,10 @@ public class SkateboardDeadState : SkateboardBaseState {
     foreach (Rigidbody rb in sm.RagdollTransformsToPush) {
       rb.velocity = Vector3.zero;
       rb.angularVelocity = Vector3.zero;
-      Vector3 targetVelocity = sm.BoardRb.velocity;
+      Vector3 targetVelocity = sm.MainRB.velocity;
       rb.AddForce(targetVelocity/Time.fixedDeltaTime, ForceMode.Acceleration);
     }
-    sm.BoardRb.velocity = Vector3.zero;
+    sm.MainRB.velocity = Vector3.zero;
     sm.PointManager.TrashPending();
   }
 
