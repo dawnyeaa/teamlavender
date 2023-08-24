@@ -157,10 +157,12 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void StartPush() {
-    if (sm.CurrentPushT <= Mathf.Epsilon && sm.Grounded) {
-      sm.CharacterAnimator.SetTrigger("push");
-      // we can start a new push
-      sm.CurrentPushT = 1;
+    if (sm.Grounded) {
+      if (sm.PushingAnim && !sm.PushBuffered) sm.PushBuffered = true;
+      if (!sm.PushingAnim) {
+        sm.PushingAnim = true;
+        sm.CharacterAnimator.SetTrigger("push");
+      }
     }
   }
 
@@ -170,16 +172,26 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void CalculatePush() {
-    if (sm.CurrentPushT > Mathf.Epsilon) {
+    if (sm.Pushing && sm.CurrentPushT > Mathf.Epsilon) {
       if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope && !sm.Crouching) {
         // we're pushing
-        float t = 1-sm.CurrentPushT;
+        float t = 1-(sm.CurrentPushT/sm.MaxPushT);
         sm.MainRB.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.FacingRB.transform.forward, ForceMode.Acceleration);
-        sm.CurrentPushT -= Time.fixedDeltaTime / sm.MaxPushDuration;
+        sm.CurrentPushT -= Time.fixedDeltaTime;
+        if (sm.CurrentPushT < 0) {
+          if (sm.PushBuffered) {
+            sm.PushBuffered = false;
+            sm.CharacterAnimator.SetTrigger("push");
+          }
+        }
       }
       else {
-        sm.CurrentPushT = 0;
+        sm.Pushing = false;
+        sm.PushingAnim = false;
       }
+    }
+    else {
+      sm.Pushing = false;
     }
   }
   

@@ -353,42 +353,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxSpeed: 20
   TurnLockSpeed: 30
-  PushForce: 10
+  PushForce: 15
   PushForceCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0.00011905789
-      inSlope: 0.0044300663
-      outSlope: 0.0044300663
+      inSlope: 6.6114545
+      outSlope: 6.6114545
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.67413604
+      outWeight: 0.08064519
     - serializedVersion: 3
-      time: 0.5546234
-      value: 0.88089216
-      inSlope: 0.1516448
-      outSlope: 0.1516448
+      time: 0.48664552
+      value: 1.0033935
+      inSlope: -0.012125423
+      outSlope: -0.012125423
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.17426571
-      outWeight: 0.13762859
+      outWeight: 0.5636675
+    - serializedVersion: 3
+      time: 0.9596905
+      value: 0.9282927
+      inSlope: -0.61346495
+      outSlope: -0.61346495
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.35777825
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: -0.00000422413
-      inSlope: -0.01078067
-      outSlope: -0.01078067
+      inSlope: -6.033232
+      outSlope: -6.033232
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.3255111
+      inWeight: 0.083816044
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  MaxPushDuration: 1
-  WheelFriction: 0.07
+  WheelFriction: 0.03
   BrakingFriction: 1
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
@@ -449,12 +457,16 @@ MonoBehaviour:
   FacingForward: 1
   Grounded: 1
   Crouching: 0
+  PushingAnim: 0
+  Pushing: 0
+  CurrentPushT: 0
+  MaxPushT: 0
+  PushBuffered: 0
   TruckTurnPercent: 0
   SpringMultiplier: 0
   Down: {x: 0, y: -1, z: 0}
   DampedDown: {x: 0, y: -1, z: 0}
   CurrentProjectLength: 0
-  CurrentPushT: 0
   AirTimeCounter: 0
   PhysMat: {fileID: 13400000, guid: 1342056bc9bfa8a4495be1035f8519d5, type: 2}
   MainRB: {fileID: 3832982824073343641}
@@ -1732,6 +1744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sm: {fileID: 3832982824073343646}
+  framesPerSecond: 30
 --- !u!4 &5211929277365854058 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9035632085801865589, guid: 769970106fb6b4e4e9b72c2ced7f0746,
