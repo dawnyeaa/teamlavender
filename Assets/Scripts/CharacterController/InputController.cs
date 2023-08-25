@@ -35,10 +35,14 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnResetPerformed;
   public Action OnOlliePerformed;
   public Action OnSlamPerformed;
+  public Action EnterDebugMode;
+
+  public SkateboardStateMachine character;
+  public DebugModeStateMachine debugMode;
 
   private Controls controls;
 
-  private void OnEnable() {
+  public void OnEnable() {
     if (controls != null)
       return;
 
@@ -49,7 +53,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     Cursor.visible = false;
   }
   
-  private void OnDisable() {
+  public void OnDisable() {
     controls.player.Disable();
   }
 
@@ -150,6 +154,15 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     }
 
     SceneManager.LoadScene(namey);
+  }
+
+  public void OnDebugflyMode(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+
+    Time.timeScale = 0;
+    character.EnterDebugMode();
+    debugMode.Activate();
   }
   
 }

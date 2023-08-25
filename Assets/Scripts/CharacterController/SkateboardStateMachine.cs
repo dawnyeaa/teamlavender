@@ -129,4 +129,12 @@ public class SkateboardStateMachine : StateMachine {
       Gamepad.current.SetMotorSpeeds(0, 0);
     }
   }
+
+  public void EnterDebugMode() {
+    SwitchState(new SkateboardPauseState(this));
+  }
+
+  public void ExitDebugMode() {
+    SwitchState(new SkateboardMoveState(this));
+  }
 }
