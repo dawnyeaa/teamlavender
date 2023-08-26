@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class DebugInputController : MonoBehaviour, Controls.IDebugFlyActions {
+  public Vector2 move;
+  public float vert;
 
   public SkateboardStateMachine character;
   public DebugModeStateMachine debugMode;
@@ -25,22 +27,17 @@ public class DebugInputController : MonoBehaviour, Controls.IDebugFlyActions {
   
   public void OnDisable() {
     controls.debugFly.Disable();
+    controls = null;
   }
 
-  public void OnLook(InputAction.CallbackContext context) {
-
-  }
+  public void OnLook(InputAction.CallbackContext context) {}
 
   public void OnMove(InputAction.CallbackContext context) {
-    
+    move = context.ReadValue<Vector2>();
   }
 
-  public void OnUp(InputAction.CallbackContext context) {
-    
-  }
-
-  public void OnDown(InputAction.CallbackContext context) {
-    
+  public void OnVert(InputAction.CallbackContext context) {
+    vert = context.ReadValue<float>();
   }
 
   public void OnStepBack(InputAction.CallbackContext context) {

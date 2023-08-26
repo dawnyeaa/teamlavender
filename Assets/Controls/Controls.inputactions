@@ -406,22 +406,13 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "down",
-                    "type": "Button",
-                    "id": "2d8482b4-96e8-4ccb-a5cf-ce72c0285af9",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "up",
-                    "type": "Button",
+                    "name": "vert",
+                    "type": "Value",
                     "id": "f7b2d019-f2a1-4564-bcda-846d5d4c1ae6",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "stepBack",
@@ -468,7 +459,7 @@
                     "id": "80c3cc0d-38f0-4f48-af10-a581c4ce5526",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=3,y=3)",
                     "groups": "gamepad",
                     "action": "look",
                     "isComposite": false,
@@ -541,48 +532,70 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "89f702d7-3f9d-493b-9497-0c4cafde5534",
+                    "name": "keyb",
+                    "id": "b457034c-34d9-46d6-b2d3-8544811d60ad",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "vert",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "af9e24c9-29dc-41f6-9e37-acdfd40937bc",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB + M",
-                    "action": "down",
+                    "action": "vert",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "3b08a663-91f7-4a70-a257-10fecdb247d1",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d257a005-cb3a-47de-83af-87544580eb4d",
+                    "name": "positive",
+                    "id": "a7c75297-97c4-4746-9481-e1e6eeaa35ce",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB + M",
-                    "action": "up",
+                    "action": "vert",
                     "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "cont",
+                    "id": "9b4e3c3a-5074-4d0b-aaa9-e005001a6e8a",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "vert",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "3fb92fc1-00aa-410f-863e-3e852622f290",
+                    "name": "negative",
+                    "id": "893e7187-8941-4388-be60-8d844bb9401b",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "vert",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "43450265-c7fc-4135-b5ac-08922098b092",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "gamepad",
-                    "action": "up",
+                    "action": "vert",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",

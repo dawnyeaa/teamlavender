@@ -87,6 +87,7 @@ public class SkateboardStateMachine : StateMachine {
   [HideInInspector] public Transform ball1, ball2, ball3;
 
   private void Start() {
+    fixedUpdate = true;
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();

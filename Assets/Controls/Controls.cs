@@ -428,22 +428,13 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""down"",
-                    ""type"": ""Button"",
-                    ""id"": ""2d8482b4-96e8-4ccb-a5cf-ce72c0285af9"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""type"": ""Button"",
+                    ""name"": ""vert"",
+                    ""type"": ""Value"",
                     ""id"": ""f7b2d019-f2a1-4564-bcda-846d5d4c1ae6"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""stepBack"",
@@ -490,7 +481,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""id"": ""80c3cc0d-38f0-4f48-af10-a581c4ce5526"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""ScaleVector2(x=3,y=3)"",
                     ""groups"": ""gamepad"",
                     ""action"": ""look"",
                     ""isComposite"": false,
@@ -563,48 +554,70 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""89f702d7-3f9d-493b-9497-0c4cafde5534"",
+                    ""name"": ""keyb"",
+                    ""id"": ""b457034c-34d9-46d6-b2d3-8544811d60ad"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""vert"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""af9e24c9-29dc-41f6-9e37-acdfd40937bc"",
                     ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB + M"",
-                    ""action"": ""down"",
+                    ""action"": ""vert"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""3b08a663-91f7-4a70-a257-10fecdb247d1"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""down"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d257a005-cb3a-47de-83af-87544580eb4d"",
+                    ""name"": ""positive"",
+                    ""id"": ""a7c75297-97c4-4746-9481-e1e6eeaa35ce"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB + M"",
-                    ""action"": ""up"",
+                    ""action"": ""vert"",
                     ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""cont"",
+                    ""id"": ""9b4e3c3a-5074-4d0b-aaa9-e005001a6e8a"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""vert"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""3fb92fc1-00aa-410f-863e-3e852622f290"",
+                    ""name"": ""negative"",
+                    ""id"": ""893e7187-8941-4388-be60-8d844bb9401b"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""vert"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""43450265-c7fc-4135-b5ac-08922098b092"",
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""gamepad"",
-                    ""action"": ""up"",
+                    ""action"": ""vert"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -733,8 +746,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_debugFly = asset.FindActionMap("debugFly", throwIfNotFound: true);
         m_debugFly_look = m_debugFly.FindAction("look", throwIfNotFound: true);
         m_debugFly_move = m_debugFly.FindAction("move", throwIfNotFound: true);
-        m_debugFly_down = m_debugFly.FindAction("down", throwIfNotFound: true);
-        m_debugFly_up = m_debugFly.FindAction("up", throwIfNotFound: true);
+        m_debugFly_vert = m_debugFly.FindAction("vert", throwIfNotFound: true);
         m_debugFly_stepBack = m_debugFly.FindAction("stepBack", throwIfNotFound: true);
         m_debugFly_stepForwards = m_debugFly.FindAction("stepForwards", throwIfNotFound: true);
         m_debugFly_DebugflyMode = m_debugFly.FindAction("Debug.flyMode", throwIfNotFound: true);
@@ -912,8 +924,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private IDebugFlyActions m_DebugFlyActionsCallbackInterface;
     private readonly InputAction m_debugFly_look;
     private readonly InputAction m_debugFly_move;
-    private readonly InputAction m_debugFly_down;
-    private readonly InputAction m_debugFly_up;
+    private readonly InputAction m_debugFly_vert;
     private readonly InputAction m_debugFly_stepBack;
     private readonly InputAction m_debugFly_stepForwards;
     private readonly InputAction m_debugFly_DebugflyMode;
@@ -923,8 +934,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public DebugFlyActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @look => m_Wrapper.m_debugFly_look;
         public InputAction @move => m_Wrapper.m_debugFly_move;
-        public InputAction @down => m_Wrapper.m_debugFly_down;
-        public InputAction @up => m_Wrapper.m_debugFly_up;
+        public InputAction @vert => m_Wrapper.m_debugFly_vert;
         public InputAction @stepBack => m_Wrapper.m_debugFly_stepBack;
         public InputAction @stepForwards => m_Wrapper.m_debugFly_stepForwards;
         public InputAction @DebugflyMode => m_Wrapper.m_debugFly_DebugflyMode;
@@ -943,12 +953,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @move.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnMove;
                 @move.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnMove;
                 @move.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnMove;
-                @down.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDown;
-                @down.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDown;
-                @down.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDown;
-                @up.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnUp;
-                @up.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnUp;
-                @up.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnUp;
+                @vert.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnVert;
+                @vert.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnVert;
+                @vert.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnVert;
                 @stepBack.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepBack;
                 @stepBack.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepBack;
                 @stepBack.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepBack;
@@ -968,12 +975,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @move.started += instance.OnMove;
                 @move.performed += instance.OnMove;
                 @move.canceled += instance.OnMove;
-                @down.started += instance.OnDown;
-                @down.performed += instance.OnDown;
-                @down.canceled += instance.OnDown;
-                @up.started += instance.OnUp;
-                @up.performed += instance.OnUp;
-                @up.canceled += instance.OnUp;
+                @vert.started += instance.OnVert;
+                @vert.performed += instance.OnVert;
+                @vert.canceled += instance.OnVert;
                 @stepBack.started += instance.OnStepBack;
                 @stepBack.performed += instance.OnStepBack;
                 @stepBack.canceled += instance.OnStepBack;
@@ -1023,8 +1027,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     {
         void OnLook(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
-        void OnDown(InputAction.CallbackContext context);
-        void OnUp(InputAction.CallbackContext context);
+        void OnVert(InputAction.CallbackContext context);
         void OnStepBack(InputAction.CallbackContext context);
         void OnStepForwards(InputAction.CallbackContext context);
         void OnDebugflyMode(InputAction.CallbackContext context);
