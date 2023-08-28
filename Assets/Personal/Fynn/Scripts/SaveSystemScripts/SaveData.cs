@@ -6,10 +6,6 @@ using UnityEngine;
 public class PlayerData
 {
     public int volume;
-    public bool coinx2;
-    public bool indestructible;
-    public int coin;
-    public int coinValue;
 
     public PlayerData(SaveManager _saveManager)
     {

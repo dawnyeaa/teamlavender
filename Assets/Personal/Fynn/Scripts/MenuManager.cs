@@ -5,18 +5,43 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MenuManager : MonoBehaviour
 {
     [SerializeField]
     GameObject[] menus; //mainMenu, settingsMenu, controlsMenu, characterMenu;
     [SerializeField] int currentMenu;
+    int currentResolutionShowing;
+    public int volume;
     [SerializeField] Button SettingMenu, MainMenu, ControlsMenu;
     [SerializeField] AudioMixer audioMixer;
+    [SerializeField] AudioListener audioListener;
+    [SerializeField] Slider volumeSlider;
+    [SerializeField] SaveManager saveManager;
+    [SerializeField] Resolution[] resolutions;
+    [SerializeField] TMP_Dropdown dropdown;
+    List<string> resolutionsList = new List<string>();
 
     // Start is called before the first frame update
     void Start()
     {
+        resolutions = Screen.resolutions;
+
+        dropdown.ClearOptions();
+        currentResolutionShowing = 0;
+        for (int i = 0; i < resolutions.Length; i++)
+        {
+            string ResolutionValue = resolutions[i].width + "x" + resolutions[i].height;
+            resolutionsList.Add(ResolutionValue);
+            if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
+            {
+                currentResolutionShowing = i;
+            }
+        }
+        dropdown.AddOptions(resolutionsList);
+        dropdown.value = currentResolutionShowing;
+        dropdown.RefreshShownValue();
         
     }
 
@@ -52,8 +77,20 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    public void VolumeMixer(Slider volumeSlider)
+    public void VolumeMixer()
     {
-       //audioMixer. = volumeSlider.value
+        AudioListener.volume = volumeSlider.value;
+        volume = (int)volumeSlider.value;
+        saveManager.save();
+    }
+    public void SetVolume()
+    {
+        volumeSlider.value = volume;
+    }
+
+    public void ChangeResolution(int Index)
+    {
+       Resolution resolution = resolutions[Index];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 }
