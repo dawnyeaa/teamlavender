@@ -24,6 +24,7 @@ public class DebugModeStateMachine : StateMachine {
   // Objects to link
   // [Header("Link Slot Objects")]
   public CinemachineVirtualCamera VirtCam;
+  public DebugFrameHandler DebugFrameHandler;
   public Transform MainCamera { get; private set; }
   public DebugInputController Input { get; private set; }
 

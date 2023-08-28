@@ -61,6 +61,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
+  [ReadOnly] public DebugFrame debugFrame;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -83,6 +84,7 @@ public class SkateboardStateMachine : StateMachine {
   public SpawnPointManager SpawnPointManager;
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
+  public DebugFrameHandler DebugFrameHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 

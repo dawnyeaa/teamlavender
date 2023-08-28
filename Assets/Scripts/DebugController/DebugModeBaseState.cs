@@ -19,11 +19,10 @@ public abstract class DebugModeBaseState : State {
     Vector3 forward = Vector3.ProjectOnPlane(sm.MainCamera.forward, Vector3.up).normalized;
     Vector2 localForward = new(forward.x, forward.z);
     Vector2 accel = Vector2.zero;
-    Vector2 drag = Vector2.zero;
     if (sm.Input.move.magnitude > 0.1f) {
       accel = MatchForwards(sm.Input.move, localForward) * sm.Acceleration;
     }
-    drag = sm.Velocity * -sm.Deceleration;
+    Vector2 drag = sm.Velocity * -sm.Deceleration;
     sm.Velocity += (accel + drag) * Time.unscaledDeltaTime;
     sm.Velocity = sm.Velocity.normalized * Mathf.Min(sm.Velocity.magnitude, sm.Speed);
 
@@ -31,5 +30,9 @@ public abstract class DebugModeBaseState : State {
     float vertMove = sm.Input.vert * sm.VertSpeed;
 
     sm.transform.position += new Vector3(sm.Velocity.x, vertMove, sm.Velocity.y) * Time.unscaledDeltaTime;
+  }
+
+  protected void DisplayDebugInfo() {
+    sm.DebugFrameHandler.ArrangeTraceLines();
   }
 }

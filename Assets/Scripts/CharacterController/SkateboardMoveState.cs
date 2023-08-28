@@ -14,6 +14,8 @@ public class SkateboardMoveState : SkateboardBaseState {
   }
 
   public override void Tick() {
+    CreateDebugFrame();
+
     AdjustSpringMultiplier();
     SetFriction();
     SetCrouching();
@@ -22,6 +24,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     CalculatePush();
     BodyUprightCorrect();
     ApplyFrictionForce();
+
+    SaveDebugFrame();
     // sm.Board.SetFloat(TurnHash, sm.Turning);
   }
 

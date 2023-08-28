@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 
 using UnityEditor;
+using RootMotion.FinalIK;
 
 public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
@@ -20,6 +21,7 @@ public abstract class SkateboardBaseState : State {
       sm.CharacterAnimator.SetBool("falling", true);
       float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
       if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
+        sm.debugFrame.predictedLandingPosition = hit.point;
         Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
         Vector3 normal = hit.normal;
         sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
@@ -50,6 +52,10 @@ public abstract class SkateboardBaseState : State {
 
     // sphere cast from body down - sphere does not need to be the same radius as the collider
     if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+
+      sm.debugFrame.pointOfContact = hit.point;
+      sm.debugFrame.contactNormal = hit.normal;
+
       Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
 
       Vector3 frontHitPos, backHitPos;
@@ -244,5 +250,17 @@ public abstract class SkateboardBaseState : State {
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
     sm.FacingParentRB.transform.rotation = rot;
+  }
+
+  protected void CreateDebugFrame() {
+    sm.debugFrame = new();
+  }
+
+  protected void SaveDebugFrame() {
+    sm.debugFrame.centerOfMass = sm.transform.position;
+    sm.debugFrame.downVector = sm.Down;
+    sm.debugFrame.dampedDownVector = sm.DampedDown;
+    
+    sm.DebugFrameHandler.PutFrame(sm.debugFrame);
   }
 }
