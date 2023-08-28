@@ -462,6 +462,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""increaseFrameWindow"",
+                    ""type"": ""Button"",
+                    ""id"": ""05994b31-5b46-47cd-86ce-22e03bf65b00"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""decreaseFrameWindow"",
+                    ""type"": ""Button"",
+                    ""id"": ""76e37466-950c-4445-89c9-24f160a8b320"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -695,6 +713,50 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""Debug.flyMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5203f131-89cb-46ee-8815-f2e19e5f8e9a"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""decreaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f64ab51d-8056-4515-97e1-b619aab184c4"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""decreaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""99f67932-eb7a-4884-b898-0bb17a702009"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""increaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b4942d92-6a65-4b0a-9da6-d98669b429b4"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""increaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -750,6 +812,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_debugFly_stepBack = m_debugFly.FindAction("stepBack", throwIfNotFound: true);
         m_debugFly_stepForwards = m_debugFly.FindAction("stepForwards", throwIfNotFound: true);
         m_debugFly_DebugflyMode = m_debugFly.FindAction("Debug.flyMode", throwIfNotFound: true);
+        m_debugFly_increaseFrameWindow = m_debugFly.FindAction("increaseFrameWindow", throwIfNotFound: true);
+        m_debugFly_decreaseFrameWindow = m_debugFly.FindAction("decreaseFrameWindow", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -928,6 +992,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_debugFly_stepBack;
     private readonly InputAction m_debugFly_stepForwards;
     private readonly InputAction m_debugFly_DebugflyMode;
+    private readonly InputAction m_debugFly_increaseFrameWindow;
+    private readonly InputAction m_debugFly_decreaseFrameWindow;
     public struct DebugFlyActions
     {
         private @Controls m_Wrapper;
@@ -938,6 +1004,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @stepBack => m_Wrapper.m_debugFly_stepBack;
         public InputAction @stepForwards => m_Wrapper.m_debugFly_stepForwards;
         public InputAction @DebugflyMode => m_Wrapper.m_debugFly_DebugflyMode;
+        public InputAction @increaseFrameWindow => m_Wrapper.m_debugFly_increaseFrameWindow;
+        public InputAction @decreaseFrameWindow => m_Wrapper.m_debugFly_decreaseFrameWindow;
         public InputActionMap Get() { return m_Wrapper.m_debugFly; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -965,6 +1033,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @DebugflyMode.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDebugflyMode;
                 @DebugflyMode.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDebugflyMode;
                 @DebugflyMode.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDebugflyMode;
+                @increaseFrameWindow.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnIncreaseFrameWindow;
+                @increaseFrameWindow.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnIncreaseFrameWindow;
+                @increaseFrameWindow.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnIncreaseFrameWindow;
+                @decreaseFrameWindow.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDecreaseFrameWindow;
             }
             m_Wrapper.m_DebugFlyActionsCallbackInterface = instance;
             if (instance != null)
@@ -987,6 +1061,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @DebugflyMode.started += instance.OnDebugflyMode;
                 @DebugflyMode.performed += instance.OnDebugflyMode;
                 @DebugflyMode.canceled += instance.OnDebugflyMode;
+                @increaseFrameWindow.started += instance.OnIncreaseFrameWindow;
+                @increaseFrameWindow.performed += instance.OnIncreaseFrameWindow;
+                @increaseFrameWindow.canceled += instance.OnIncreaseFrameWindow;
+                @decreaseFrameWindow.started += instance.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.performed += instance.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.canceled += instance.OnDecreaseFrameWindow;
             }
         }
     }
@@ -1031,5 +1111,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnStepBack(InputAction.CallbackContext context);
         void OnStepForwards(InputAction.CallbackContext context);
         void OnDebugflyMode(InputAction.CallbackContext context);
+        void OnIncreaseFrameWindow(InputAction.CallbackContext context);
+        void OnDecreaseFrameWindow(InputAction.CallbackContext context);
     }
 }

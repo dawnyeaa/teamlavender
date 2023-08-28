@@ -32,6 +32,22 @@ public abstract class DebugModeBaseState : State {
     sm.transform.position += new Vector3(sm.Velocity.x, vertMove, sm.Velocity.y) * Time.unscaledDeltaTime;
   }
 
+  protected void SelectNextFrame() {
+    sm.DebugFrameHandler.SelectNextFrame();
+  }
+
+  protected void SelectPrevFrame() {
+    sm.DebugFrameHandler.SelectPrevFrame();
+  }
+
+  protected void IncreaseFrameWindow() {
+    sm.DebugFrameHandler.IncreaseFrameWindow();
+  }
+
+  protected void DecreaseFrameWindow() {
+    sm.DebugFrameHandler.DecreaseFrameWindow();
+  }
+
   protected void DisplayDebugInfo() {
     sm.DebugFrameHandler.ArrangeTraceLines();
   }

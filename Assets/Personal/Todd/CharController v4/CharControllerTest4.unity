@@ -2659,7 +2659,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2e659596bb3fa54cb3036acc9b80643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentFrame: 0
+  darkAlpha: 0.893
+  lightAlpha: 1
+  centerOfMassColorDark: {r: 0.8018868, g: 0.57309717, b: 0.055980746, a: 0}
+  centerOfMassColorLight: {r: 0.9811321, g: 0.91863257, b: 0, a: 0}
+  pointOfContactColorDark: {r: 0.4528302, g: 0.05297257, b: 0.13762738, a: 0}
+  pointOfContactColorLight: {r: 0.7735849, g: 0.07589887, b: 0.07589887, a: 0}
+  predictedLandingPositionColorDark: {r: 0.32253078, g: 0.056817338, b: 0.5283019,
+    a: 0}
+  predictedLandingPositionColorLight: {r: 0.58481437, g: 0.082378045, b: 0.8396226,
+    a: 0}
+  downVectorColorDark: {r: 0.08826979, g: 0.40153372, b: 0.8207547, a: 0}
+  downVectorColorLight: {r: 0.081149824, g: 0.6237153, b: 0.9150943, a: 0}
+  dampedDownVectorColorDark: {r: 0.08319682, g: 0.13487653, b: 0.7735849, a: 0}
+  dampedDownVectorColorLight: {r: 0.046617936, g: 0.3456557, b: 0.9150943, a: 0}
+  contactNormalColorDark: {r: 0.05884653, g: 0.5471698, b: 0.35194314, a: 0}
+  contactNormalColorLight: {r: 0.0872552, g: 0.8113208, b: 0.5317979, a: 0}
   frameFalloff: 1
   traceLines:
   - {fileID: 218238060}
@@ -3499,7 +3514,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 573934779}
   m_LocalRotation: {x: -0.05471179, y: 0.017256357, z: -0.00094568403, w: 0.99835265}
-  m_LocalPosition: {x: -0.10367878, y: 2.1573963, z: -3.253443}
+  m_LocalPosition: {x: -0.1036791, y: 2.1573963, z: -3.253443}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4903,7 +4918,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 916097573}
   m_LocalRotation: {x: -0.05471179, y: 0.017256357, z: -0.00094568403, w: 0.99835265}
-  m_LocalPosition: {x: -0.103678904, y: 2.1573963, z: -3.253443}
+  m_LocalPosition: {x: -0.1036791, y: 2.1573963, z: -3.253443}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5612,7 +5627,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1013157846}
   m_LocalRotation: {x: -0.05471179, y: 0.017256357, z: -0.00094568403, w: 0.99835265}
-  m_LocalPosition: {x: -0.103678875, y: 2.1573963, z: -3.253443}
+  m_LocalPosition: {x: -0.1036791, y: 2.1573963, z: -3.253443}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

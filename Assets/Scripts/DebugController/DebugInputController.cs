@@ -9,6 +9,11 @@ public class DebugInputController : MonoBehaviour, Controls.IDebugFlyActions {
   public Vector2 move;
   public float vert;
 
+  public Action OnStepNextPerformed;
+  public Action OnStepPrevPerformed;
+  public Action OnIncFrameWindowPerformed;
+  public Action OnDecFrameWindowPerformed;
+
   public SkateboardStateMachine character;
   public DebugModeStateMachine debugMode;
 
@@ -41,11 +46,31 @@ public class DebugInputController : MonoBehaviour, Controls.IDebugFlyActions {
   }
 
   public void OnStepBack(InputAction.CallbackContext context) {
-    
+    if (!context.performed)
+      return;
+
+    OnStepPrevPerformed?.Invoke();
   }
 
   public void OnStepForwards(InputAction.CallbackContext context) {
-    
+    if (!context.performed)
+      return;
+
+    OnStepNextPerformed?.Invoke();
+  }
+
+  public void OnIncreaseFrameWindow(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+
+    OnIncFrameWindowPerformed?.Invoke();
+  }
+
+  public void OnDecreaseFrameWindow(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+
+    OnDecFrameWindowPerformed?.Invoke();
   }
 
   public void OnDebugflyMode(InputAction.CallbackContext context) {

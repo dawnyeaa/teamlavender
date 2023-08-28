@@ -10,12 +10,27 @@ public static class Extensions {
 }
 
 public class DebugFrameHandler : MonoBehaviour {
-  private const int _maxBufferSize = 11;
+  private const int _maxBufferSize = 401;
   private DebugFrame[] debugFrames;
   private int frameWriteIndex;
   private int frameReadIndex;
-  public int currentFrame;
-  public int frameFalloff = 1;
+  private int currentFrame = 1;
+  [Range(0, 1)]
+  public float darkAlpha, lightAlpha;
+  [Space(10)]
+  public Color centerOfMassColorDark, centerOfMassColorLight;
+  [Space(10)]
+  public Color pointOfContactColorDark, pointOfContactColorLight;
+  [Space(10)]
+  public Color predictedLandingPositionColorDark, predictedLandingPositionColorLight;
+  [Space(10)]
+  public Color downVectorColorDark, downVectorColorLight;
+  [Space(10)]
+  public Color dampedDownVectorColorDark, dampedDownVectorColorLight;
+  [Space(10)]
+  public Color contactNormalColorDark, contactNormalColorLight;
+  [Space(10)]
+  public int frameFalloff = 5;
   public LineRenderer[] traceLines;
 
   public void Awake() {
@@ -28,28 +43,73 @@ public class DebugFrameHandler : MonoBehaviour {
     foreach (LineRenderer line in traceLines) {
       line.enabled = show;
     }
+    currentFrame = GetBufferSize()-1;
   }
 
   public bool ArrangeTraceLines() {
-    Debug.Log("start buffer: " + frameReadIndex);
-    Debug.Log(NormalizedToBufferIndex(7));
-    int bufferSize = GetBufferSize();
-    Vector3[] positions = new Vector3[bufferSize];
-    float[] alphas = new float[bufferSize];
+    int bufferSize = GetBufferSize() - 1;
+    Vector3[] COMs = new Vector3[bufferSize+1];
+    Vector3[] POCs = new Vector3[bufferSize+1];
+    Vector3[] predictedLandings = new Vector3[bufferSize+1];
+    (float val, float pos) startKey = (currentFrame-frameFalloff > 0 ? 0 : 1-(currentFrame/(float)frameFalloff), Mathf.Clamp01((currentFrame-frameFalloff)/(float)bufferSize));
+    (float val, float pos) midKey = (1, currentFrame/(float)bufferSize);
+    (float val, float pos) endKey = (currentFrame+frameFalloff < bufferSize ? 0 : 1-((bufferSize-currentFrame)/(float)frameFalloff), Mathf.Clamp01((currentFrame+frameFalloff)/(float)bufferSize));
+    GradientColorKey[] COMcolors = new GradientColorKey[] {
+      new GradientColorKey(Color.Lerp(centerOfMassColorDark, centerOfMassColorLight, startKey.val), startKey.pos),
+      new GradientColorKey(Color.Lerp(centerOfMassColorDark, centerOfMassColorLight, midKey.val), midKey.pos),
+      new GradientColorKey(Color.Lerp(centerOfMassColorDark, centerOfMassColorLight, endKey.val), endKey.pos-Mathf.Epsilon)
+    };
+    GradientColorKey[] POCcolors = new GradientColorKey[] {
+      new GradientColorKey(Color.Lerp(pointOfContactColorDark, pointOfContactColorLight, startKey.val), startKey.pos),
+      new GradientColorKey(Color.Lerp(pointOfContactColorDark, pointOfContactColorLight, midKey.val), midKey.pos),
+      new GradientColorKey(Color.Lerp(pointOfContactColorDark, pointOfContactColorLight, endKey.val), endKey.pos-Mathf.Epsilon)
+    };
+    GradientColorKey[] predictedLandingcolors = new GradientColorKey[] {
+      new GradientColorKey(Color.Lerp(predictedLandingPositionColorDark, predictedLandingPositionColorLight, startKey.val), startKey.pos),
+      new GradientColorKey(Color.Lerp(predictedLandingPositionColorDark, predictedLandingPositionColorLight, midKey.val), midKey.pos),
+      new GradientColorKey(Color.Lerp(predictedLandingPositionColorDark, predictedLandingPositionColorLight, endKey.val), endKey.pos-Mathf.Epsilon)
+    };
+    GradientAlphaKey[] alphas = new GradientAlphaKey[] {
+      new GradientAlphaKey(Mathf.Lerp(darkAlpha, lightAlpha, startKey.val), startKey.pos),
+      new GradientAlphaKey(Mathf.Lerp(darkAlpha, lightAlpha, midKey.val), midKey.pos),
+      new GradientAlphaKey(Mathf.Lerp(darkAlpha, lightAlpha, endKey.val), endKey.pos-Mathf.Epsilon)
+    };
     // iterate thru all frames
-    for (int i = frameReadIndex, j = 0; j < bufferSize; i = (i + 1) % _maxBufferSize, ++j) {
-      positions[j] = debugFrames[i].centerOfMass;
-
+    for (int i = frameReadIndex, j = 0; j < bufferSize+1; i = (i + 1) % _maxBufferSize, ++j) {
+      COMs[j] = debugFrames[i].centerOfMass;
+      POCs[j] = debugFrames[i].pointOfContact;
+      predictedLandings[j] = debugFrames[i].predictedLandingPosition;
     }
     traceLines[0].positionCount = GetBufferSize();
-    traceLines[0].SetPositions(positions);
-    Gradient grad = new Gradient();
-    GradientColorKey colorKey0 = new GradientColorKey(Color.yellow, 0);
-    GradientColorKey colorKey1 = new GradientColorKey(Color.yellow, 1);
-    GradientAlphaKey alphaKey = new GradientAlphaKey(1, 1);
-    grad.SetKeys(new GradientColorKey[] {colorKey0, colorKey1}, new GradientAlphaKey[] {alphaKey});
+    traceLines[0].SetPositions(COMs);
+    traceLines[1].positionCount = GetBufferSize();
+    traceLines[1].SetPositions(POCs);
+    traceLines[2].positionCount = GetBufferSize();
+    traceLines[2].SetPositions(predictedLandings);
+    Gradient grad = new();
+    grad.SetKeys(COMcolors, alphas);
     traceLines[0].colorGradient = grad;
+    grad.SetKeys(POCcolors, alphas);
+    traceLines[1].colorGradient = grad;
+    grad.SetKeys(predictedLandingcolors, alphas);
+    traceLines[2].colorGradient = grad;
     return true;
+  }
+
+  public void SelectNextFrame() {
+    currentFrame = Mathf.Min(currentFrame+1, GetBufferSize()-1);
+  }
+
+  public void SelectPrevFrame() {
+    currentFrame = Mathf.Max(currentFrame-1, 0);
+  }
+
+  public void IncreaseFrameWindow() {
+    frameFalloff++;
+  }
+
+  public void DecreaseFrameWindow() {
+    frameFalloff = Mathf.Max(frameFalloff-1, 1);
   }
 
   public DebugFrame[] SampleFrames(int offset, int length) {
@@ -64,8 +124,6 @@ public class DebugFrameHandler : MonoBehaviour {
       result = false;
     }
     debugFrames[frameWriteIndex] = frame;
-    // needs to be before the new write index is assigned
-    currentFrame = frameWriteIndex;
     frameWriteIndex = (frameWriteIndex + 1) % _maxBufferSize;
     return result;
   }

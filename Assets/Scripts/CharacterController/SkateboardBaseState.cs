@@ -253,7 +253,14 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void CreateDebugFrame() {
-    sm.debugFrame = new();
+    sm.debugFrame = new() {
+      centerOfMass = Vector3.zero,
+      pointOfContact = Vector3.zero,
+      predictedLandingPosition = Vector3.zero,
+      downVector = Vector3.zero,
+      dampedDownVector = Vector3.zero,
+      contactNormal = Vector3.zero,
+    };
   }
 
   protected void SaveDebugFrame() {

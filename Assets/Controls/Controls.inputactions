@@ -440,6 +440,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "increaseFrameWindow",
+                    "type": "Button",
+                    "id": "05994b31-5b46-47cd-86ce-22e03bf65b00",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "decreaseFrameWindow",
+                    "type": "Button",
+                    "id": "76e37466-950c-4445-89c9-24f160a8b320",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -673,6 +691,50 @@
                     "action": "Debug.flyMode",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "5203f131-89cb-46ee-8815-f2e19e5f8e9a",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "decreaseFrameWindow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f64ab51d-8056-4515-97e1-b619aab184c4",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB + M",
+                    "action": "decreaseFrameWindow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "99f67932-eb7a-4884-b898-0bb17a702009",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KB + M",
+                    "action": "increaseFrameWindow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b4942d92-6a65-4b0a-9da6-d98669b429b4",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "increaseFrameWindow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
