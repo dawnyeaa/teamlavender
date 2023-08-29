@@ -11,9 +11,13 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnPushPerformed += StartPush;
     sm.Input.OnSwitchPerformed += OnSwitch;
     sm.Input.OnOlliePerformed += OnOllieInput;
+    sm.Input.OnStartBraking += StartBrake;
+    sm.Input.OnEndBraking += EndBrake;
   }
 
   public override void Tick() {
+    CreateDebugFrame();
+
     AdjustSpringMultiplier();
     SetFriction();
     SetCrouching();
@@ -22,6 +26,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     CalculatePush();
     BodyUprightCorrect();
     ApplyFrictionForce();
+
+    SaveDebugFrame();
     // sm.Board.SetFloat(TurnHash, sm.Turning);
   }
 
@@ -29,5 +35,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnPushPerformed -= StartPush;
     sm.Input.OnSwitchPerformed -= OnSwitch;
     sm.Input.OnOlliePerformed -= OnOllieInput;
+    sm.Input.OnStartBraking -= StartBrake;
+    sm.Input.OnEndBraking -= EndBrake;
   }
 }

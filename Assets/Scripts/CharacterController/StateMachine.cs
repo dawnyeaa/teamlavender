@@ -2,6 +2,7 @@ using UnityEngine;
 
 public abstract class StateMachine : MonoBehaviour {
   private State currentState;
+  protected bool fixedUpdate = true;
 
   public void SwitchState(State state) {
     currentState?.Exit();
@@ -10,6 +11,14 @@ public abstract class StateMachine : MonoBehaviour {
   }
 
   private void FixedUpdate() {
-    currentState?.Tick();
+    if (fixedUpdate) {
+      currentState?.Tick();
+    }
+  }
+
+  private void Update() {
+    if (!fixedUpdate) {
+      currentState?.Tick();
+    }
   }
 }
