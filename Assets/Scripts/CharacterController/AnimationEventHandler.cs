@@ -16,4 +16,8 @@ public class AnimationEventHandler : MonoBehaviour {
   public void PushingEnd() {
     sm.PushingEnd();
   }
+
+  public void BrakeForce() {
+    sm.BrakeForce();
+  }
 }

@@ -141,7 +141,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh32384
+  m_Name: pb_Mesh146724
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1079,9 +1079,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.07
@@ -1895,6 +1893,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   move: {x: 0, y: 0}
   vert: 0
+  stepPrev: {fileID: 0}
+  stepNext: {fileID: 0}
+  incWindow: {fileID: 0}
+  decWindow: {fileID: 0}
   character: {fileID: 3832982825729624541}
   debugMode: {fileID: 340438400}
 --- !u!4 &340438402
@@ -2659,22 +2661,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2e659596bb3fa54cb3036acc9b80643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  darkAlpha: 0.893
-  lightAlpha: 1
-  centerOfMassColorDark: {r: 0.8018868, g: 0.57309717, b: 0.055980746, a: 0}
-  centerOfMassColorLight: {r: 0.9811321, g: 0.91863257, b: 0, a: 0}
-  pointOfContactColorDark: {r: 0.4528302, g: 0.05297257, b: 0.13762738, a: 0}
-  pointOfContactColorLight: {r: 0.7735849, g: 0.07589887, b: 0.07589887, a: 0}
-  predictedLandingPositionColorDark: {r: 0.32253078, g: 0.056817338, b: 0.5283019,
+  pointGizmo: {fileID: 4180219193605404878, guid: 252470724c2973d49b6e2a5d6f1ca077,
+    type: 3}
+  dirGizmo: {fileID: 624301257543504532, guid: 745fa453bf0f9234f8ba95bd3919ba60, type: 3}
+  pointGizmoScale: 1
+  dirGizmoScale: 1
+  centerOfMassColorDark: {r: 0.4528302, g: 0.044855822, b: 0.044855822, a: 0}
+  centerOfMassColorLight: {r: 0.8962264, g: 0.097232126, b: 0.097232126, a: 0}
+  pointOfContactColorDark: {r: 0.10279457, g: 0.2793205, b: 0.6226415, a: 0}
+  pointOfContactColorLight: {r: 0.07413671, g: 0.49542513, b: 0.9245283, a: 0}
+  predictedLandingPositionColorDark: {r: 0.4210125, g: 0.058339275, b: 0.5377358,
     a: 0}
-  predictedLandingPositionColorLight: {r: 0.58481437, g: 0.082378045, b: 0.8396226,
+  predictedLandingPositionColorLight: {r: 0.8773585, g: 0.086908154, b: 0.86263466,
     a: 0}
-  downVectorColorDark: {r: 0.08826979, g: 0.40153372, b: 0.8207547, a: 0}
-  downVectorColorLight: {r: 0.081149824, g: 0.6237153, b: 0.9150943, a: 0}
-  dampedDownVectorColorDark: {r: 0.08319682, g: 0.13487653, b: 0.7735849, a: 0}
-  dampedDownVectorColorLight: {r: 0.046617936, g: 0.3456557, b: 0.9150943, a: 0}
-  contactNormalColorDark: {r: 0.05884653, g: 0.5471698, b: 0.35194314, a: 0}
-  contactNormalColorLight: {r: 0.0872552, g: 0.8113208, b: 0.5317979, a: 0}
+  downVectorColorDark: {r: 0, g: 0, b: 0, a: 0}
+  downVectorColorLight: {r: 0.9245283, g: 0.83657426, b: 0.082858644, a: 0}
+  dampedDownVectorColorDark: {r: 0, g: 0, b: 0, a: 0}
+  dampedDownVectorColorLight: {r: 0.9339623, g: 0.6472514, b: 0.083704144, a: 0}
+  contactNormalColorDark: {r: 0, g: 0, b: 0, a: 0}
+  contactNormalColorLight: {r: 0.15691648, g: 0.8584906, b: 0.07694017, a: 0}
   frameFalloff: 1
   traceLines:
   - {fileID: 218238060}
@@ -2859,7 +2864,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33296
+  m_Name: pb_Mesh147650
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7332,12 +7337,10 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.07
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -7824,12 +7827,10 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.07
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -8086,7 +8087,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528319170}
-  m_LocalRotation: {x: 0.049420062, y: 0.01271571, z: -0.002038213, w: 0.9986951}
+  m_LocalRotation: {x: 0.049420062, y: 0.012715746, z: -0.0020382188, w: 0.9986951}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

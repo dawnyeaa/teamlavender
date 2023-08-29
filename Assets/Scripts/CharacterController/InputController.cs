@@ -35,6 +35,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnResetPerformed;
   public Action OnOlliePerformed;
   public Action OnSlamPerformed;
+  public Action OnStartBraking, OnEndBraking;
   public Action EnterDebugMode;
 
   public SkateboardStateMachine character;
@@ -71,10 +72,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnBrake(InputAction.CallbackContext context) {
     if (context.performed) {
-      braking = true;
+      OnStartBraking?.Invoke();
     }
     else if (context.canceled) {
-      braking = false;
+      OnEndBraking?.Invoke();
     }
   }
 

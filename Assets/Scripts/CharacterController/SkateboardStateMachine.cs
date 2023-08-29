@@ -114,6 +114,10 @@ public class SkateboardStateMachine : StateMachine {
     CurrentPushT = duration;
   }
 
+  public void BrakeForce() {
+    Input.braking = true;
+  }
+
   public void PushingEnd() {
     PushingAnim = false;
     Pushing = false;

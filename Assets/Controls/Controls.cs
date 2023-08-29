@@ -438,21 +438,21 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""stepBack"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""c670d8de-5236-4acb-b002-dda465511ef2"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Digital"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""stepForwards"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""7daf7753-5fc9-4671-acec-f16e8ad9068a"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Digital"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Debug.flyMode"",
@@ -650,7 +650,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""daaaab71-eeed-4868-aab4-85b8d8ed904d"",
+                    ""id"": ""a2aee82b-127e-4ca9-bd7c-27be637a0494"",
                     ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -666,17 +666,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB + M"",
-                    ""action"": ""stepForwards"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1758fd48-6e1c-4646-8bc6-82d628067e31"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
                     ""action"": ""stepForwards"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -755,6 +744,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""increaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfb28c93-dedb-49d1-833e-7a4e62bb2c3c"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""stepForwards"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }

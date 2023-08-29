@@ -11,6 +11,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnPushPerformed += StartPush;
     sm.Input.OnSwitchPerformed += OnSwitch;
     sm.Input.OnOlliePerformed += OnOllieInput;
+    sm.Input.OnStartBraking += StartBrake;
+    sm.Input.OnEndBraking += EndBrake;
   }
 
   public override void Tick() {
@@ -33,5 +35,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnPushPerformed -= StartPush;
     sm.Input.OnSwitchPerformed -= OnSwitch;
     sm.Input.OnOlliePerformed -= OnOllieInput;
+    sm.Input.OnStartBraking -= StartBrake;
+    sm.Input.OnEndBraking -= EndBrake;
   }
 }

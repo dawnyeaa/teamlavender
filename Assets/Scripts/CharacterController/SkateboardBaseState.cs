@@ -230,6 +230,21 @@ public abstract class SkateboardBaseState : State {
     sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 
+  protected void StartBrake() {
+    sm.CharacterAnimator.SetBool("stopping", true);
+    if (sm.MainRB.velocity.magnitude > 1f) {
+      sm.CharacterAnimator.SetBool("hardStop", true);
+    }
+    else {
+      sm.CharacterAnimator.SetBool("hardStop", false);
+    }
+  }
+
+  protected void EndBrake() {
+    sm.Input.braking = false;
+    sm.CharacterAnimator.SetBool("stopping", false);
+  }
+
   public void Spawn() {
     // find the nearest spawn point
     (Vector3 pos, Quaternion rot) = sm.SpawnPointManager.GetNearestSpawnPoint(sm.transform.position);
@@ -267,7 +282,7 @@ public abstract class SkateboardBaseState : State {
     sm.debugFrame.centerOfMass = sm.transform.position;
     sm.debugFrame.downVector = sm.Down;
     sm.debugFrame.dampedDownVector = sm.DampedDown;
-    
+
     sm.DebugFrameHandler.PutFrame(sm.debugFrame);
   }
 }

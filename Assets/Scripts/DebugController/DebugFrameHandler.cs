@@ -10,13 +10,18 @@ public static class Extensions {
 }
 
 public class DebugFrameHandler : MonoBehaviour {
-  private const int _maxBufferSize = 401;
+  private const int MAXBUFFERSIZE = 401;
+  private const int MAXFALLOFF = 5;
+  private const int POSCOUNT = 3;
+  private const int DIRCOUNT = 3;
   private DebugFrame[] debugFrames;
   private int frameWriteIndex;
   private int frameReadIndex;
+  private List<GameObject> pointGizmoPool;
+  private List<GameObject> directionGizmoPool;
+  public GameObject pointGizmo, dirGizmo;
+  public float pointGizmoScale = 1, dirGizmoScale = 1;
   private int currentFrame = 1;
-  [Range(0, 1)]
-  public float darkAlpha, lightAlpha;
   [Space(10)]
   public Color centerOfMassColorDark, centerOfMassColorLight;
   [Space(10)]
@@ -34,16 +39,40 @@ public class DebugFrameHandler : MonoBehaviour {
   public LineRenderer[] traceLines;
 
   public void Awake() {
-    debugFrames = new DebugFrame[_maxBufferSize];
+    debugFrames = new DebugFrame[MAXBUFFERSIZE];
     frameWriteIndex = 0;
     frameReadIndex = 0;
+    int posGizmoPoolSize = (MAXFALLOFF*2+1)*POSCOUNT;
+    pointGizmoPool = new List<GameObject>(posGizmoPoolSize);
+    for (int i = 0; i < posGizmoPoolSize; ++i) {
+      GameObject newGizmo = Instantiate(pointGizmo, transform);
+      newGizmo.SetActive(false);
+      pointGizmoPool.Add(newGizmo);
+    }
+    int dirGizmoPoolSize = (MAXFALLOFF*2+1)*DIRCOUNT;
+    directionGizmoPool = new List<GameObject>(dirGizmoPoolSize);
+    for (int i = 0; i < dirGizmoPoolSize; ++i) {
+      GameObject newGizmo = Instantiate(dirGizmo, transform);
+      newGizmo.SetActive(false);
+      directionGizmoPool.Add(newGizmo);
+    }
   }
 
   public void ShowTraceLines(bool show) {
     foreach (LineRenderer line in traceLines) {
       line.enabled = show;
     }
+    ClearGizmos();
     currentFrame = GetBufferSize()-1;
+  }
+
+  public void ClearGizmos() {
+    foreach(GameObject lPosGizmo in pointGizmoPool) {
+      lPosGizmo.SetActive(false);
+    }
+    foreach(GameObject lDirGizmo in directionGizmoPool) {
+      lDirGizmo.SetActive(false);
+    }
   }
 
   public bool ArrangeTraceLines() {
@@ -51,34 +80,69 @@ public class DebugFrameHandler : MonoBehaviour {
     Vector3[] COMs = new Vector3[bufferSize+1];
     Vector3[] POCs = new Vector3[bufferSize+1];
     Vector3[] predictedLandings = new Vector3[bufferSize+1];
-    (float val, float pos) startKey = (currentFrame-frameFalloff > 0 ? 0 : 1-(currentFrame/(float)frameFalloff), Mathf.Clamp01((currentFrame-frameFalloff)/(float)bufferSize));
-    (float val, float pos) midKey = (1, currentFrame/(float)bufferSize);
-    (float val, float pos) endKey = (currentFrame+frameFalloff < bufferSize ? 0 : 1-((bufferSize-currentFrame)/(float)frameFalloff), Mathf.Clamp01((currentFrame+frameFalloff)/(float)bufferSize));
-    GradientColorKey[] COMcolors = new GradientColorKey[] {
-      new GradientColorKey(Color.Lerp(centerOfMassColorDark, centerOfMassColorLight, startKey.val), startKey.pos),
-      new GradientColorKey(Color.Lerp(centerOfMassColorDark, centerOfMassColorLight, midKey.val), midKey.pos),
-      new GradientColorKey(Color.Lerp(centerOfMassColorDark, centerOfMassColorLight, endKey.val), endKey.pos-Mathf.Epsilon)
-    };
-    GradientColorKey[] POCcolors = new GradientColorKey[] {
-      new GradientColorKey(Color.Lerp(pointOfContactColorDark, pointOfContactColorLight, startKey.val), startKey.pos),
-      new GradientColorKey(Color.Lerp(pointOfContactColorDark, pointOfContactColorLight, midKey.val), midKey.pos),
-      new GradientColorKey(Color.Lerp(pointOfContactColorDark, pointOfContactColorLight, endKey.val), endKey.pos-Mathf.Epsilon)
-    };
-    GradientColorKey[] predictedLandingcolors = new GradientColorKey[] {
-      new GradientColorKey(Color.Lerp(predictedLandingPositionColorDark, predictedLandingPositionColorLight, startKey.val), startKey.pos),
-      new GradientColorKey(Color.Lerp(predictedLandingPositionColorDark, predictedLandingPositionColorLight, midKey.val), midKey.pos),
-      new GradientColorKey(Color.Lerp(predictedLandingPositionColorDark, predictedLandingPositionColorLight, endKey.val), endKey.pos-Mathf.Epsilon)
-    };
-    GradientAlphaKey[] alphas = new GradientAlphaKey[] {
-      new GradientAlphaKey(Mathf.Lerp(darkAlpha, lightAlpha, startKey.val), startKey.pos),
-      new GradientAlphaKey(Mathf.Lerp(darkAlpha, lightAlpha, midKey.val), midKey.pos),
-      new GradientAlphaKey(Mathf.Lerp(darkAlpha, lightAlpha, endKey.val), endKey.pos-Mathf.Epsilon)
-    };
+    GradientColorKey[] COMcolors = new GradientColorKey[] { new GradientColorKey(centerOfMassColorDark, 0) };
+    GradientColorKey[] POCcolors = new GradientColorKey[] { new GradientColorKey(pointOfContactColorDark, 0) };
+    GradientColorKey[] predictedLandingcolors = new GradientColorKey[] { new GradientColorKey(predictedLandingPositionColorDark, 0) };
+    GradientAlphaKey[] alphas = new GradientAlphaKey[] { new GradientAlphaKey(1, 0) };
+    ClearGizmos();
     // iterate thru all frames
-    for (int i = frameReadIndex, j = 0; j < bufferSize+1; i = (i + 1) % _maxBufferSize, ++j) {
+    for (int i = frameReadIndex, j = 0, k = 0; j < bufferSize+1; i = (i + 1) % MAXBUFFERSIZE, ++j) {
+      // draw paths
       COMs[j] = debugFrames[i].centerOfMass;
       POCs[j] = debugFrames[i].pointOfContact;
       predictedLandings[j] = debugFrames[i].predictedLandingPosition;
+      // now drawing gizmos
+      if (j >= currentFrame-frameFalloff && j <= currentFrame+frameFalloff) {
+        // draw center of mass
+        GameObject comGizmo = pointGizmoPool[k*POSCOUNT];
+        comGizmo.transform.position = debugFrames[i].centerOfMass;
+        comGizmo.transform.rotation = pointGizmo.transform.rotation;
+        comGizmo.transform.localScale = Vector3.one*pointGizmoScale;
+        comGizmo.SetActive(true);
+        comGizmo.GetComponent<DebugGizmoMatHandler>().SetColor(centerOfMassColorLight);
+        // draw point of contact
+        GameObject pocGizmo = pointGizmoPool[(k*POSCOUNT)+1];
+        pocGizmo.transform.position = debugFrames[i].pointOfContact;
+        pocGizmo.transform.rotation = pointGizmo.transform.rotation;
+        pocGizmo.transform.localScale = Vector3.one*pointGizmoScale;
+        pocGizmo.SetActive(true);
+        pocGizmo.GetComponent<DebugGizmoMatHandler>().SetColor(pointOfContactColorLight);
+        // draw predicted landing
+        GameObject predLandingGizmo = pointGizmoPool[(k*POSCOUNT)+2];
+        predLandingGizmo.transform.position = debugFrames[i].predictedLandingPosition;
+        predLandingGizmo.transform.rotation = pointGizmo.transform.rotation;
+        predLandingGizmo.transform.localScale = Vector3.one*pointGizmoScale;
+        predLandingGizmo.SetActive(true);
+        predLandingGizmo.GetComponent<DebugGizmoMatHandler>().SetColor(predictedLandingPositionColorLight);
+        // draw down
+        if (debugFrames[i].downVector.magnitude > 0) {
+          GameObject downGizmo = directionGizmoPool[k*DIRCOUNT];
+          downGizmo.transform.position = debugFrames[i].centerOfMass;
+          downGizmo.transform.rotation = Quaternion.LookRotation(debugFrames[i].downVector, Vector3.up);
+          downGizmo.transform.localScale = Vector3.one*dirGizmoScale;
+          downGizmo.SetActive(true);
+          downGizmo.GetComponent<DebugGizmoMatHandler>().SetColor(downVectorColorLight);
+        }
+        // draw damped down
+        if (debugFrames[i].dampedDownVector.magnitude > 0) {
+          GameObject dampedDownGizmo = directionGizmoPool[(k*DIRCOUNT)+1];
+          dampedDownGizmo.transform.position = debugFrames[i].centerOfMass;
+          dampedDownGizmo.transform.rotation = Quaternion.LookRotation(debugFrames[i].dampedDownVector, Vector3.up);
+          dampedDownGizmo.transform.localScale = Vector3.one*dirGizmoScale;
+          dampedDownGizmo.SetActive(true);
+          dampedDownGizmo.GetComponent<DebugGizmoMatHandler>().SetColor(dampedDownVectorColorLight);
+        }
+        // draw ground normal
+        if (debugFrames[i].contactNormal.magnitude > 0) {
+          GameObject groundNormalGizmo = directionGizmoPool[(k*DIRCOUNT)+2];
+          groundNormalGizmo.transform.position = debugFrames[i].pointOfContact;
+          groundNormalGizmo.transform.rotation = Quaternion.LookRotation(debugFrames[i].contactNormal, Vector3.up);
+          groundNormalGizmo.transform.localScale = Vector3.one*dirGizmoScale;
+          groundNormalGizmo.SetActive(true);
+          groundNormalGizmo.GetComponent<DebugGizmoMatHandler>().SetColor(contactNormalColorLight);
+        }
+        k++;
+      }
     }
     traceLines[0].positionCount = GetBufferSize();
     traceLines[0].SetPositions(COMs);
@@ -105,11 +169,11 @@ public class DebugFrameHandler : MonoBehaviour {
   }
 
   public void IncreaseFrameWindow() {
-    frameFalloff++;
+    frameFalloff = Mathf.Min(frameFalloff+1, MAXFALLOFF);
   }
 
   public void DecreaseFrameWindow() {
-    frameFalloff = Mathf.Max(frameFalloff-1, 1);
+    frameFalloff = Mathf.Max(frameFalloff-1, 0);
   }
 
   public DebugFrame[] SampleFrames(int offset, int length) {
@@ -118,13 +182,13 @@ public class DebugFrameHandler : MonoBehaviour {
 
   public bool PutFrame(DebugFrame frame) {
     bool result = true;
-    if ((frameWriteIndex + 1) % _maxBufferSize == frameReadIndex) {
+    if ((frameWriteIndex + 1) % MAXBUFFERSIZE == frameReadIndex) {
       // uh oh the buffers full
-      frameReadIndex = (frameReadIndex + 1) % _maxBufferSize;
+      frameReadIndex = (frameReadIndex + 1) % MAXBUFFERSIZE;
       result = false;
     }
     debugFrames[frameWriteIndex] = frame;
-    frameWriteIndex = (frameWriteIndex + 1) % _maxBufferSize;
+    frameWriteIndex = (frameWriteIndex + 1) % MAXBUFFERSIZE;
     return result;
   }
 
@@ -150,23 +214,23 @@ public class DebugFrameHandler : MonoBehaviour {
       return false;
     }
 
-    frameReadIndex = (frameReadIndex + 1) % _maxBufferSize;
+    frameReadIndex = (frameReadIndex + 1) % MAXBUFFERSIZE;
     return true;
   }
 
   private int NormalizedToBufferIndex(int normI) {
-    return (normI + frameReadIndex) % _maxBufferSize;
+    return (normI + frameReadIndex) % MAXBUFFERSIZE;
   }
 
   private int BufferToNormalizedIndex(int buffI) {
     if (buffI < frameReadIndex) {
-      buffI += _maxBufferSize;
+      buffI += MAXBUFFERSIZE;
     }
     return buffI - frameReadIndex;
   }
   
   private int GetBufferSize() {
-    int diff = ((frameWriteIndex-frameReadIndex)+_maxBufferSize) % _maxBufferSize;
+    int diff = ((frameWriteIndex-frameReadIndex)+MAXBUFFERSIZE) % MAXBUFFERSIZE;
     return diff;
   }
 }

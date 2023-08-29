@@ -256,7 +256,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3832982824073343645}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -399,7 +399,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   WheelFriction: 0.03
-  BrakingFriction: 1
+  BrakingFriction: 1.5
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
   TruckTurnDamping: 0.1
@@ -505,6 +505,7 @@ MonoBehaviour:
   SpawnPointManager: {fileID: 0}
   HeadSensZone: {fileID: 5858372948550401881}
   PointManager: {fileID: 0}
+  DebugFrameHandler: {fileID: 0}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
@@ -734,7 +735,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3832982824601065070}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
