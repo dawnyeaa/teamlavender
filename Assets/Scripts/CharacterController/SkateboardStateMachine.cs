@@ -52,6 +52,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public bool Crouching = false;
   [ReadOnly] public bool PushingAnim = false;
   [ReadOnly] public bool Pushing = false;
+  [ReadOnly] public bool PlayingBufferedPush = false;
   [ReadOnly] public float CurrentPushT = 0;
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
