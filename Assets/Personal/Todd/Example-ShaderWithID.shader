@@ -17,6 +17,16 @@ Shader "Example/GradientShaderWithIDPass" {
            "Queue" = "Geometry"
            "UniversalMaterialType" = "Lit" }
 
+    HLSLINCLUDE
+    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+    
+		CBUFFER_START(UnityPerMaterial)
+		float4 _BaseMap_ST;
+		float4 _BaseColor;
+		float _Cutoff;
+		CBUFFER_END
+    ENDHLSL
+
     Pass {
       Name "ForwardLit"
       Tags { "LightMode" = "UniversalForward" }
@@ -25,8 +35,6 @@ Shader "Example/GradientShaderWithIDPass" {
       #pragma prefer_hlslcc gles
       #pragma exclude_renderers d3d11_9x
       #pragma target 2.0
-
-      #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
       #pragma vertex vert
       #pragma fragment frag
@@ -138,6 +146,32 @@ Shader "Example/GradientShaderWithIDPass" {
         OSPos = i.positionOS;
       }
 
+      ENDHLSL
+    }
+
+    Pass {
+      Name "ShadowCaster"
+      Tags { "LightMode" = "ShadowCaster" }
+
+      ZWrite On
+      ZTest LEqual
+      ColorMask 0
+      Cull Back
+
+      HLSLPROGRAM
+      //--------------------------------------
+      // GPU Instancing
+      #pragma multi_compile_instancing
+      #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
+      #pragma vertex ShadowPassVertex
+      #pragma fragment ShadowPassFragment
+
+      #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+
+      #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
+      #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
+      #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
       ENDHLSL
     }
 
