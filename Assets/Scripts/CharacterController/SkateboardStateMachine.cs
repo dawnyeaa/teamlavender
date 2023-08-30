@@ -52,6 +52,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public bool Crouching = false;
   [ReadOnly] public bool PushingAnim = false;
   [ReadOnly] public bool Pushing = false;
+  [ReadOnly] public bool PlayingBufferedPush = false;
   [ReadOnly] public float CurrentPushT = 0;
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
@@ -61,6 +62,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
+  [ReadOnly] public DebugFrame debugFrame;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -83,10 +85,12 @@ public class SkateboardStateMachine : StateMachine {
   public SpawnPointManager SpawnPointManager;
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
+  public DebugFrameHandler DebugFrameHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
   private void Start() {
+    fixedUpdate = true;
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
@@ -111,6 +115,10 @@ public class SkateboardStateMachine : StateMachine {
     CurrentPushT = duration;
   }
 
+  public void BrakeForce() {
+    Input.braking = true;
+  }
+
   public void PushingEnd() {
     PushingAnim = false;
     Pushing = false;
@@ -128,5 +136,13 @@ public class SkateboardStateMachine : StateMachine {
       await Task.Delay(100);
       Gamepad.current.SetMotorSpeeds(0, 0);
     }
+  }
+
+  public void EnterDebugMode() {
+    SwitchState(new SkateboardPauseState(this));
+  }
+
+  public void ExitDebugMode() {
+    SwitchState(new SkateboardMoveState(this));
   }
 }
