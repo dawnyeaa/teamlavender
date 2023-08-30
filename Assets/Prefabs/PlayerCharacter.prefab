@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxSpeed: 20
-  TurnLockSpeed: 30
+  TurnLockSpeed: 15
   PushForce: 15
   PushForceCurve:
     serializedVersion: 2
@@ -449,6 +449,7 @@ MonoBehaviour:
   TruckGripFactor: 0.8
   BoardPositionDamping: 0.1
   PushingMaxSlope: 90
+  PushTurnReduction: 0.65
   OllieForce: 180
   DeadTime: 3
   MinHeadZoneSize: 2.4

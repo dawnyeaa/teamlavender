@@ -130,10 +130,9 @@ public abstract class SkateboardBaseState : State {
   protected void CalculateTurn() {
     if (sm.Grounded) {
       float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
-      if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget = 0;
+      if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
       sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
-      sm.CharacterAnimator.SetBool("leanR", sm.TruckTurnPercent > 0);
-      sm.CharacterAnimator.SetFloat("leanStrength", Mathf.Abs(sm.TruckTurnPercent));
+      sm.CharacterAnimator.SetFloat("leanValue", (sm.TruckTurnPercent*0.5f) + 0.5f);
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;

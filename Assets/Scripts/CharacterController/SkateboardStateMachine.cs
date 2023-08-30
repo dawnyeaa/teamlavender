@@ -37,6 +37,7 @@ public class SkateboardStateMachine : StateMachine {
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
   public float PushingMaxSlope = 5f;
+  public float PushTurnReduction = 0.75f;
   public float OllieForce = 1f;
   public float DeadTime = 3f;
   public float MinHeadZoneSize = 2.4f;
