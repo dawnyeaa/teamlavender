@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEditor;
 
 public class SkateboardMoveState : SkateboardBaseState {
-  private readonly int TurnHash = Animator.StringToHash("dir");
-
   public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
 
   public override void Enter() {
@@ -13,6 +11,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnOlliePerformed += OnOllieInput;
     sm.Input.OnStartBraking += StartBrake;
     sm.Input.OnEndBraking += EndBrake;
+    sm.ComboActions["ollie"] += OnOllieInput;
   }
 
   public override void Tick() {
@@ -28,7 +27,6 @@ public class SkateboardMoveState : SkateboardBaseState {
     ApplyFrictionForce();
 
     SaveDebugFrame();
-    // sm.Board.SetFloat(TurnHash, sm.Turning);
   }
 
   public override void Exit() {
@@ -37,5 +35,6 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnOlliePerformed -= OnOllieInput;
     sm.Input.OnStartBraking -= StartBrake;
     sm.Input.OnEndBraking -= EndBrake;
+    sm.ComboActions["ollie"] -= OnOllieInput;
   }
 }

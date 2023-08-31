@@ -220,7 +220,26 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void SetCrouching() {
-    sm.Crouching = sm.Input.crouching && sm.Grounded;
+    // if input is crouching, we're crouching (and the recover timer should be reset)
+    // if input is not crouching
+      // if we've just released it, start the crouch recover timer, and keep crouching
+      // if the timer is running, then decrement the timer, and keep crouching
+      // if the timer is expired, then stop crouching
+    bool localCrouching;
+    if (sm.Input.crouching) {
+      localCrouching = true;
+      sm.UncrouchDelayTimer = sm.UncrouchDelayTime;
+    }
+    else {
+      if (sm.UncrouchDelayTimer > 0) {
+        localCrouching = true;
+        sm.UncrouchDelayTimer -= Time.fixedDeltaTime;
+      }
+      else {
+        localCrouching = false;
+      }
+    }
+    sm.Crouching = localCrouching && sm.Grounded;
     sm.CharacterAnimator.SetBool("crouching", sm.Crouching);
   }
 

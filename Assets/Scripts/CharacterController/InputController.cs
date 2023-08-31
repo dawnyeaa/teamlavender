@@ -4,11 +4,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using System.Text.RegularExpressions;
 
 public enum Input {
-  Push,
-  Brake,
-  Switch,
+  northButton,
+  eastButton,
+  southButton,
+  westButton,
+  lb,
+  lt,
+  rb,
+  rt,
+  dpadUp,
+  dpadRight,
+  dpadDown,
+  dpadLeft,
+  rsClick,
+  lsClick,
   rs1,
   rs2,
   rs3,
@@ -17,10 +29,21 @@ public enum Input {
   rs6,
   rs7,
   rs8,
-  rs9
+  rs9,
+  ls1,
+  ls2,
+  ls3,
+  ls4,
+  ls5,
+  ls6,
+  ls7,
+  ls8,
+  ls9
 }
 
 public class InputController : MonoBehaviour, Controls.IPlayerActions {
+  private const float ONEONROOT2 = 0.7071067811865475f;
+  private readonly Regex leftStickRx = new(@"(?!.*\/)left.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
   public float turn;
   public bool braking;
   public bool crouching;
@@ -29,6 +52,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Vector2 rightStickDigital;
 
   public float rightStickDead = 0.2f;
+  public float comboStickDead = 0.2f;
+
+  private int rsLastNumpad = -1;
+  private int lsLastNumpad = -1;
 
   public Action OnPushPerformed;
   public Action OnSwitchPerformed;
@@ -41,16 +68,20 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public SkateboardStateMachine character;
   public DebugModeStateMachine debugMode;
 
+  public ComboController comboController;
+
   private Controls controls;
 
   public void OnEnable() {
     if (controls != null)
       return;
 
+    comboController = comboController != null ? comboController : character.GetComponent<ComboController>();
+
     controls = new Controls();
     controls.player.SetCallbacks(this);
     controls.player.Enable();
-    UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+    Cursor.lockState = CursorLockMode.Locked;
     Cursor.visible = false;
   }
   
@@ -92,37 +123,9 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnRightStick(InputAction.CallbackContext context) {
     rightStick = context.ReadValue<Vector2>();
-    if (rightStick.magnitude < rightStickDead)
-      rightStickDigital.Set(0, 0);
-    else {
-      Vector2 stickNormed = rightStick.normalized;
-      float stickDeg = Vector2.SignedAngle(Vector2.right, stickNormed);
-      if (stickDeg <= 22.5f && stickDeg > -22.5f) {
-        rightStickDigital.Set(1, 0);
-      }
-      else if (stickDeg <= 67.5f && stickDeg > 22.5f) {
-        rightStickDigital.Set(1, 1);
-      }
-      else if (stickDeg <= 112.5f && stickDeg > 67.5f) {
-        rightStickDigital.Set(0, 1);
-      }
-      else if (stickDeg <= 157.5f && stickDeg > 112.5f) {
-        rightStickDigital.Set(-1, 1);
-      }
-      else if (stickDeg > -67.5f && stickDeg <= -22.5f) {
-        rightStickDigital.Set(1, -1);
-      }
-      else if (stickDeg > -112.5f && stickDeg <= -67.5f) {
-        rightStickDigital.Set(0, -1);
-      }
-      else if (stickDeg > -157.5f && stickDeg <= -112.5f) {
-        rightStickDigital.Set(-1, -1);
-      }
-      else if (stickDeg <= -157.5f || stickDeg > 157.5f) {
-        rightStickDigital.Set(-1, 0);
-      }
-    }
+    rightStickDigital = ParseStickDigitalDir(rightStick, rightStickDead);
   }
+
   public void OnOllie(InputAction.CallbackContext context) {
     if (context.performed) {
       crouching = true;
@@ -130,6 +133,95 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     else if (context.canceled) {
       if (crouching == true) OnOlliePerformed?.Invoke();
       crouching = false;
+    }
+  }
+
+  public void OnOllieCrouch(InputAction.CallbackContext context) {
+    if (context.performed) {
+      crouching = true;
+    }
+    else if (context.canceled) {
+      crouching = false;
+    }
+  }
+
+  public void OnComboInputButton(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    
+    var buttonName = context.control.name;
+    Input input;
+
+    switch (buttonName) {
+      case "buttonNorth":
+        input = Input.northButton;
+        break;
+      case "buttonEast":
+        input = Input.eastButton;
+        break;
+      case "buttonSouth":
+        input = Input.southButton;
+        break;
+      case "buttonWest":
+        input = Input.westButton;
+        break;
+      case "rightShoulder":
+        input = Input.rb;
+        break;
+      case "rightTrigger":
+        input = Input.rt;
+        break;
+      case "leftShoulder":
+        input = Input.lb;
+        break;
+      case "leftTrigger":
+        input = Input.lt;
+        break;
+      case "up":
+        input = Input.dpadUp;
+        break;
+      case "right":
+        input = Input.dpadRight;
+        break;
+      case "down":
+        input = Input.dpadDown;
+        break;
+      case "left":
+        input = Input.dpadLeft;
+        break;
+      case "leftStickPress":
+        input = Input.lsClick;
+        break;
+      case "rightStickPress":
+        input = Input.rsClick;
+        break;
+      default:
+        // unknown input
+        return;
+    }
+
+    comboController.AddToBuffer(input);
+  }
+
+  public void OnComboInputStick(InputAction.CallbackContext context) {
+    var stick = context.ReadValue<Vector2>();
+    var stickNumpad = ParseStickNumpadNotation(stick, comboStickDead);
+    // check if left or right stick (assume right if unknown)
+    var stickName = context.control.name;
+    var isLeftStick = stickName.ToLower().Contains("left");
+
+    var lastNumpad = isLeftStick ? lsLastNumpad : rsLastNumpad;
+    var stickNumpadValueOffset = (isLeftStick ? Input.ls1 : Input.rs1) - 1;
+    bool isStickValueNew = stickNumpad != lastNumpad;
+
+    if (isStickValueNew)
+      comboController.AddToBuffer(stickNumpad+stickNumpadValueOffset);
+
+    if (isLeftStick) {
+      lsLastNumpad = stickNumpad;
+    }
+    else {
+      rsLastNumpad = stickNumpad;
     }
   }
 
@@ -166,5 +258,78 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     character.EnterDebugMode();
     debugMode.Activate();
   }
-  
+
+  public static int ParseStickNumpadNotation(Vector2 stick, float stickDead) {
+    Vector2[] STICK_DIRECTIONS = {
+      new Vector2(-ONEONROOT2, -ONEONROOT2),
+      new Vector2(0, -1),
+      new Vector2(ONEONROOT2, -ONEONROOT2),
+      new Vector2(-1, 0),
+      new Vector2(1, 0),
+      new Vector2(-ONEONROOT2, ONEONROOT2),
+      new Vector2(0, 1),
+      new Vector2(ONEONROOT2, ONEONROOT2)
+    };
+    if (stick.magnitude < stickDead)
+      return 5;
+    else {
+      Vector2 stickNormed = stick.normalized;
+      float[] stickDots = {
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[0]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[1]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[2]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[3]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[4]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[5]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[6]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[7]),
+      };
+
+      int maxIndex = 0;
+      float max = float.MinValue;
+      for (int i = 0; i < stickDots.Length; ++i) {
+        if (stickDots[i] > max) {
+          max = stickDots[i];
+          maxIndex = i;
+        } 
+      }
+
+      // maps 0...7 to 1...9, skipping 5
+      return maxIndex + (maxIndex >= 4 ? 2 : 1);
+    }
+  }
+
+  private static Vector2 ParseStickDigitalDir(Vector2 stick, float stickDead) {
+    Vector2 result = new();
+
+    switch (ParseStickNumpadNotation(stick, stickDead)) {
+      case 1:
+        result.Set(-1, -1);
+        break;
+      case 2:
+        result.Set(0, -1);
+        break;
+      case 3:
+        result.Set(1, -1);
+        break;
+      case 4:
+        result.Set(-1, 0);
+        break;
+      case 5:
+        break;
+      case 6:
+        result.Set(1, 0);
+        break;
+      case 7:
+        result.Set(-1, 1);
+        break;
+      case 8:
+        result.Set(0, 1);
+        break;
+      case 9:
+        result.Set(1, 1);
+        break;
+    }
+    return result;
+  }
 }

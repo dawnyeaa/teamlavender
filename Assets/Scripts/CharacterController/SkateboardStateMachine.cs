@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Animations;
 using System.Threading.Tasks;
 using UnityEngine.InputSystem;
+using System;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -39,6 +41,7 @@ public class SkateboardStateMachine : StateMachine {
   public float PushingMaxSlope = 5f;
   public float PushTurnReduction = 0.75f;
   public float OllieForce = 1f;
+  public float UncrouchDelayTime = 0.2f;
   public float DeadTime = 3f;
   public float MinHeadZoneSize = 2.4f;
   public float MaxHeadZoneSize = 6f;
@@ -51,6 +54,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public bool FacingForward = true;
   [ReadOnly] public bool Grounded = true;
   [ReadOnly] public bool Crouching = false;
+  [ReadOnly] public float UncrouchDelayTimer = 0;
   [ReadOnly] public bool PushingAnim = false;
   [ReadOnly] public bool Pushing = false;
   [ReadOnly] public bool PlayingBufferedPush = false;
@@ -63,6 +67,9 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
+  [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
+    { "ollie", null }
+  };
   [ReadOnly] public DebugFrame debugFrame;
 
   // Objects to link
@@ -73,8 +80,6 @@ public class SkateboardStateMachine : StateMachine {
   public Rigidbody FacingParentRB, FacingRB;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
-  // public WheelController Wheels { get; private set; }
-
   public Transform footRepresentation;
   public Transform BodyMesh;
   public Transform Board;
@@ -95,7 +100,6 @@ public class SkateboardStateMachine : StateMachine {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
-    // Wheels = GetComponent<WheelController>();
 
     SwitchState(new SkateboardMoveState(this));
 
@@ -145,5 +149,9 @@ public class SkateboardStateMachine : StateMachine {
 
   public void ExitDebugMode() {
     SwitchState(new SkateboardMoveState(this));
+  }
+
+  public void OnCombo(string name) {
+    ComboActions[name]?.Invoke();
   }
 }
