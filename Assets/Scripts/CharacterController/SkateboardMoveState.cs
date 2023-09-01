@@ -12,6 +12,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnStartBraking += StartBrake;
     sm.Input.OnEndBraking += EndBrake;
     sm.ComboActions["ollie"] += OnOllieInput;
+    sm.ComboActions["kickflip"] += OnKickflipInput;
   }
 
   public override void Tick() {
@@ -36,5 +37,6 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnStartBraking -= StartBrake;
     sm.Input.OnEndBraking -= EndBrake;
     sm.ComboActions["ollie"] -= OnOllieInput;
+    sm.ComboActions["kickflip"] -= OnKickflipInput;
   }
 }

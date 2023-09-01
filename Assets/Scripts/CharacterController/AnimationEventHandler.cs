@@ -9,6 +9,10 @@ public class AnimationEventHandler : MonoBehaviour {
     sm.OnOllie();
   }
 
+  public void OnKickflip() {
+    sm.OnKickflipForce();
+  }
+
   public void PushForce(int pushFrames) {
     sm.StartPushForce(pushFrames/framesPerSecond);
   }

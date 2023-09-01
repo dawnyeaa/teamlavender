@@ -68,7 +68,8 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
   [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
-    { "ollie", null }
+    { "ollie", null },
+    { "kickflip", null }
   };
   [ReadOnly] public DebugFrame debugFrame;
 
@@ -111,6 +112,10 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void OnOllie() {
+    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
+  }
+
+  public void OnKickflipForce() {
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
   }
 

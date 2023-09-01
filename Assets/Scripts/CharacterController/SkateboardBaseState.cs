@@ -249,6 +249,12 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void OnKickflipInput() {
+    if (sm.Crouching) {
+      sm.CharacterAnimator.SetTrigger("kickflip");
+    }
+  }
+
   protected void ApplyFrictionForce() {
     Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
     float frictionMag = sm.PhysMat.dynamicFriction * forwardVelocity.magnitude;

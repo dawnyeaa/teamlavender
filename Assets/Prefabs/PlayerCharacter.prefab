@@ -340,8 +340,14 @@ MonoBehaviour:
   rightStick: {x: 0, y: 0}
   rightStickDigital: {x: 0, y: 0}
   rightStickDead: 0.2
+  comboStickDead: 0.7
+  comboStickMidRadius: 0.1
+  comboStickMidVelocityThreshold: 0.01
+  rsNumpad: 0
+  rsRaw: {x: 0, y: 0}
   character: {fileID: 3832982824073343646}
   debugMode: {fileID: 0}
+  comboController: {fileID: 0}
 --- !u!114 &3832982824073343646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,6 +458,7 @@ MonoBehaviour:
   PushingMaxSlope: 90
   PushTurnReduction: 0.65
   OllieForce: 180
+  UncrouchDelayTime: 0.6
   DeadTime: 3
   MinHeadZoneSize: 2.4
   MaxHeadZoneSize: 6
@@ -461,6 +468,7 @@ MonoBehaviour:
   FacingForward: 1
   Grounded: 1
   Crouching: 0
+  UncrouchDelayTimer: 0
   PushingAnim: 0
   Pushing: 0
   PlayingBufferedPush: 0
@@ -524,8 +532,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c224c5143432e5c47aa199fd7a98be33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  queueVis: 
   comboList:
   - {fileID: 11400000, guid: 8bb87be32a04a1141a7be10a93422f72, type: 2}
+  - {fileID: 11400000, guid: e57c8decd520b874da7a31dc7ce7d885, type: 2}
 --- !u!1 &3832982824258907184
 GameObject:
   m_ObjectHideFlags: 0

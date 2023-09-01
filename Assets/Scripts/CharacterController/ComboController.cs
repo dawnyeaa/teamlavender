@@ -24,6 +24,7 @@ public class ComboController : MonoBehaviour {
 
   public void ClearBuffer() {
     comboBuffer.Clear();
+    queueVis = comboBuffer.ToList();
   }
 
   public void CheckCombos() {
@@ -39,6 +40,7 @@ public class ComboController : MonoBehaviour {
         if ((int)reversedbuffer[bufferI] == (int)comboInput[comboI]) {
           comboI++;
           if (comboI >= comboInput.Count) {
+            Debug.Log("ollieing");
             combo.ExecuteCombo();
             ClearBuffer();
             return;
