@@ -25,7 +25,6 @@ public enum Input {
   rs2,
   rs3,
   rs4,
-  rs5,
   rs6,
   rs7,
   rs8,
@@ -34,7 +33,6 @@ public enum Input {
   ls2,
   ls3,
   ls4,
-  ls5,
   ls6,
   ls7,
   ls8,
@@ -43,7 +41,6 @@ public enum Input {
 
 public class InputController : MonoBehaviour, Controls.IPlayerActions {
   private const float ONEONROOT2 = 0.7071067811865475f;
-  private readonly Regex leftStickRx = new(@"(?!.*\/)left.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
   public float turn;
   public bool braking;
   public bool crouching;
@@ -53,6 +50,12 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public float rightStickDead = 0.2f;
   public float comboStickDead = 0.2f;
+  public float comboStickMidRadius = 0.1f;
+  public float comboStickMidVelocityThreshold = 0.1f;
+
+  private Vector2 rightStickLast = new(0, 0);
+  private Vector2 leftStickLast = new(0, 0);
+  private float rightStickLastTime = 0, leftStickLastTime = 0;
 
   private int rsLastNumpad = -1;
   private int lsLastNumpad = -1;
@@ -76,7 +79,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     if (controls != null)
       return;
 
-    comboController = comboController != null ? comboController : character.GetComponent<ComboController>();
+    comboController ??= character.GetComponent<ComboController>();
 
     controls = new Controls();
     controls.player.SetCallbacks(this);
@@ -123,7 +126,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnRightStick(InputAction.CallbackContext context) {
     rightStick = context.ReadValue<Vector2>();
-    rightStickDigital = ParseStickDigitalDir(rightStick, rightStickDead);
+    // rightStickDigital = ParseStickDigitalDir(rightStick, rightStickDead);
   }
 
   public void OnOllie(InputAction.CallbackContext context) {
@@ -205,24 +208,42 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnComboInputStick(InputAction.CallbackContext context) {
     var stick = context.ReadValue<Vector2>();
-    var stickNumpad = ParseStickNumpadNotation(stick, comboStickDead);
-    // check if left or right stick (assume right if unknown)
     var stickName = context.control.name;
     var isLeftStick = stickName.ToLower().Contains("left");
 
-    var lastNumpad = isLeftStick ? lsLastNumpad : rsLastNumpad;
-    var stickNumpadValueOffset = (isLeftStick ? Input.ls1 : Input.rs1) - 1;
-    bool isStickValueNew = stickNumpad != lastNumpad;
-
-    if (isStickValueNew)
-      comboController.AddToBuffer(stickNumpad+stickNumpadValueOffset);
-
+    Vector2 stickDiff;
+    float stickTimeDelta;
     if (isLeftStick) {
-      lsLastNumpad = stickNumpad;
+      stickDiff = leftStickLast - stick;
+      stickTimeDelta = leftStickLastTime - Time.time;
+      leftStickLast = stick;
+      leftStickLastTime = Time.time;
     }
     else {
-      rsLastNumpad = stickNumpad;
+      stickDiff = rightStickLast - stick;
+      stickTimeDelta = rightStickLastTime - Time.time;
+      rightStickLast = stick;
+      rightStickLastTime = Time.time;
     }
+    var stickVelocity = (stickDiff/stickTimeDelta).magnitude;
+
+    var stickNumpad = ParseStickNumpadNotation(stick, comboStickDead, comboStickMidRadius, comboStickMidVelocityThreshold, stickVelocity);
+    // var stickIndex = stickNumpad - (stickNumpad > 5 ? 1 : 0);
+    // // check if left or right stick (assume right if unknown)
+
+    // var lastNumpad = isLeftStick ? lsLastNumpad : rsLastNumpad;
+    // var stickNumpadValueOffset = (isLeftStick ? Input.ls1 : Input.rs1) - 1;
+    // bool isStickValueNew = stickNumpad != lastNumpad;
+
+    // if (stickNumpad != 5 && isStickValueNew)
+    //   comboController.AddToBuffer(stickIndex+stickNumpadValueOffset);
+
+    // if (isLeftStick) {
+    //   lsLastNumpad = stickNumpad;
+    // }
+    // else {
+    //   rsLastNumpad = stickNumpad;
+    // }
   }
 
   public void OnDebugdie(InputAction.CallbackContext context) {
@@ -259,7 +280,11 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     debugMode.Activate();
   }
 
-  public static int ParseStickNumpadNotation(Vector2 stick, float stickDead) {
+  public static int ParseStickNumpadNotation(Vector2 stick, 
+                                             float stickDeadRadius, 
+                                             float stickMidRadius, 
+                                             float stickMidVelocityThreshold,
+                                             float stickVelocity) {
     Vector2[] STICK_DIRECTIONS = {
       new Vector2(-ONEONROOT2, -ONEONROOT2),
       new Vector2(0, -1),
@@ -270,9 +295,9 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       new Vector2(0, 1),
       new Vector2(ONEONROOT2, ONEONROOT2)
     };
-    if (stick.magnitude < stickDead)
-      return 5;
-    else {
+
+    if (stick.magnitude >= stickDeadRadius) {
+      // its a regular direction
       Vector2 stickNormed = stick.normalized;
       float[] stickDots = {
         Vector2.Dot(stickNormed, STICK_DIRECTIONS[0]),
@@ -282,7 +307,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
         Vector2.Dot(stickNormed, STICK_DIRECTIONS[4]),
         Vector2.Dot(stickNormed, STICK_DIRECTIONS[5]),
         Vector2.Dot(stickNormed, STICK_DIRECTIONS[6]),
-        Vector2.Dot(stickNormed, STICK_DIRECTIONS[7]),
+        Vector2.Dot(stickNormed, STICK_DIRECTIONS[7])
       };
 
       int maxIndex = 0;
@@ -291,18 +316,28 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
         if (stickDots[i] > max) {
           max = stickDots[i];
           maxIndex = i;
-        } 
+        }
       }
 
       // maps 0...7 to 1...9, skipping 5
       return maxIndex + (maxIndex >= 4 ? 2 : 1);
     }
+    else if (stick.magnitude < stickMidRadius && stickVelocity < stickMidVelocityThreshold) {
+      // its at 5
+      return 5;
+    }
+    // otherwise its just in the dead zone, return code 0
+    return 0;
   }
 
-  private static Vector2 ParseStickDigitalDir(Vector2 stick, float stickDead) {
+  private static Vector2 ParseStickDigitalDir(Vector2 stick, 
+                                             float stickDeadRadius, 
+                                             float stickMidRadius, 
+                                             float stickMidVelocityThreshold,
+                                             float stickVelocity) {
     Vector2 result = new();
 
-    switch (ParseStickNumpadNotation(stick, stickDead)) {
+    switch (ParseStickNumpadNotation(stick, stickDeadRadius, stickMidRadius, stickMidVelocityThreshold, stickVelocity)) {
       case 1:
         result.Set(-1, -1);
         break;

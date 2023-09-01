@@ -24,6 +24,7 @@ public class ComboController : MonoBehaviour {
 
   public void ClearBuffer() {
     comboBuffer.Clear();
+    queueVis = comboBuffer.ToList();
   }
 
   public void CheckCombos() {
