@@ -55,7 +55,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   private Vector2 rightStickLast = new(0, 0);
   private Vector2 leftStickLast = new(0, 0);
-  private float rightStickLastTime = 0, leftStickLastTime = 0;
+  private double rightStickLastTime = 0, leftStickLastTime = 0;
+
+  public int rsNumpad = 0;
+  public Vector2 rsRaw = new(0, 0);
 
   private int rsLastNumpad = -1;
   private int lsLastNumpad = -1;
@@ -79,7 +82,8 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     if (controls != null)
       return;
 
-    comboController ??= character.GetComponent<ComboController>();
+    comboController =
+    comboController != null ? comboController : character.GetComponent<ComboController>();
 
     controls = new Controls();
     controls.player.SetCallbacks(this);
@@ -208,42 +212,49 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
 
   public void OnComboInputStick(InputAction.CallbackContext context) {
     var stick = context.ReadValue<Vector2>();
+    // check if left or right stick (assume right if unknown)
     var stickName = context.control.name;
     var isLeftStick = stickName.ToLower().Contains("left");
 
     Vector2 stickDiff;
-    float stickTimeDelta;
+    double stickTimeDelta;
     if (isLeftStick) {
       stickDiff = leftStickLast - stick;
-      stickTimeDelta = leftStickLastTime - Time.time;
+      stickTimeDelta = context.time - leftStickLastTime;
       leftStickLast = stick;
-      leftStickLastTime = Time.time;
+      leftStickLastTime = context.time;
     }
     else {
       stickDiff = rightStickLast - stick;
-      stickTimeDelta = rightStickLastTime - Time.time;
+      stickTimeDelta = context.time - rightStickLastTime;
       rightStickLast = stick;
-      rightStickLastTime = Time.time;
+      rightStickLastTime = context.time;
     }
-    var stickVelocity = (stickDiff/stickTimeDelta).magnitude;
+    var stickVelocity = stickDiff.magnitude/stickTimeDelta;
+    
+    var stickNumpad = ParseStickNumpadNotation(stick, comboStickDead, comboStickMidRadius, comboStickMidVelocityThreshold, (float)stickVelocity);
+    var stickIndex = stickNumpad - (stickNumpad > 5 ? 1 : 0);
 
-    var stickNumpad = ParseStickNumpadNotation(stick, comboStickDead, comboStickMidRadius, comboStickMidVelocityThreshold, stickVelocity);
-    // var stickIndex = stickNumpad - (stickNumpad > 5 ? 1 : 0);
-    // // check if left or right stick (assume right if unknown)
+    var lastNumpad = isLeftStick ? lsLastNumpad : rsLastNumpad;
+    var stickNumpadValueOffset = (isLeftStick ? Input.ls1 : Input.rs1) - 1;
+    bool isStickValueNew = stickNumpad != lastNumpad;
 
-    // var lastNumpad = isLeftStick ? lsLastNumpad : rsLastNumpad;
-    // var stickNumpadValueOffset = (isLeftStick ? Input.ls1 : Input.rs1) - 1;
-    // bool isStickValueNew = stickNumpad != lastNumpad;
+    if (stickNumpad == 5) {
+      // I REALLY WANT TO UNCOMMENT THIS BUT IT MAKES IT VERY HARD TO DO STUFF RN
+      // comboController.ClearBuffer();
+    }
+    else if (stickNumpad != 0 && isStickValueNew) {
+      comboController.AddToBuffer(stickIndex+stickNumpadValueOffset);
+    }
 
-    // if (stickNumpad != 5 && isStickValueNew)
-    //   comboController.AddToBuffer(stickIndex+stickNumpadValueOffset);
-
-    // if (isLeftStick) {
-    //   lsLastNumpad = stickNumpad;
-    // }
-    // else {
-    //   rsLastNumpad = stickNumpad;
-    // }
+    if (isLeftStick) {
+      lsLastNumpad = stickNumpad;
+    }
+    else {
+      rsRaw = stick;
+      rsNumpad = stickNumpad;
+      rsLastNumpad = stickNumpad;
+    }
   }
 
   public void OnDebugdie(InputAction.CallbackContext context) {
