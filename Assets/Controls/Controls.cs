@@ -116,6 +116,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""debug.flyMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""a2ce7473-b7ce-491c-9945-009c44d76e6d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -360,6 +369,394 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""debug.changeScene"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""07d63a5c-0169-4121-b9c3-8ff9386446a7"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""debug.flyMode"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""b1f47d97-7fa8-4c70-8583-867ba2e8f3bb"",
+                    ""path"": ""<Keyboard>/pageDown"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""debug.flyMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""e1ffa61f-eec1-4c0e-a4f5-be03cd2c7e91"",
+                    ""path"": ""<Keyboard>/pageUp"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""debug.flyMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
+        },
+        {
+            ""name"": ""debugFly"",
+            ""id"": ""cdc489b7-d901-4257-a0c3-4f7a0b12328c"",
+            ""actions"": [
+                {
+                    ""name"": ""look"",
+                    ""type"": ""Value"",
+                    ""id"": ""694b1f77-1f3a-482a-8566-cea85e7296e1"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""move"",
+                    ""type"": ""Value"",
+                    ""id"": ""6a8e62ef-691f-4743-927d-aa94b1b5c8a1"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""vert"",
+                    ""type"": ""Value"",
+                    ""id"": ""f7b2d019-f2a1-4564-bcda-846d5d4c1ae6"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""stepBack"",
+                    ""type"": ""Value"",
+                    ""id"": ""c670d8de-5236-4acb-b002-dda465511ef2"",
+                    ""expectedControlType"": ""Digital"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""stepForwards"",
+                    ""type"": ""Value"",
+                    ""id"": ""7daf7753-5fc9-4671-acec-f16e8ad9068a"",
+                    ""expectedControlType"": ""Digital"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Debug.flyMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""b48b1be0-a78b-4d8b-af48-c9d9996d2d08"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""increaseFrameWindow"",
+                    ""type"": ""Button"",
+                    ""id"": ""05994b31-5b46-47cd-86ce-22e03bf65b00"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""decreaseFrameWindow"",
+                    ""type"": ""Button"",
+                    ""id"": ""76e37466-950c-4445-89c9-24f160a8b320"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b10e8b83-2861-48bc-82cf-23595a386bec"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""80c3cc0d-38f0-4f48-af10-a581c4ce5526"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=3,y=3)"",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""wasd"",
+                    ""id"": ""d23856ef-a88e-49d9-bbeb-d8a89618f0de"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""a7eefec0-386b-4fa9-8636-423fe56d7642"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""3bd850c4-ef89-4cf2-b8d1-d52c8b28bece"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""a498af03-5315-41d6-aaaf-0706c525555c"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""d70e913a-a9d4-41c7-a4b9-9eb84bc951ca"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b9c6db15-263e-43fa-a0d2-bca60641dfc4"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""keyb"",
+                    ""id"": ""b457034c-34d9-46d6-b2d3-8544811d60ad"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""vert"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""af9e24c9-29dc-41f6-9e37-acdfd40937bc"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""vert"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""a7c75297-97c4-4746-9481-e1e6eeaa35ce"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""vert"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""cont"",
+                    ""id"": ""9b4e3c3a-5074-4d0b-aaa9-e005001a6e8a"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""vert"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""893e7187-8941-4388-be60-8d844bb9401b"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""vert"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""43450265-c7fc-4135-b5ac-08922098b092"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""vert"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9dcac7ea-40b5-47e3-ac91-ca32900a74d0"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""stepBack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a2aee82b-127e-4ca9-bd7c-27be637a0494"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""stepBack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d6c5e622-81cd-495d-b530-15f45f403484"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""stepForwards"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""ab330e0e-2a32-460f-b733-338bd608aab4"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Debug.flyMode"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""3f0f1d57-9f46-43a0-8798-c036be2779a0"",
+                    ""path"": ""<Keyboard>/pageDown"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Debug.flyMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""4802cc8a-a2fa-4f5b-a254-cddbdc9e59a7"",
+                    ""path"": ""<Keyboard>/pageUp"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Debug.flyMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5203f131-89cb-46ee-8815-f2e19e5f8e9a"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""decreaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f64ab51d-8056-4515-97e1-b619aab184c4"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""decreaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""99f67932-eb7a-4884-b898-0bb17a702009"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""increaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b4942d92-6a65-4b0a-9da6-d98669b429b4"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""increaseFrameWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfb28c93-dedb-49d1-833e-7a4e62bb2c3c"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""stepForwards"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -406,6 +803,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_ollie = m_player.FindAction("ollie", throwIfNotFound: true);
         m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
         m_player_debugchangeScene = m_player.FindAction("debug.changeScene", throwIfNotFound: true);
+        m_player_debugflyMode = m_player.FindAction("debug.flyMode", throwIfNotFound: true);
+        // debugFly
+        m_debugFly = asset.FindActionMap("debugFly", throwIfNotFound: true);
+        m_debugFly_look = m_debugFly.FindAction("look", throwIfNotFound: true);
+        m_debugFly_move = m_debugFly.FindAction("move", throwIfNotFound: true);
+        m_debugFly_vert = m_debugFly.FindAction("vert", throwIfNotFound: true);
+        m_debugFly_stepBack = m_debugFly.FindAction("stepBack", throwIfNotFound: true);
+        m_debugFly_stepForwards = m_debugFly.FindAction("stepForwards", throwIfNotFound: true);
+        m_debugFly_DebugflyMode = m_debugFly.FindAction("Debug.flyMode", throwIfNotFound: true);
+        m_debugFly_increaseFrameWindow = m_debugFly.FindAction("increaseFrameWindow", throwIfNotFound: true);
+        m_debugFly_decreaseFrameWindow = m_debugFly.FindAction("decreaseFrameWindow", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -475,6 +883,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_ollie;
     private readonly InputAction m_player_debugdie;
     private readonly InputAction m_player_debugchangeScene;
+    private readonly InputAction m_player_debugflyMode;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -489,6 +898,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @ollie => m_Wrapper.m_player_ollie;
         public InputAction @debugdie => m_Wrapper.m_player_debugdie;
         public InputAction @debugchangeScene => m_Wrapper.m_player_debugchangeScene;
+        public InputAction @debugflyMode => m_Wrapper.m_player_debugflyMode;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -528,6 +938,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugchangeScene.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
                 @debugchangeScene.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
                 @debugchangeScene.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
+                @debugflyMode.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugflyMode;
+                @debugflyMode.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugflyMode;
+                @debugflyMode.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugflyMode;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -562,10 +975,102 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugchangeScene.started += instance.OnDebugchangeScene;
                 @debugchangeScene.performed += instance.OnDebugchangeScene;
                 @debugchangeScene.canceled += instance.OnDebugchangeScene;
+                @debugflyMode.started += instance.OnDebugflyMode;
+                @debugflyMode.performed += instance.OnDebugflyMode;
+                @debugflyMode.canceled += instance.OnDebugflyMode;
             }
         }
     }
     public PlayerActions @player => new PlayerActions(this);
+
+    // debugFly
+    private readonly InputActionMap m_debugFly;
+    private IDebugFlyActions m_DebugFlyActionsCallbackInterface;
+    private readonly InputAction m_debugFly_look;
+    private readonly InputAction m_debugFly_move;
+    private readonly InputAction m_debugFly_vert;
+    private readonly InputAction m_debugFly_stepBack;
+    private readonly InputAction m_debugFly_stepForwards;
+    private readonly InputAction m_debugFly_DebugflyMode;
+    private readonly InputAction m_debugFly_increaseFrameWindow;
+    private readonly InputAction m_debugFly_decreaseFrameWindow;
+    public struct DebugFlyActions
+    {
+        private @Controls m_Wrapper;
+        public DebugFlyActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @look => m_Wrapper.m_debugFly_look;
+        public InputAction @move => m_Wrapper.m_debugFly_move;
+        public InputAction @vert => m_Wrapper.m_debugFly_vert;
+        public InputAction @stepBack => m_Wrapper.m_debugFly_stepBack;
+        public InputAction @stepForwards => m_Wrapper.m_debugFly_stepForwards;
+        public InputAction @DebugflyMode => m_Wrapper.m_debugFly_DebugflyMode;
+        public InputAction @increaseFrameWindow => m_Wrapper.m_debugFly_increaseFrameWindow;
+        public InputAction @decreaseFrameWindow => m_Wrapper.m_debugFly_decreaseFrameWindow;
+        public InputActionMap Get() { return m_Wrapper.m_debugFly; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugFlyActions set) { return set.Get(); }
+        public void SetCallbacks(IDebugFlyActions instance)
+        {
+            if (m_Wrapper.m_DebugFlyActionsCallbackInterface != null)
+            {
+                @look.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnLook;
+                @look.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnLook;
+                @look.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnLook;
+                @move.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnMove;
+                @move.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnMove;
+                @move.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnMove;
+                @vert.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnVert;
+                @vert.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnVert;
+                @vert.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnVert;
+                @stepBack.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepBack;
+                @stepBack.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepBack;
+                @stepBack.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepBack;
+                @stepForwards.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepForwards;
+                @stepForwards.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepForwards;
+                @stepForwards.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnStepForwards;
+                @DebugflyMode.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDebugflyMode;
+                @DebugflyMode.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDebugflyMode;
+                @DebugflyMode.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDebugflyMode;
+                @increaseFrameWindow.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnIncreaseFrameWindow;
+                @increaseFrameWindow.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnIncreaseFrameWindow;
+                @increaseFrameWindow.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnIncreaseFrameWindow;
+                @decreaseFrameWindow.started -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.performed -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.canceled -= m_Wrapper.m_DebugFlyActionsCallbackInterface.OnDecreaseFrameWindow;
+            }
+            m_Wrapper.m_DebugFlyActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @look.started += instance.OnLook;
+                @look.performed += instance.OnLook;
+                @look.canceled += instance.OnLook;
+                @move.started += instance.OnMove;
+                @move.performed += instance.OnMove;
+                @move.canceled += instance.OnMove;
+                @vert.started += instance.OnVert;
+                @vert.performed += instance.OnVert;
+                @vert.canceled += instance.OnVert;
+                @stepBack.started += instance.OnStepBack;
+                @stepBack.performed += instance.OnStepBack;
+                @stepBack.canceled += instance.OnStepBack;
+                @stepForwards.started += instance.OnStepForwards;
+                @stepForwards.performed += instance.OnStepForwards;
+                @stepForwards.canceled += instance.OnStepForwards;
+                @DebugflyMode.started += instance.OnDebugflyMode;
+                @DebugflyMode.performed += instance.OnDebugflyMode;
+                @DebugflyMode.canceled += instance.OnDebugflyMode;
+                @increaseFrameWindow.started += instance.OnIncreaseFrameWindow;
+                @increaseFrameWindow.performed += instance.OnIncreaseFrameWindow;
+                @increaseFrameWindow.canceled += instance.OnIncreaseFrameWindow;
+                @decreaseFrameWindow.started += instance.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.performed += instance.OnDecreaseFrameWindow;
+                @decreaseFrameWindow.canceled += instance.OnDecreaseFrameWindow;
+            }
+        }
+    }
+    public DebugFlyActions @debugFly => new DebugFlyActions(this);
     private int m_KBMSchemeIndex = -1;
     public InputControlScheme KBMScheme
     {
@@ -596,5 +1101,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnOllie(InputAction.CallbackContext context);
         void OnDebugdie(InputAction.CallbackContext context);
         void OnDebugchangeScene(InputAction.CallbackContext context);
+        void OnDebugflyMode(InputAction.CallbackContext context);
+    }
+    public interface IDebugFlyActions
+    {
+        void OnLook(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
+        void OnVert(InputAction.CallbackContext context);
+        void OnStepBack(InputAction.CallbackContext context);
+        void OnStepForwards(InputAction.CallbackContext context);
+        void OnDebugflyMode(InputAction.CallbackContext context);
+        void OnIncreaseFrameWindow(InputAction.CallbackContext context);
+        void OnDecreaseFrameWindow(InputAction.CallbackContext context);
     }
 }
