@@ -29,6 +29,9 @@ public class SkateboardStateMachine : StateMachine {
   public float SpringDamping = 1f;
   public float ProjectRadius = 0.25f;
   public float ProjectLength = 1.5f;
+  public float ForwardCollisionDistance = 0.43f;
+  public float ForwardCollisionOriginYOffset = 0.1f;
+  public float WallBounceForce = 0.5f;
   public float RightingStrength = 1f;
   // public float EdgeSafeSpeedEpsilon = 0.1f;
   // public float EdgeSafeAngle = 60f;

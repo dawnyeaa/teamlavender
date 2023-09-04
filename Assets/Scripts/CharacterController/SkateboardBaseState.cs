@@ -87,7 +87,7 @@ public abstract class SkateboardBaseState : State {
       sm.CurrentProjectLength = hit.distance;
       float compression = sm.ProjectLength - sm.CurrentProjectLength;
 
-      sm.MainRB.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
+      sm.MainRB.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier, ForceMode.Acceleration);
       if (!sm.Grounded) {
         Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.Down).normalized;
         if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.FacingRB.transform.forward)) < sm.LandingAngleGive) {
@@ -204,6 +204,24 @@ public abstract class SkateboardBaseState : State {
     }
     else {
       sm.Pushing = false;
+    }
+  }
+
+  protected void CheckWalls() {
+    var raycastOrigin = sm.Board.position+sm.ForwardCollisionOriginYOffset*-sm.DampedDown;
+    var raycastDirection = sm.FacingRB.transform.forward;
+    var collisionDistance = sm.ForwardCollisionDistance;
+    if (Physics.Raycast(raycastOrigin, raycastDirection, out RaycastHit hit, collisionDistance * 2f, LayerMask.GetMask("Ground"))) {
+      if (hit.distance < collisionDistance) {
+        var right = Vector3.Cross(sm.DampedDown, sm.FacingRB.transform.forward);
+        var verticalWallNormal = Vector3.ProjectOnPlane(hit.normal, right);
+        var forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
+        // if the hit distance is too close, then we've hit a wall
+        // get the forward velocity, and then push back with the force required for that speed
+        var wallSteepness = Vector3.Dot(verticalWallNormal.normalized, -forwardVelocity.normalized);
+        if (wallSteepness > 0.8f)
+          sm.MainRB.AddForce(-(forwardVelocity * (1 + sm.WallBounceForce)) / Time.fixedDeltaTime, ForceMode.Acceleration);
+      }
     }
   }
   
