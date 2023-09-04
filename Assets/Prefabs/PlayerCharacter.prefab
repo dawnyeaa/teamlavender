@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 374655035495845006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.141, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -339,6 +339,8 @@ MonoBehaviour:
   rightStick: {x: 0, y: 0}
   rightStickDigital: {x: 0, y: 0}
   rightStickDead: 0.2
+  character: {fileID: 3832982824073343646}
+  debugMode: {fileID: 0}
 --- !u!114 &3832982824073343646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +399,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   WheelFriction: 0.03
-  BrakingFriction: 1
+  BrakingFriction: 1.5
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
   TruckTurnDamping: 0.1
@@ -407,7 +409,7 @@ MonoBehaviour:
   SpringDamping: 20
   ProjectRadius: 0.25
   ProjectLength: 0.96
-  RightingStrength: 1
+  RightingStrength: 0.1
   GoingDownThreshold: -4
   LandingAngleGive: 0.8
   AirTurningDrag: 1
@@ -445,7 +447,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   TruckGripFactor: 0.8
-  BoardPositionDamping: 1
+  BoardPositionDamping: 0.1
   PushingMaxSlope: 90
   OllieForce: 180
   DeadTime: 3
@@ -459,6 +461,7 @@ MonoBehaviour:
   Crouching: 0
   PushingAnim: 0
   Pushing: 0
+  PlayingBufferedPush: 0
   CurrentPushT: 0
   MaxPushT: 0
   PushBuffered: 0
@@ -503,6 +506,7 @@ MonoBehaviour:
   SpawnPointManager: {fileID: 0}
   HeadSensZone: {fileID: 5858372948550401881}
   PointManager: {fileID: 0}
+  DebugFrameHandler: {fileID: 0}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
@@ -825,10 +829,10 @@ ParentConstraint:
   m_IsContraintActive: 1
   m_IsLocked: 1
   m_Sources:
-  - sourceTransform: {fileID: 0}
-    weight: 1
-  - sourceTransform: {fileID: 0}
+  - sourceTransform: {fileID: 6165387340348967196}
     weight: 0
+  - sourceTransform: {fileID: 6165387340348967196}
+    weight: 1
 --- !u!1 &3832982824730551212
 GameObject:
   m_ObjectHideFlags: 0
@@ -1364,7 +1368,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.141
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}

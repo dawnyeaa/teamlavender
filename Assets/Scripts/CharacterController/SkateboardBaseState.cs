@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 
 using UnityEditor;
+using RootMotion.FinalIK;
 
 public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
@@ -20,6 +21,7 @@ public abstract class SkateboardBaseState : State {
       sm.CharacterAnimator.SetBool("falling", true);
       float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
       if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
+        sm.debugFrame.predictedLandingPosition = hit.point;
         Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
         Vector3 normal = hit.normal;
         sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
@@ -50,6 +52,10 @@ public abstract class SkateboardBaseState : State {
 
     // sphere cast from body down - sphere does not need to be the same radius as the collider
     if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+
+      sm.debugFrame.pointOfContact = hit.point;
+      sm.debugFrame.contactNormal = hit.normal;
+
       Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
 
       Vector3 frontHitPos, backHitPos;
@@ -124,7 +130,10 @@ public abstract class SkateboardBaseState : State {
   protected void CalculateTurn() {
     if (sm.Grounded) {
       float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
+      if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget = 0;
       sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
+      sm.CharacterAnimator.SetBool("leanR", sm.TruckTurnPercent > 0);
+      sm.CharacterAnimator.SetFloat("leanStrength", Mathf.Abs(sm.TruckTurnPercent));
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
@@ -180,8 +189,12 @@ public abstract class SkateboardBaseState : State {
         sm.CurrentPushT -= Time.fixedDeltaTime;
         if (sm.CurrentPushT < 0) {
           if (sm.PushBuffered) {
+            sm.PlayingBufferedPush = true;
             sm.PushBuffered = false;
             sm.CharacterAnimator.SetTrigger("push");
+          }
+          else {
+            sm.PlayingBufferedPush = false;
           }
         }
       }
@@ -224,6 +237,25 @@ public abstract class SkateboardBaseState : State {
     sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 
+  protected void StartBrake() {
+    if (sm.PlayingBufferedPush) {
+      sm.PushingAnim = false;
+      sm.PushBuffered = false;
+    }
+    sm.CharacterAnimator.SetBool("stopping", true);
+    if (sm.MainRB.velocity.magnitude > 1f) {
+      sm.CharacterAnimator.SetBool("hardStop", true);
+    }
+    else {
+      sm.CharacterAnimator.SetBool("hardStop", false);
+    }
+  }
+
+  protected void EndBrake() {
+    sm.Input.braking = false;
+    sm.CharacterAnimator.SetBool("stopping", false);
+  }
+
   public void Spawn() {
     // find the nearest spawn point
     (Vector3 pos, Quaternion rot) = sm.SpawnPointManager.GetNearestSpawnPoint(sm.transform.position);
@@ -244,5 +276,24 @@ public abstract class SkateboardBaseState : State {
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
     sm.FacingParentRB.transform.rotation = rot;
+  }
+
+  protected void CreateDebugFrame() {
+    sm.debugFrame = new() {
+      centerOfMass = Vector3.zero,
+      pointOfContact = Vector3.zero,
+      predictedLandingPosition = Vector3.zero,
+      downVector = Vector3.zero,
+      dampedDownVector = Vector3.zero,
+      contactNormal = Vector3.zero,
+    };
+  }
+
+  protected void SaveDebugFrame() {
+    sm.debugFrame.centerOfMass = sm.transform.position;
+    sm.debugFrame.downVector = sm.Down;
+    sm.debugFrame.dampedDownVector = sm.DampedDown;
+
+    sm.DebugFrameHandler.PutFrame(sm.debugFrame);
   }
 }
