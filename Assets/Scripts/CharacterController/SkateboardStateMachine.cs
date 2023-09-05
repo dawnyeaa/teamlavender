@@ -70,6 +70,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
+  [ReadOnly] public Rail GrindingRail;
   [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
     { "ollie", null },
     { "kickflip", null }
@@ -96,6 +97,7 @@ public class SkateboardStateMachine : StateMachine {
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
   public DebugFrameHandler DebugFrameHandler;
+  public RailManager RailManager;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -141,6 +143,10 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardDeadState(this));
     await Task.Delay((int)(DeadTime*1000));
     SwitchState(new SkateboardMoveState(this));
+  }
+
+  public void EnterRail() {
+    SwitchState(new SkateboardRailState(this));
   }
 
   public async void SlamRumble() {

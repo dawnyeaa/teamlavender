@@ -24,6 +24,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     VertBodySpring();
     CalculateTurn();
     CalculatePush();
+    CheckRails();
     CheckWalls();
     BodyUprightCorrect();
     ApplyFrictionForce();

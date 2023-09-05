@@ -224,6 +224,17 @@ public abstract class SkateboardBaseState : State {
       }
     }
   }
+
+  protected void CheckRails() {
+    var vertVelocity = Vector3.Dot(Vector3.up, sm.MainRB.velocity);
+    if (vertVelocity < -Mathf.Epsilon) {
+      Rail rail = sm.RailManager.CheckRails(sm.Board.position, sm.MainRB.velocity);
+      if (rail != null) {
+        sm.GrindingRail = rail;
+        sm.EnterRail();
+      }
+    }
+  }
   
   protected void SetFriction() {
     if (sm.Input.braking)
