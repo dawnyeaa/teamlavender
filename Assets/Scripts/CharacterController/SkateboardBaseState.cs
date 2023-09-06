@@ -8,6 +8,7 @@ public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
   protected float TurnSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
+  protected Vector3 boardRailSnapVel = Vector3.zero;
 
   protected SkateboardBaseState(SkateboardStateMachine stateMachine) {
     sm = stateMachine;
@@ -160,6 +161,9 @@ public abstract class SkateboardBaseState : State {
         sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       }
     }
+  }
+
+  protected void ApplyRotationToModels() {
     sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
     sm.Board.rotation = sm.FacingRB.transform.rotation;
   }
@@ -236,11 +240,15 @@ public abstract class SkateboardBaseState : State {
     }
   }
   
-  protected void SetFriction() {
+  protected void SetMovingFriction() {
     if (sm.Input.braking)
-      sm.PhysMat.dynamicFriction = sm.BrakingFriction;
+      sm.Friction = sm.BrakingFriction;
     else
-      sm.PhysMat.dynamicFriction = sm.WheelFriction;
+      sm.Friction = sm.WheelFriction;
+  }
+  
+  protected void SetGrindingFriction() {
+    sm.Friction = sm.GrindingFriction;
   }
 
   protected void CapSpeed() {
@@ -286,7 +294,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void ApplyFrictionForce() {
     Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
-    float frictionMag = sm.PhysMat.dynamicFriction * forwardVelocity.magnitude;
+    float frictionMag = sm.Friction * forwardVelocity.magnitude;
     sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 
@@ -307,6 +315,74 @@ public abstract class SkateboardBaseState : State {
   protected void EndBrake() {
     sm.Input.braking = false;
     sm.CharacterAnimator.SetBool("stopping", false);
+  }
+
+  protected void FaceAlongRail() {
+    sm.FacingParentRB.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
+  }
+
+  protected void DisableSpinBody() {
+    sm.FacingRB.isKinematic = true;
+    sm.FacingRB.transform.localRotation = Quaternion.identity;
+  }
+
+  protected void EnableSpinBody() {
+    sm.FacingRB.isKinematic = false;
+  }
+
+  protected void StartRailBoost() {
+    var signedRailVector = (Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector.normalized).normalized;
+    sm.MainRB.AddForce(signedRailVector*sm.RailStartBoostForce, ForceMode.Acceleration);
+  }
+
+  protected void KeepOnRail() {
+    var a = Vector3.ProjectOnPlane(Physics.gravity, sm.GrindingRail.RailVector);
+    var v = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.GrindingRail.RailVector);
+    sm.MainRB.AddForce(-a, ForceMode.Acceleration);
+    sm.MainRB.AddForce(-v/Time.fixedDeltaTime, ForceMode.Acceleration);
+  }
+
+  protected void InitRailPos() {
+    sm.GrindOffsetPID = new PIDController3();
+  }
+
+  protected void SetRailPos() {
+    sm.GrindBoardLockPoint = sm.GrindingRail.GetNearestPoint(sm.Board.position);
+    sm.Board.position = sm.GrindBoardLockPoint;
+    sm.Board.position -= sm.RailLockTransforms[0].localPosition;
+    var signedRailVector = (Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector.normalized).normalized;
+    var railNormal = (sm.GrindingRail.RailOutside.normalized + Vector3.up + Vector3.up + Vector3.up) * 0.25f;
+    sm.Board.rotation = Quaternion.LookRotation(signedRailVector, railNormal);
+  }
+
+  protected void StartRailAnim() {
+    sm.CharacterAnimator.SetBool("50-50ing", true);
+  }
+
+  protected void EndRailAnim() {
+    sm.CharacterAnimator.SetBool("50-50ing", false);
+  }
+
+  protected void AdjustToTargetRailOffset() {
+    var railNormal = (sm.GrindingRail.RailOutside.normalized + 7*Vector3.up) * 0.125f;
+    var target = sm.GrindBoardLockPoint + railNormal*sm.GrindOffsetHeight;
+    // add the force to go to target
+    sm.GrindOffsetPID.proportionalGain = sm.GrindingPosSpringConstant;
+    sm.GrindOffsetPID.derivativeGain = sm.GrindingPosSpringDamping;
+    sm.MainRB.AddForce(Vector3.ProjectOnPlane(sm.GrindOffsetPID.Update(Time.fixedDeltaTime, sm.MainRB.position, target), sm.GrindingRail.RailVector), ForceMode.Acceleration);
+  }
+
+  protected void CheckRailValidity() {
+    sm.GrindBoardLockPoint = sm.GrindingRail.GetNearestPoint(sm.Board.position);
+    if (sm.GrindBoardLockPoint == sm.LastGrindPos) {
+      // end the grind
+      sm.ExitRail();
+    }
+    sm.LastGrindPos = sm.GrindBoardLockPoint;
+  }
+
+  protected void PushOffRail() {
+    sm.MainRB.AddForce(sm.GrindingRail.RailOutside.normalized*sm.ExitRailForce, ForceMode.Acceleration);
   }
 
   public void Spawn() {

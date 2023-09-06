@@ -1667,8 +1667,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0.12202659, y: -0.0064214882, z: 0.000789509, w: 0.9925058}
-  m_LocalPosition: {x: 0.00038276985, y: 2.5555902, z: -3.33949}
+  m_LocalRotation: {x: 0.12202656, y: -0.006411029, z: 0.00078822306, w: 0.99250585}
+  m_LocalPosition: {x: 0.0003119968, y: 2.5555902, z: -3.339491}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4341,7 +4341,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835217643}
   m_LocalRotation: {x: 0.05471179, y: -0.017256357, z: 0.00094568403, w: 0.99835265}
-  m_LocalPosition: {x: 0.00038276985, y: 2.5555902, z: -3.33949}
+  m_LocalPosition: {x: 0.0003119968, y: 2.5555902, z: -3.339491}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6687,7 +6687,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1176362370}
-  m_LocalRotation: {x: 0.085667074, y: 0.010607513, z: -0.0020980835, w: 0.9962652}
+  m_LocalRotation: {x: 0.08566705, y: 0.010617834, z: -0.0021001252, w: 0.99626505}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7697,7 +7697,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh174872
+  m_Name: pb_Mesh29286
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -8316,7 +8316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Rails: []
   ScanDistance: 10
-  LockDistance: 0.5
+  LockDistance: 0.3
   MinRailSpeed: 0.1
   RailLockAngleDegrees: 90
 --- !u!4 &1506500530
@@ -8448,7 +8448,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528319170}
-  m_LocalRotation: {x: 0.049421232, y: 0.010676706, z: -0.0017113788, w: 0.99871945}
+  m_LocalRotation: {x: 0.049421236, y: 0.010687104, z: -0.0017130456, w: 0.99871933}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8639,7 +8639,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh175822
+  m_Name: pb_Mesh30248
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11378,7 +11378,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2141149526}
-  m_LocalRotation: {x: 0.06753132, y: 0.010643921, z: -0.0019047912, w: 0.99765855}
+  m_LocalRotation: {x: 0.06753131, y: 0.010654294, z: -0.0019066476, w: 0.99765843}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12345,6 +12345,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 3.5527136e-17
       objectReference: {fileID: 0}
+    - target: {fileID: 2258488478340628080, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258488478340628080, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 2933329496816466224, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -12419,6 +12429,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 125.41713
+      objectReference: {fileID: 0}
+    - target: {fileID: 3408609873825854683, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3509300044070209438, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
@@ -12510,6 +12525,11 @@ PrefabInstance:
       propertyPath: debugMode
       value: 
       objectReference: {fileID: 340438400}
+    - target: {fileID: 3832982824073343643, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3832982824073343645, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
       propertyPath: m_Name
@@ -12532,14 +12552,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
+      propertyPath: GrindingFriction
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
       propertyPath: DebugFrameHandler
       value: 
       objectReference: {fileID: 416967712}
     - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
+      propertyPath: GrindOffsetHeight
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
       propertyPath: SpawnPointManager
       value: 
       objectReference: {fileID: 2078207117}
+    - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: RailStartBoostForce
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: GrindingPosSpringDamping
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832982824073343646, guid: 702bef6466822a64eac18f5c89d27a6b,
+        type: 3}
+      propertyPath: GrindingPosSpringConstant
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 3832982824695889956, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
       propertyPath: m_LocalPosition.x

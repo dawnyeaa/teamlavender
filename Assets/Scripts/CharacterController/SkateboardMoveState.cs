@@ -19,10 +19,11 @@ public class SkateboardMoveState : SkateboardBaseState {
     CreateDebugFrame();
 
     AdjustSpringMultiplier();
-    SetFriction();
+    SetMovingFriction();
     SetCrouching();
     VertBodySpring();
     CalculateTurn();
+    ApplyRotationToModels();
     CalculatePush();
     CheckRails();
     CheckWalls();

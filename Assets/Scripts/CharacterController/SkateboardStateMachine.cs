@@ -20,6 +20,7 @@ public class SkateboardStateMachine : StateMachine {
   // public float MaxPushDuration = 1f;
   public float WheelFriction = 0.01f;
   public float BrakingFriction = 0.4f;
+  public float GrindingFriction = 0.1f;
   public float MaxTruckTurnDeg = 8.34f;
   public float TruckSpacing = 0.205f;
   public float TruckTurnDamping = 0.3f;
@@ -51,10 +52,16 @@ public class SkateboardStateMachine : StateMachine {
   [Range(0, 1)] public float HeadZoneSpeedToHorizontalRatio = 0.5f;
   public float MinimumAirTime = 0.5f;
   public float PointsPerAirTimeSecond = 100f;
+  public float GrindingPosSpringConstant = 40f;
+  public float GrindingPosSpringDamping = 1f;
+  public float GrindOffsetHeight = 1f;
+  public float RailStartBoostForce = 10f;
+  public float ExitRailForce = 20f;
 
   // Internal State Processing
   [Header("Internal State")]
   [ReadOnly] public bool FacingForward = true;
+  [ReadOnly] public float Friction;
   [ReadOnly] public bool Grounded = true;
   [ReadOnly] public bool Crouching = false;
   [ReadOnly] public float UncrouchDelayTimer = 0;
@@ -71,6 +78,9 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
   [ReadOnly] public Rail GrindingRail;
+  [ReadOnly] public Vector3 GrindBoardLockPoint;
+  [ReadOnly] public Vector3 LastGrindPos;
+  [ReadOnly] public PIDController3 GrindOffsetPID;
   [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
     { "ollie", null },
     { "kickflip", null }
@@ -98,6 +108,7 @@ public class SkateboardStateMachine : StateMachine {
   public PointManager PointManager;
   public DebugFrameHandler DebugFrameHandler;
   public RailManager RailManager;
+  public List<Transform> RailLockTransforms;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -147,6 +158,10 @@ public class SkateboardStateMachine : StateMachine {
 
   public void EnterRail() {
     SwitchState(new SkateboardRailState(this));
+  }
+
+  public void ExitRail() {
+    SwitchState(new SkateboardMoveState(this));
   }
 
   public async void SlamRumble() {
