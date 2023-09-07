@@ -48,7 +48,6 @@ public class PIDController3 {
   private PIDController pid1, pid2, pid3;
 
   public PIDController3() {
-    Debug.Log("calling the constructor");
     pid1 = new();
     pid2 = new();
     pid3 = new();
