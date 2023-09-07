@@ -89,7 +89,6 @@ public class SkateboardStateMachine : StateMachine {
 
   // Objects to link
   [Header("Link Slot Objects")]
-  public PhysicMaterial PhysMat;
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
   public Rigidbody FacingParentRB, FacingRB;
