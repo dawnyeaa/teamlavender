@@ -25,10 +25,12 @@ public class SkateboardMoveState : SkateboardBaseState {
     CalculateTurn();
     ApplyRotationToModels();
     CalculatePush();
+    CapSpeed();
     CheckRails();
     CheckWalls();
     BodyUprightCorrect();
     ApplyFrictionForce();
+    SetHipHelperPos();
 
     SaveDebugFrame();
   }

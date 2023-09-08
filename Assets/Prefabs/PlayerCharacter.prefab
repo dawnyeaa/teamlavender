@@ -259,6 +259,7 @@ Transform:
   m_Children:
   - {fileID: 7733470790545756163}
   - {fileID: 1866958914355683588}
+  - {fileID: 4474288110729284100}
   m_Father: {fileID: 3832982824073343637}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -359,6 +360,7 @@ GameObject:
   - component: {fileID: 3832982824073343640}
   - component: {fileID: 3832982824073343646}
   - component: {fileID: 5959250916401455701}
+  - component: {fileID: 2908417279074541027}
   m_Layer: 7
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -456,8 +458,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4247ece03b03b0742a602a4b655a3f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxSpeed: 20
-  TurnLockSpeed: 15
+  MaxSpeed: 15
+  TurnLockSpeed: 25
   PushForce: 15
   PushForceCurve:
     serializedVersion: 2
@@ -503,10 +505,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   WheelFriction: 0.03
   BrakingFriction: 1.5
-  GrindingFriction: 0.7
+  GrindingFriction: 0.3
   MaxTruckTurnDeg: 8.34
   TruckSpacing: 0.205
-  TruckTurnDamping: 0.1
+  TruckTurnDamping: 0.05
   SpringConstant: 150
   SpringMultiplierMin: 0.6
   SpringMultiplierMax: 1
@@ -556,24 +558,27 @@ MonoBehaviour:
   TruckGripFactor: 0.8
   BoardPositionDamping: 0.1
   PushingMaxSlope: 90
-  PushTurnReduction: 0.65
+  PushTurnReduction: 0.4
   OllieForce: 180
   UncrouchDelayTime: 0.6
+  MaxProceduralCrouchDistance: 0.1
   DeadTime: 3
   MinHeadZoneSize: 2.4
   MaxHeadZoneSize: 6
   HeadZoneSpeedToHorizontalRatio: 0.5
   MinimumAirTime: 0.5
   PointsPerAirTimeSecond: 100
-  GrindingPosSpringConstant: 150
-  GrindingPosSpringDamping: 1
-  GrindOffsetHeight: 1
-  RailStartBoostForce: 20
+  GrindingPosSpringConstant: 500
+  GrindingPosSpringDamping: 0.5
+  GrindOffsetHeight: 1.3
+  RailStartBoostForce: 50
   ExitRailForce: 20
+  HipHelperFPS: 6
   FacingForward: 1
   Friction: 0
   Grounded: 1
   Crouching: 0
+  ProceduralCrouchFactor: 0
   UncrouchDelayTimer: 0
   PushingAnim: 0
   Pushing: 0
@@ -590,13 +595,14 @@ MonoBehaviour:
   GrindingRail: {fileID: 0}
   GrindBoardLockPoint: {x: 0, y: 0, z: 0}
   LastGrindPos: {x: 0, y: 0, z: 0}
-  PhysMat: {fileID: 13400000, guid: 1342056bc9bfa8a4495be1035f8519d5, type: 2}
   MainRB: {fileID: 3832982824073343641}
   frontAxis: {fileID: 3832982825911100688}
   backAxis: {fileID: 3832982824258907185}
   FacingParentRB: {fileID: 3832982824583626805}
   FacingRB: {fileID: 3832982824730551213}
   footRepresentation: {fileID: 3832982824601065071}
+  SmoothHipHelper: {fileID: 4474288110729284100}
+  HipHelper: {fileID: 1866958914355683588}
   BodyMesh: {fileID: 6165387340348967196}
   Board: {fileID: 7304270088077225127}
   CharacterAnimator: {fileID: 7231628970856199054}
@@ -651,6 +657,21 @@ MonoBehaviour:
   comboList:
   - {fileID: 11400000, guid: 8bb87be32a04a1141a7be10a93422f72, type: 2}
   - {fileID: 11400000, guid: e57c8decd520b874da7a31dc7ce7d885, type: 2}
+--- !u!114 &2908417279074541027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3832982824073343645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c40bad5d8a4dc419c29cf89dc923b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 1
+  transitionTime: 0.1
+  coolTimeScale: 0.2
 --- !u!1 &3832982824258907184
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,9 +978,7 @@ ParentConstraint:
   m_RotationAtRest: {x: 0, y: 0, z: 0}
   m_TranslationOffsets:
   - {x: -0.04309366, y: -0.21440971, z: 0.020228602}
-  - {x: -0.04309366, y: -0.21440971, z: 0.020228602}
   m_RotationOffsets:
-  - {x: 0, y: -90, z: 0}
   - {x: 0, y: -90, z: 0}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
@@ -970,9 +989,7 @@ ParentConstraint:
   m_IsContraintActive: 1
   m_IsLocked: 1
   m_Sources:
-  - sourceTransform: {fileID: 6165387340348967196}
-    weight: 0
-  - sourceTransform: {fileID: 6165387340348967196}
+  - sourceTransform: {fileID: 4474288110729284100}
     weight: 1
 --- !u!1 &3832982824730551212
 GameObject:
@@ -1283,6 +1300,37 @@ Transform:
   - {fileID: 497523644630318794}
   m_Father: {fileID: 7304270088077225127}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6232039392654713770
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4474288110729284100}
+  m_Layer: 7
+  m_Name: smoothHipPosHelper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4474288110729284100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6232039392654713770}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.141, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7304270088077225127}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6329314355085923148
 GameObject:
@@ -2017,6 +2065,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sm: {fileID: 3832982824073343646}
+  coolTime: {fileID: 2908417279074541027}
   framesPerSecond: 30
 --- !u!4 &5211929277365854058 stripped
 Transform:

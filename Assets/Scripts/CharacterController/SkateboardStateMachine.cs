@@ -46,6 +46,7 @@ public class SkateboardStateMachine : StateMachine {
   public float PushTurnReduction = 0.75f;
   public float OllieForce = 1f;
   public float UncrouchDelayTime = 0.2f;
+  public float MaxProceduralCrouchDistance = 0.3f;
   public float DeadTime = 3f;
   public float MinHeadZoneSize = 2.4f;
   public float MaxHeadZoneSize = 6f;
@@ -57,6 +58,7 @@ public class SkateboardStateMachine : StateMachine {
   public float GrindOffsetHeight = 1f;
   public float RailStartBoostForce = 10f;
   public float ExitRailForce = 20f;
+  public float HipHelperFPS = 12f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -64,7 +66,9 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float Friction;
   [ReadOnly] public bool Grounded = true;
   [ReadOnly] public bool Crouching = false;
+  [ReadOnly] public float ProceduralCrouchFactor = 0;
   [ReadOnly] public float UncrouchDelayTimer = 0;
+  [ReadOnly] public ContinuousDataStepper HipHeight;
   [ReadOnly] public bool PushingAnim = false;
   [ReadOnly] public bool Pushing = false;
   [ReadOnly] public bool PlayingBufferedPush = false;
@@ -95,6 +99,8 @@ public class SkateboardStateMachine : StateMachine {
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
+  public Transform SmoothHipHelper;
+  public Transform HipHelper;
   public Transform BodyMesh;
   public Transform Board;
   public Animator CharacterAnimator;

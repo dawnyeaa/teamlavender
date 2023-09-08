@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AnimationEventHandler : MonoBehaviour {
   public SkateboardStateMachine sm;
+  public CoolTimeController coolTime;
   public float framesPerSecond = 30;
   public void OnOllie() {
     sm.OnOllie();
@@ -11,6 +12,10 @@ public class AnimationEventHandler : MonoBehaviour {
 
   public void OnKickflip() {
     sm.OnKickflipForce();
+  }
+
+  public void CoolTime() {
+    coolTime.StartCoolTime();
   }
 
   public void PushForce(int pushFrames) {

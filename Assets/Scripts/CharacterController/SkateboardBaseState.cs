@@ -163,6 +163,23 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void SetHipHelperPos() {
+    // place hip helper at mainRB height above the board
+    var heightVector =  sm.MainRB.transform.position - sm.Board.position;
+    var smoothHeight = Vector3.Dot(heightVector, -sm.DampedDown);
+    // add crouching offset to height
+    
+    // smoothHeight -= sm.ProceduralCrouchFactor*sm.MaxProceduralCrouchDistance;
+    // Debug.Log(smoothHeight);
+
+    // step height
+    sm.HipHeight ??= new ContinuousDataStepper(smoothHeight, sm.HipHelperFPS);
+    var height = sm.HipHeight.Tick(smoothHeight, Time.fixedDeltaTime);
+    sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
+    sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
+    sm.BodyMesh.position = sm.HipHelper.position;
+  }
+
   protected void ApplyRotationToModels() {
     sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
     sm.Board.rotation = sm.FacingRB.transform.rotation;
@@ -254,6 +271,7 @@ public abstract class SkateboardBaseState : State {
   protected void CapSpeed() {
     if (sm.MainRB.velocity.magnitude > sm.MaxSpeed)
       sm.MainRB.velocity = sm.MainRB.velocity.normalized * sm.MaxSpeed;
+    sm.ProceduralCrouchFactor = sm.MainRB.velocity.magnitude / sm.MaxSpeed;
   }
 
   protected void SetCrouching() {
