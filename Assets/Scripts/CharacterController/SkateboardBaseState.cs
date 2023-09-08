@@ -8,6 +8,7 @@ public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
   protected float TurnSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
+  protected Vector3 boardRailSnapVel = Vector3.zero;
 
   protected SkateboardBaseState(SkateboardStateMachine stateMachine) {
     sm = stateMachine;
@@ -87,7 +88,7 @@ public abstract class SkateboardBaseState : State {
       sm.CurrentProjectLength = hit.distance;
       float compression = sm.ProjectLength - sm.CurrentProjectLength;
 
-      sm.MainRB.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier);
+      sm.MainRB.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier, ForceMode.Acceleration);
       if (!sm.Grounded) {
         Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.Down).normalized;
         if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.FacingRB.transform.forward)) < sm.LandingAngleGive) {
@@ -130,10 +131,9 @@ public abstract class SkateboardBaseState : State {
   protected void CalculateTurn() {
     if (sm.Grounded) {
       float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
-      if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget = 0;
+      if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
       sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
-      sm.CharacterAnimator.SetBool("leanR", sm.TruckTurnPercent > 0);
-      sm.CharacterAnimator.SetFloat("leanStrength", Mathf.Abs(sm.TruckTurnPercent));
+      sm.CharacterAnimator.SetFloat("leanValue", (sm.TruckTurnPercent*0.5f) + 0.5f);
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
@@ -161,6 +161,26 @@ public abstract class SkateboardBaseState : State {
         sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       }
     }
+  }
+
+  protected void SetHipHelperPos() {
+    // place hip helper at mainRB height above the board
+    var heightVector =  sm.MainRB.transform.position - sm.Board.position;
+    var smoothHeight = Vector3.Dot(heightVector, -sm.DampedDown);
+    // add crouching offset to height
+    
+    // smoothHeight -= sm.ProceduralCrouchFactor*sm.MaxProceduralCrouchDistance;
+    // Debug.Log(smoothHeight);
+
+    // step height
+    sm.HipHeight ??= new ContinuousDataStepper(smoothHeight, sm.HipHelperFPS);
+    var height = sm.HipHeight.Tick(smoothHeight, Time.fixedDeltaTime);
+    sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
+    sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
+    sm.BodyMesh.position = sm.HipHelper.position;
+  }
+
+  protected void ApplyRotationToModels() {
     sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
     sm.Board.rotation = sm.FacingRB.transform.rotation;
   }
@@ -207,21 +227,74 @@ public abstract class SkateboardBaseState : State {
       sm.Pushing = false;
     }
   }
+
+  protected void CheckWalls() {
+    var raycastOrigin = sm.Board.position+sm.ForwardCollisionOriginYOffset*-sm.DampedDown;
+    var raycastDirection = sm.FacingRB.transform.forward;
+    var collisionDistance = sm.ForwardCollisionDistance;
+    if (Physics.Raycast(raycastOrigin, raycastDirection, out RaycastHit hit, collisionDistance * 2f, LayerMask.GetMask("Ground"))) {
+      if (hit.distance < collisionDistance) {
+        var right = Vector3.Cross(sm.DampedDown, sm.FacingRB.transform.forward);
+        var verticalWallNormal = Vector3.ProjectOnPlane(hit.normal, right);
+        var forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
+        // if the hit distance is too close, then we've hit a wall
+        // get the forward velocity, and then push back with the force required for that speed
+        var wallSteepness = Vector3.Dot(verticalWallNormal.normalized, -forwardVelocity.normalized);
+        if (wallSteepness > 0.8f)
+          sm.MainRB.AddForce(-(forwardVelocity * (1 + sm.WallBounceForce)) / Time.fixedDeltaTime, ForceMode.Acceleration);
+      }
+    }
+  }
+
+  protected void CheckRails() {
+    var vertVelocity = Vector3.Dot(Vector3.up, sm.MainRB.velocity);
+    if (vertVelocity < -Mathf.Epsilon) {
+      Rail rail = sm.RailManager.CheckRails(sm.Board.position, sm.MainRB.velocity);
+      if (rail != null) {
+        sm.GrindingRail = rail;
+        sm.EnterRail();
+      }
+    }
+  }
   
-  protected void SetFriction() {
+  protected void SetMovingFriction() {
     if (sm.Input.braking)
-      sm.PhysMat.dynamicFriction = sm.BrakingFriction;
+      sm.Friction = sm.BrakingFriction;
     else
-      sm.PhysMat.dynamicFriction = sm.WheelFriction;
+      sm.Friction = sm.WheelFriction;
+  }
+  
+  protected void SetGrindingFriction() {
+    sm.Friction = sm.GrindingFriction;
   }
 
   protected void CapSpeed() {
     if (sm.MainRB.velocity.magnitude > sm.MaxSpeed)
       sm.MainRB.velocity = sm.MainRB.velocity.normalized * sm.MaxSpeed;
+    sm.ProceduralCrouchFactor = sm.MainRB.velocity.magnitude / sm.MaxSpeed;
   }
 
   protected void SetCrouching() {
-    sm.Crouching = sm.Input.crouching && sm.Grounded;
+    // if input is crouching, we're crouching (and the recover timer should be reset)
+    // if input is not crouching
+      // if we've just released it, start the crouch recover timer, and keep crouching
+      // if the timer is running, then decrement the timer, and keep crouching
+      // if the timer is expired, then stop crouching
+    bool localCrouching;
+    if (sm.Input.crouching) {
+      localCrouching = true;
+      sm.UncrouchDelayTimer = sm.UncrouchDelayTime;
+    }
+    else {
+      if (sm.UncrouchDelayTimer > 0) {
+        localCrouching = true;
+        sm.UncrouchDelayTimer -= Time.fixedDeltaTime;
+      }
+      else {
+        localCrouching = false;
+      }
+    }
+    sm.Crouching = localCrouching && sm.Grounded;
     sm.CharacterAnimator.SetBool("crouching", sm.Crouching);
   }
 
@@ -231,9 +304,15 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void OnKickflipInput() {
+    if (sm.Crouching) {
+      sm.CharacterAnimator.SetTrigger("kickflip");
+    }
+  }
+
   protected void ApplyFrictionForce() {
     Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
-    float frictionMag = sm.PhysMat.dynamicFriction * forwardVelocity.magnitude;
+    float frictionMag = sm.Friction * forwardVelocity.magnitude;
     sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 
@@ -254,6 +333,74 @@ public abstract class SkateboardBaseState : State {
   protected void EndBrake() {
     sm.Input.braking = false;
     sm.CharacterAnimator.SetBool("stopping", false);
+  }
+
+  protected void FaceAlongRail() {
+    sm.FacingParentRB.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
+  }
+
+  protected void DisableSpinBody() {
+    sm.FacingRB.isKinematic = true;
+    sm.FacingRB.transform.localRotation = Quaternion.identity;
+  }
+
+  protected void EnableSpinBody() {
+    sm.FacingRB.isKinematic = false;
+  }
+
+  protected void StartRailBoost() {
+    var signedRailVector = (Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector.normalized).normalized;
+    sm.MainRB.AddForce(signedRailVector*sm.RailStartBoostForce, ForceMode.Acceleration);
+  }
+
+  protected void KeepOnRail() {
+    var a = Vector3.ProjectOnPlane(Physics.gravity, sm.GrindingRail.RailVector);
+    var v = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.GrindingRail.RailVector);
+    sm.MainRB.AddForce(-a, ForceMode.Acceleration);
+    sm.MainRB.AddForce(-v/Time.fixedDeltaTime, ForceMode.Acceleration);
+  }
+
+  protected void InitRailPos() {
+    sm.GrindOffsetPID = new PIDController3();
+  }
+
+  protected void SetRailPos() {
+    sm.GrindBoardLockPoint = sm.GrindingRail.GetNearestPoint(sm.Board.position);
+    sm.Board.position = sm.GrindBoardLockPoint;
+    sm.Board.position -= sm.RailLockTransforms[0].localPosition;
+    var signedRailVector = (Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector.normalized).normalized;
+    var railNormal = (sm.GrindingRail.RailOutside.normalized + Vector3.up + Vector3.up + Vector3.up) * 0.25f;
+    sm.Board.rotation = Quaternion.LookRotation(signedRailVector, railNormal);
+  }
+
+  protected void StartRailAnim() {
+    sm.CharacterAnimator.SetBool("50-50ing", true);
+  }
+
+  protected void EndRailAnim() {
+    sm.CharacterAnimator.SetBool("50-50ing", false);
+  }
+
+  protected void AdjustToTargetRailOffset() {
+    var railNormal = (sm.GrindingRail.RailOutside.normalized + 7*Vector3.up) * 0.125f;
+    var target = sm.GrindBoardLockPoint + railNormal*sm.GrindOffsetHeight;
+    // add the force to go to target
+    sm.GrindOffsetPID.proportionalGain = sm.GrindingPosSpringConstant;
+    sm.GrindOffsetPID.derivativeGain = sm.GrindingPosSpringDamping;
+    sm.MainRB.AddForce(Vector3.ProjectOnPlane(sm.GrindOffsetPID.Update(Time.fixedDeltaTime, sm.MainRB.position, target), sm.GrindingRail.RailVector), ForceMode.Acceleration);
+  }
+
+  protected void CheckRailValidity() {
+    sm.GrindBoardLockPoint = sm.GrindingRail.GetNearestPoint(sm.Board.position);
+    if (sm.GrindBoardLockPoint == sm.LastGrindPos) {
+      // end the grind
+      sm.ExitRail();
+    }
+    sm.LastGrindPos = sm.GrindBoardLockPoint;
+  }
+
+  protected void PushOffRail() {
+    sm.MainRB.AddForce(sm.GrindingRail.RailOutside.normalized*sm.ExitRailForce, ForceMode.Acceleration);
   }
 
   public void Spawn() {
