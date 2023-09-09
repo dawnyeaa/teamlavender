@@ -95,7 +95,8 @@ public class SkateboardStateMachine : StateMachine {
   [Header("Link Slot Objects")]
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
-  public Rigidbody FacingParentRB, FacingRB;
+  public Transform FacingParent;
+  public Torquer Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
