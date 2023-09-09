@@ -280,7 +280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5007393084501851100
 Transform:
   m_ObjectHideFlags: 0
@@ -961,8 +961,10 @@ ParentConstraint:
   m_RotationAtRest: {x: 0, y: 0, z: 0}
   m_TranslationOffsets:
   - {x: -0.04309366, y: -0.21440971, z: 0.020228602}
+  - {x: 0, y: 0, z: 0}
   m_RotationOffsets:
   - {x: 0, y: -90, z: 0}
+  - {x: 0, y: 0, z: 0}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
@@ -974,6 +976,8 @@ ParentConstraint:
   m_Sources:
   - sourceTransform: {fileID: 4474288110729284100}
     weight: 1
+  - sourceTransform: {fileID: 4474288110729284100}
+    weight: 0
 --- !u!1 &3832982824730551212
 GameObject:
   m_ObjectHideFlags: 0
