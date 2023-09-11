@@ -28,10 +28,11 @@ public abstract class SkateboardBaseState : State {
         sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
         sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
 
-        sm.FacingParentRB.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.Down), -sm.Down);
+        // sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.Down), -sm.Down);
+        sm.FacingParent.rotation = Quaternion.identity;
         
-        sm.BodyMesh.rotation = sm.FacingParentRB.rotation;
-        sm.Board.rotation = sm.FacingParentRB.rotation;
+        sm.BodyMesh.rotation = sm.Facing.transform.rotation;
+        sm.Board.rotation = sm.Facing.transform.rotation;
         // sm.Board.localPosition = sm.Down * sm.BodyMesh.localPosition.magnitude;
       }
     }
@@ -57,7 +58,7 @@ public abstract class SkateboardBaseState : State {
       sm.debugFrame.pointOfContact = hit.point;
       sm.debugFrame.contactNormal = hit.normal;
 
-      Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.FacingRB.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
+      Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.Facing.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
 
       Vector3 frontHitPos, backHitPos;
       Vector3 tempNormal;
@@ -91,11 +92,10 @@ public abstract class SkateboardBaseState : State {
       sm.MainRB.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier, ForceMode.Acceleration);
       if (!sm.Grounded) {
         Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.Down).normalized;
-        if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.FacingRB.transform.forward)) < sm.LandingAngleGive) {
+        if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.Facing.transform.forward)) < sm.LandingAngleGive) {
           // sm.EnterDead();
         }
         else {
-          sm.FacingRB.transform.localRotation = Quaternion.identity;
         }
 
         if (sm.AirTimeCounter > sm.MinimumAirTime) {
@@ -112,7 +112,6 @@ public abstract class SkateboardBaseState : State {
       sm.Grounded = false;
     }
     if (!sm.Grounded) {
-      sm.FacingRB.transform.localRotation = Quaternion.identity;
       if (sm.AirTimeCounter > sm.MinimumAirTime)
         sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
       sm.AirTimeCounter += Time.fixedDeltaTime;
@@ -137,9 +136,9 @@ public abstract class SkateboardBaseState : State {
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
-        Vector3 newLeft = Vector3.Cross(sm.FacingRB.transform.forward, sm.Down);
+        Vector3 newLeft = Vector3.Cross(sm.Facing.transform.forward, sm.Down);
         Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
-        Vector3 turnForcePosition = sm.FacingRB.position + truckOffset * (i == 0 ? 1 : -1);
+        Vector3 turnForcePosition = sm.Facing.transform.position + truckOffset * (i == 0 ? 1 : -1);
         truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
         localTruckTurnPercent *= i == 0 ? 1 : -1;
         // get the new forward for the truck
@@ -149,15 +148,15 @@ public abstract class SkateboardBaseState : State {
         // get the truck's steering axis (right-left)
         Vector3 steeringDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * -newLeft * (i == 0 ? 1 : -1);
         // get the current velocity of the truck
-        Vector3 truckWorldVel = sm.MainRB.GetPointVelocity(turnForcePosition)+sm.FacingRB.GetPointVelocity(turnForcePosition);
+        Vector3 truckWorldVel = sm.MainRB.GetPointVelocity(turnForcePosition) + sm.Facing.GetPointVelocity(turnForcePosition);
         // get the speed in the trucks steering direction (right-left)
         float steeringVel = Vector3.Dot(steeringDir, truckWorldVel);
         // get the desired change in velocity (that would cancel sliding)
         float desiredVelChange = -steeringVel * sm.TruckGripFactor;
         // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
         float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
-        sm.FacingParentRB.rotation = Quaternion.LookRotation(truckOffset.normalized, -sm.DampedDown);
-        sm.FacingRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
+        sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
+        sm.Facing.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition);
         sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       }
     }
@@ -181,8 +180,8 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void ApplyRotationToModels() {
-    sm.BodyMesh.rotation = sm.FacingRB.transform.rotation;
-    sm.Board.rotation = sm.FacingRB.transform.rotation;
+    sm.BodyMesh.rotation = sm.Facing.transform.rotation;
+    sm.Board.rotation = sm.Facing.transform.rotation;
   }
 
   protected void StartPush() {
@@ -197,7 +196,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void OnSwitch() {
     if (sm.Grounded)
-      sm.FacingParentRB.transform.rotation *= Quaternion.AngleAxis(180f, sm.FacingParentRB.transform.up);
+      sm.FacingParent.rotation *= Quaternion.AngleAxis(180f, sm.FacingParent.up);
   }
 
   protected void CalculatePush() {
@@ -205,7 +204,7 @@ public abstract class SkateboardBaseState : State {
       if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope && !sm.Crouching) {
         // we're pushing
         float t = 1-(sm.CurrentPushT/sm.MaxPushT);
-        sm.MainRB.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.FacingRB.transform.forward, ForceMode.Acceleration);
+        sm.MainRB.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.Facing.transform.forward, ForceMode.Acceleration);
         sm.CurrentPushT -= Time.fixedDeltaTime;
         if (sm.CurrentPushT < 0) {
           if (sm.PushBuffered) {
@@ -230,13 +229,13 @@ public abstract class SkateboardBaseState : State {
 
   protected void CheckWalls() {
     var raycastOrigin = sm.Board.position+sm.ForwardCollisionOriginYOffset*-sm.DampedDown;
-    var raycastDirection = sm.FacingRB.transform.forward;
+    var raycastDirection = sm.Facing.transform.forward;
     var collisionDistance = sm.ForwardCollisionDistance;
     if (Physics.Raycast(raycastOrigin, raycastDirection, out RaycastHit hit, collisionDistance * 2f, LayerMask.GetMask("Ground"))) {
       if (hit.distance < collisionDistance) {
-        var right = Vector3.Cross(sm.DampedDown, sm.FacingRB.transform.forward);
+        var right = Vector3.Cross(sm.DampedDown, sm.Facing.transform.forward);
         var verticalWallNormal = Vector3.ProjectOnPlane(hit.normal, right);
-        var forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
+        var forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.Facing.transform.forward);
         // if the hit distance is too close, then we've hit a wall
         // get the forward velocity, and then push back with the force required for that speed
         var wallSteepness = Vector3.Dot(verticalWallNormal.normalized, -forwardVelocity.normalized);
@@ -311,7 +310,7 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void ApplyFrictionForce() {
-    Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.FacingRB.transform.forward);
+    Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.Facing.transform.forward);
     float frictionMag = sm.Friction * forwardVelocity.magnitude;
     sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
@@ -336,16 +335,16 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void FaceAlongRail() {
-    sm.FacingParentRB.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
+    sm.FacingParent.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
   }
 
   protected void DisableSpinBody() {
-    sm.FacingRB.isKinematic = true;
-    sm.FacingRB.transform.localRotation = Quaternion.identity;
+    sm.Facing.update = false;
+    sm.Facing.transform.localRotation = Quaternion.identity;
   }
 
   protected void EnableSpinBody() {
-    sm.FacingRB.isKinematic = false;
+    sm.Facing.update = true;
   }
 
   protected void StartRailBoost() {
@@ -408,12 +407,10 @@ public abstract class SkateboardBaseState : State {
     (Vector3 pos, Quaternion rot) = sm.SpawnPointManager.GetNearestSpawnPoint(sm.transform.position);
     // reset any necessary properties
     sm.MainRB.velocity = Vector3.zero;
-    sm.FacingRB.velocity = Vector3.zero;
     sm.MainRB.angularVelocity = Vector3.zero;
-    sm.FacingRB.angularVelocity = Vector3.zero;
 
-    sm.FacingParentRB.transform.localRotation = Quaternion.identity;
-    sm.FacingRB.MoveRotation(Quaternion.identity);
+    sm.FacingParent.localRotation = Quaternion.identity;
+    sm.Facing.Reset();
 
     sm.Down = Vector3.down;
     sm.DampedDown = Vector3.down;
@@ -422,7 +419,7 @@ public abstract class SkateboardBaseState : State {
     sm.HeadSensZone.SetT(0);
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
-    sm.FacingParentRB.transform.rotation = rot;
+    sm.FacingParent.rotation = rot;
   }
 
   protected void CreateDebugFrame() {
