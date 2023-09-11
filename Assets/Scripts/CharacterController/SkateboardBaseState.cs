@@ -196,7 +196,7 @@ public abstract class SkateboardBaseState : State {
 
   protected void OnSwitch() {
     if (sm.Grounded)
-      sm.FacingParent.rotation *= Quaternion.AngleAxis(180f, sm.FacingParent.up);
+      sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
   }
 
   protected void CalculatePush() {
