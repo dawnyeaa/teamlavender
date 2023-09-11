@@ -82,9 +82,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""debug.reset"",
+                    ""name"": ""ollieCrouch"",
                     ""type"": ""Button"",
-                    ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
+                    ""id"": ""83528823-48cd-4d9d-99ec-528c5c805bfb"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -94,6 +94,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""name"": ""ollie"",
                     ""type"": ""Button"",
                     ""id"": ""ecd1b5fc-f94b-45e4-956a-b332c5a2cc42"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""debug.reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -125,6 +134,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""comboInputButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""530bfe53-8772-4079-b991-fbb6ffc168f1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""comboInputStick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""04bf4378-7df8-4ae4-9a57-b65e534f02ef"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -295,28 +322,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""2c3ba339-daeb-42ad-9783-c57ac7f13633"",
-                    ""path"": ""<Keyboard>/backspace"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB + M"",
-                    ""action"": ""debug.reset"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3313ee40-49ae-401c-a59a-cb7912aab2e2"",
-                    ""path"": ""<Gamepad>/select"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""debug.reset"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""9313f699-0839-4aed-831a-555ed45236f8"",
                     ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
@@ -402,6 +407,215 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""debug.flyMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""94d3ce8e-189e-472f-aecf-6ab922a2b95a"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd40acc2-3bc2-45d1-98ca-d16df9e639ac"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6ef8d155-0f66-41d9-bd52-e13f0a122906"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d1b8638-7060-4ade-bd08-147bdcb08783"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d5b4e2db-fead-42f8-bbd2-923144f517ba"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0f25fa96-a11e-4f72-9ebf-7f84c1b8d60c"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d02bdc56-a043-4ffc-8c2c-ab922c689254"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e17989f7-6ecd-465f-921d-1a7c64872e01"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""385609b8-a99f-47d9-9430-2c2e1509fbe0"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64c71825-6f44-487a-8a05-93cbec774c86"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46685f17-2da1-4662-8824-792eab5327f7"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9547ef79-023b-420c-b86a-4fc82fc350e4"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f5d2726c-bf9c-44ba-b621-958091bd4909"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0159c7d8-66c6-49be-899d-be13fd320715"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""054ecc07-6b2a-4480-a6db-73a265d0406c"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""df101c81-7178-4b4f-964d-3e8e368caa67"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""comboInputStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0c6998c7-2065-45c8-b8ad-793f52cc1d60"",
+                    ""path"": ""<Gamepad>/rightStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""ollieCrouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c3ba339-daeb-42ad-9783-c57ac7f13633"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB + M"",
+                    ""action"": ""debug.reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3313ee40-49ae-401c-a59a-cb7912aab2e2"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""debug.reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -799,11 +1013,14 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
-        m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
+        m_player_ollieCrouch = m_player.FindAction("ollieCrouch", throwIfNotFound: true);
         m_player_ollie = m_player.FindAction("ollie", throwIfNotFound: true);
+        m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
         m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
         m_player_debugchangeScene = m_player.FindAction("debug.changeScene", throwIfNotFound: true);
         m_player_debugflyMode = m_player.FindAction("debug.flyMode", throwIfNotFound: true);
+        m_player_comboInputButton = m_player.FindAction("comboInputButton", throwIfNotFound: true);
+        m_player_comboInputStick = m_player.FindAction("comboInputStick", throwIfNotFound: true);
         // debugFly
         m_debugFly = asset.FindActionMap("debugFly", throwIfNotFound: true);
         m_debugFly_look = m_debugFly.FindAction("look", throwIfNotFound: true);
@@ -879,11 +1096,14 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_brake;
     private readonly InputAction m_player_switch;
     private readonly InputAction m_player_rightStick;
-    private readonly InputAction m_player_debugreset;
+    private readonly InputAction m_player_ollieCrouch;
     private readonly InputAction m_player_ollie;
+    private readonly InputAction m_player_debugreset;
     private readonly InputAction m_player_debugdie;
     private readonly InputAction m_player_debugchangeScene;
     private readonly InputAction m_player_debugflyMode;
+    private readonly InputAction m_player_comboInputButton;
+    private readonly InputAction m_player_comboInputStick;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -894,11 +1114,14 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @brake => m_Wrapper.m_player_brake;
         public InputAction @switch => m_Wrapper.m_player_switch;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
-        public InputAction @debugreset => m_Wrapper.m_player_debugreset;
+        public InputAction @ollieCrouch => m_Wrapper.m_player_ollieCrouch;
         public InputAction @ollie => m_Wrapper.m_player_ollie;
+        public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputAction @debugdie => m_Wrapper.m_player_debugdie;
         public InputAction @debugchangeScene => m_Wrapper.m_player_debugchangeScene;
         public InputAction @debugflyMode => m_Wrapper.m_player_debugflyMode;
+        public InputAction @comboInputButton => m_Wrapper.m_player_comboInputButton;
+        public InputAction @comboInputStick => m_Wrapper.m_player_comboInputStick;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -926,12 +1149,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @rightStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
-                @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
-                @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
-                @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @ollieCrouch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
+                @ollieCrouch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
+                @ollieCrouch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
                 @ollie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
                 @ollie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
                 @ollie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
+                @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
+                @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugdie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
                 @debugdie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
                 @debugdie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
@@ -941,6 +1167,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugflyMode.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugflyMode;
                 @debugflyMode.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugflyMode;
                 @debugflyMode.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugflyMode;
+                @comboInputButton.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputButton;
+                @comboInputButton.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputButton;
+                @comboInputButton.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputButton;
+                @comboInputStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputStick;
+                @comboInputStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputStick;
+                @comboInputStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputStick;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -963,12 +1195,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @rightStick.started += instance.OnRightStick;
                 @rightStick.performed += instance.OnRightStick;
                 @rightStick.canceled += instance.OnRightStick;
-                @debugreset.started += instance.OnDebugreset;
-                @debugreset.performed += instance.OnDebugreset;
-                @debugreset.canceled += instance.OnDebugreset;
+                @ollieCrouch.started += instance.OnOllieCrouch;
+                @ollieCrouch.performed += instance.OnOllieCrouch;
+                @ollieCrouch.canceled += instance.OnOllieCrouch;
                 @ollie.started += instance.OnOllie;
                 @ollie.performed += instance.OnOllie;
                 @ollie.canceled += instance.OnOllie;
+                @debugreset.started += instance.OnDebugreset;
+                @debugreset.performed += instance.OnDebugreset;
+                @debugreset.canceled += instance.OnDebugreset;
                 @debugdie.started += instance.OnDebugdie;
                 @debugdie.performed += instance.OnDebugdie;
                 @debugdie.canceled += instance.OnDebugdie;
@@ -978,6 +1213,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @debugflyMode.started += instance.OnDebugflyMode;
                 @debugflyMode.performed += instance.OnDebugflyMode;
                 @debugflyMode.canceled += instance.OnDebugflyMode;
+                @comboInputButton.started += instance.OnComboInputButton;
+                @comboInputButton.performed += instance.OnComboInputButton;
+                @comboInputButton.canceled += instance.OnComboInputButton;
+                @comboInputStick.started += instance.OnComboInputStick;
+                @comboInputStick.performed += instance.OnComboInputStick;
+                @comboInputStick.canceled += instance.OnComboInputStick;
             }
         }
     }
@@ -1097,11 +1338,14 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnBrake(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
-        void OnDebugreset(InputAction.CallbackContext context);
+        void OnOllieCrouch(InputAction.CallbackContext context);
         void OnOllie(InputAction.CallbackContext context);
+        void OnDebugreset(InputAction.CallbackContext context);
         void OnDebugdie(InputAction.CallbackContext context);
         void OnDebugchangeScene(InputAction.CallbackContext context);
         void OnDebugflyMode(InputAction.CallbackContext context);
+        void OnComboInputButton(InputAction.CallbackContext context);
+        void OnComboInputStick(InputAction.CallbackContext context);
     }
     public interface IDebugFlyActions
     {
