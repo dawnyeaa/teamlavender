@@ -6,17 +6,11 @@ using UnityEngine.UI;
 public class ButtonSelect : MonoBehaviour
 {
     [SerializeField] Button playButton;
-    [SerializeField] Light[] lights;
+    // [SerializeField] Light[] lights;
     // Start is called before the first frame update
     void Start()
     {
-        lights = (Light[])FindObjectsOfType(typeof(UnityEngine.Light));
-        
-        playButton.Select();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        // lights = (Light[])FindObjectsOfType(typeof(UnityEngine.Light));
+        // playButton.Select();
     }
 }
