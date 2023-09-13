@@ -6,12 +6,8 @@ public class AnimationEventHandler : MonoBehaviour {
   public SkateboardStateMachine sm;
   public CoolTimeController coolTime;
   public float framesPerSecond = 30;
-  public void OnOllie() {
-    sm.OnOllie();
-  }
-
-  public void OnKickflip() {
-    sm.OnKickflipForce();
+  public void OnOllieForce() {
+    sm.OnOllieForce();
   }
 
   public void CoolTime() {

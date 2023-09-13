@@ -237,7 +237,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.3408928
-        functionName: OnOllie
+        functionName: OnOllieForce
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -253,6 +253,26 @@ ModelImporter:
       - path: SkaterRig_grp/JNT_VerticalOffset
         weight: 0
       - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Nose
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Nose/JNT_NoseTruck
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Nose/JNT_NoseTruck/JNT_NoseTruckSwivel
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Nose/JNT_NoseTruck/JNT_NoseTruckSwivel/JNT_NoseWheel_L
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Nose/JNT_NoseTruck/JNT_NoseTruckSwivel/JNT_NoseWheel_R
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Tail
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Tail/JNT_TailTruck
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Tail/JNT_TailTruck/JNT_TailTruckSwivel
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Tail/JNT_TailTruck/JNT_TailTruckSwivel/JNT_TailWheel_L
+        weight: 1
+      - path: SkaterRig_grp/JNT_VerticalOffset/JNT_Board/JNT_Tail/JNT_TailTruck/JNT_TailTruckSwivel/JNT_TailWheel_R
         weight: 1
       - path: SkaterRig_grp/JNT_VerticalOffset/JNT_root
         weight: 1
@@ -328,7 +348,7 @@ ModelImporter:
         weight: 1
       - path: SkaterRig_grp/JNT_VerticalOffset/JNT_root/JNT_spine1/JNT_spine2/JNT_spine3/JNT_shoulder_R/JNT_elbow_R/JNT_wrist_R/JNT_thumb1_R/JNT_thumb2_R/JNT_thumb3_R
         weight: 1
-      - path: SkaterRig_grp/Skater_geo
+      - path: SkaterRig_grp/Skater
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}

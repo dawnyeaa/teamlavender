@@ -85,9 +85,12 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 GrindBoardLockPoint;
   [ReadOnly] public Vector3 LastGrindPos;
   [ReadOnly] public PIDController3 GrindOffsetPID;
+  [ReadOnly] public int CurrentOllieTrickIndex;
   [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
     { "ollie", null },
-    { "kickflip", null }
+    { "kickflip", null },
+    { "heelflip", null },
+    { "popShuvit", null }
   };
   [ReadOnly] public DebugFrame debugFrame;
 
@@ -133,7 +136,7 @@ public class SkateboardStateMachine : StateMachine {
     Input.OnSlamPerformed += SlamRumble;
   }
 
-  public void OnOllie() {
+  public void OnOllieForce() {
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
   }
 

@@ -6,10 +6,15 @@ using UnityEngine.Events;
 public class Combo : ScriptableObject {
   public string _ComboName;
   public List<Input> _ComboInputs;
+  public int _OllieTrickIndex;
   public UnityEvent _ExtraComboEvents;
 
+  private SkateboardStateMachine sm;
+
   public void ExecuteCombo() {
-    FindObjectOfType<SkateboardStateMachine>().OnCombo(_ComboName);
+    sm = FindObjectOfType<SkateboardStateMachine>();
+    sm.CurrentOllieTrickIndex = _OllieTrickIndex;
+    sm.OnCombo(_ComboName);
     _ExtraComboEvents?.Invoke();
   }
 
