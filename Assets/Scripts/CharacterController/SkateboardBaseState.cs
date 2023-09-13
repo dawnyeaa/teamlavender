@@ -20,6 +20,7 @@ public abstract class SkateboardBaseState : State {
 
     if (!sm.Grounded && vertVelocity <= 0) {
       sm.CharacterAnimator.SetBool("falling", true);
+      sm.CharacterAnimator.SetInteger("ollieTrickIndex", 0);
       float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
       if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
         sm.debugFrame.predictedLandingPosition = hit.point;
@@ -297,17 +298,23 @@ public abstract class SkateboardBaseState : State {
     sm.CharacterAnimator.SetBool("crouching", sm.Crouching);
   }
 
-  protected void OnOllieInput() {
-    if (sm.Crouching) {
-      sm.CharacterAnimator.SetTrigger("ollie");
-    }
+  protected void OnOllieTrickInput() {
+    sm.CharacterAnimator.SetInteger("ollieTrickIndex", sm.CurrentOllieTrickIndex);
   }
 
-  protected void OnKickflipInput() {
-    if (sm.Crouching) {
-      sm.CharacterAnimator.SetTrigger("kickflip");
-    }
-  }
+  // protected void OnOllieInput() {
+  //   // if (sm.Crouching) {
+  //   //   sm.CharacterAnimator.SetTrigger("ollie");
+  //   // }
+  //   sm.CharacterAnimator.SetInteger("ollieTrickIndex", 1);
+  // }
+
+  // protected void OnKickflipInput() {
+  //   // if (sm.Crouching) {
+  //   //   sm.CharacterAnimator.SetTrigger("kickflip");
+  //   // }
+  //   sm.CharacterAnimator.SetInteger("ollieTrickIndex", 2);
+  // }
 
   protected void ApplyFrictionForce() {
     Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.Facing.transform.forward);
