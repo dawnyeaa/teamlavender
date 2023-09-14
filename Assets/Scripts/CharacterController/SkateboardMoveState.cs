@@ -8,7 +8,7 @@ public class SkateboardMoveState : SkateboardBaseState {
   public override void Enter() {
     sm.Input.OnPushPerformed += StartPush;
     sm.Input.OnSwitchPerformed += OnSwitch;
-    // sm.Input.OnOlliePerformed += OnOllieInput;
+    sm.Input.OnPausePerformed += sm.Pause;
     sm.Input.OnStartBraking += StartBrake;
     sm.Input.OnEndBraking += EndBrake;
     sm.ComboActions["ollie"] += OnOllieTrickInput;
@@ -40,7 +40,7 @@ public class SkateboardMoveState : SkateboardBaseState {
   public override void Exit() {
     sm.Input.OnPushPerformed -= StartPush;
     sm.Input.OnSwitchPerformed -= OnSwitch;
-    // sm.Input.OnOlliePerformed -= OnOllieInput;
+    sm.Input.OnPausePerformed -= sm.Pause;
     sm.Input.OnStartBraking -= StartBrake;
     sm.Input.OnEndBraking -= EndBrake;
     sm.ComboActions["ollie"] -= OnOllieTrickInput;
