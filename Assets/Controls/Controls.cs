@@ -64,6 +64,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""949d2481-fa9b-4b88-b8e7-921bcc882f56"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""switch"",
                     ""type"": ""Button"",
                     ""id"": ""a3203d16-d2d6-4010-8687-ecb7eac347e7"",
@@ -594,6 +603,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""debug.reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""54ab2544-9a2a-4def-8d82-18a21a3ba6e6"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -951,6 +971,34 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UI"",
+            ""id"": ""b4db8cf1-fbe1-4640-b800-5dfc428f49f1"",
+            ""actions"": [
+                {
+                    ""name"": ""Unpause"",
+                    ""type"": ""Button"",
+                    ""id"": ""dc3a6474-b629-42e5-b764-a4e8be20d11b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""27cc3941-9ce3-4424-81b3-f37c5b79f011"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -989,6 +1037,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_push = m_player.FindAction("push", throwIfNotFound: true);
         m_player_look = m_player.FindAction("look", throwIfNotFound: true);
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
+        m_player_pause = m_player.FindAction("pause", throwIfNotFound: true);
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
         m_player_ollieCrouch = m_player.FindAction("ollieCrouch", throwIfNotFound: true);
@@ -1009,6 +1058,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_debugFly_DebugflyMode = m_debugFly.FindAction("Debug.flyMode", throwIfNotFound: true);
         m_debugFly_increaseFrameWindow = m_debugFly.FindAction("increaseFrameWindow", throwIfNotFound: true);
         m_debugFly_decreaseFrameWindow = m_debugFly.FindAction("decreaseFrameWindow", throwIfNotFound: true);
+        // UI
+        m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
+        m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1072,6 +1124,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_push;
     private readonly InputAction m_player_look;
     private readonly InputAction m_player_brake;
+    private readonly InputAction m_player_pause;
     private readonly InputAction m_player_switch;
     private readonly InputAction m_player_rightStick;
     private readonly InputAction m_player_ollieCrouch;
@@ -1090,6 +1143,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @push => m_Wrapper.m_player_push;
         public InputAction @look => m_Wrapper.m_player_look;
         public InputAction @brake => m_Wrapper.m_player_brake;
+        public InputAction @pause => m_Wrapper.m_player_pause;
         public InputAction @switch => m_Wrapper.m_player_switch;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
         public InputAction @ollieCrouch => m_Wrapper.m_player_ollieCrouch;
@@ -1121,6 +1175,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @brake.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
                 @brake.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
                 @brake.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBrake;
+                @pause.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @pause.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @pause.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
                 @switch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
                 @switch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
                 @switch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
@@ -1167,6 +1224,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @brake.started += instance.OnBrake;
                 @brake.performed += instance.OnBrake;
                 @brake.canceled += instance.OnBrake;
+                @pause.started += instance.OnPause;
+                @pause.performed += instance.OnPause;
+                @pause.canceled += instance.OnPause;
                 @switch.started += instance.OnSwitch;
                 @switch.performed += instance.OnSwitch;
                 @switch.canceled += instance.OnSwitch;
@@ -1290,6 +1350,39 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         }
     }
     public DebugFlyActions @debugFly => new DebugFlyActions(this);
+
+    // UI
+    private readonly InputActionMap m_UI;
+    private IUIActions m_UIActionsCallbackInterface;
+    private readonly InputAction m_UI_Unpause;
+    public struct UIActions
+    {
+        private @Controls m_Wrapper;
+        public UIActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
+        public InputActionMap Get() { return m_Wrapper.m_UI; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIActions set) { return set.Get(); }
+        public void SetCallbacks(IUIActions instance)
+        {
+            if (m_Wrapper.m_UIActionsCallbackInterface != null)
+            {
+                @Unpause.started -= m_Wrapper.m_UIActionsCallbackInterface.OnUnpause;
+                @Unpause.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnUnpause;
+                @Unpause.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnUnpause;
+            }
+            m_Wrapper.m_UIActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Unpause.started += instance.OnUnpause;
+                @Unpause.performed += instance.OnUnpause;
+                @Unpause.canceled += instance.OnUnpause;
+            }
+        }
+    }
+    public UIActions @UI => new UIActions(this);
     private int m_KBMSchemeIndex = -1;
     public InputControlScheme KBMScheme
     {
@@ -1314,6 +1407,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnPush(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
         void OnOllieCrouch(InputAction.CallbackContext context);
@@ -1335,5 +1429,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnDebugflyMode(InputAction.CallbackContext context);
         void OnIncreaseFrameWindow(InputAction.CallbackContext context);
         void OnDecreaseFrameWindow(InputAction.CallbackContext context);
+    }
+    public interface IUIActions
+    {
+        void OnUnpause(InputAction.CallbackContext context);
     }
 }
