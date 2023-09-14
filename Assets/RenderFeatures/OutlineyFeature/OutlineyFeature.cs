@@ -20,6 +20,7 @@ public class OutlineyFeature : ScriptableRendererFeature {
 
   [Header("ID Pass")]
   [SerializeField] LayerMask _layerMask;
+  [SerializeField] Material _fallbackIdMaterial;
   [SerializeField] bool _useMSAA;
   [SerializeField, ShowIf("_useMSAA", LogicalOperatorType.Equals, true)] Samples _mSAASamples;
 
@@ -51,7 +52,9 @@ public class OutlineyFeature : ScriptableRendererFeature {
     int SobelOutRT = Shader.PropertyToID("_sobelOutRT");
     int SobelOutOSPosRT = Shader.PropertyToID("_sobelOSPosRT");
     float outlineWobbleMultiplier = 0.01f;
-    _idPass = new IDPass("ID Pass", _layerMask, _useMSAA, (int)Mathf.Pow(2, (int)_mSAASamples+1), IDRT, OSPosRT);
+    _idPass = new IDPass("ID Pass", _layerMask, _useMSAA, (int)Mathf.Pow(2, (int)_mSAASamples+1), IDRT, OSPosRT) {
+      _fallbackIdMaterial = _fallbackIdMaterial
+    };
     _sobelishPass = new SobelishPass("Sobelish Pass", IDRT, OSPosRT, SobelOutRT, SobelOutOSPosRT) {
       _sobelishMaterial = _sobelishMaterial
     };
@@ -77,6 +80,10 @@ public class OutlineyFeature : ScriptableRendererFeature {
   }
 
   public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData) {
+    if (renderingData.cameraData.isPreviewCamera) return;
+    // Ignore feature for editor/inspector previews & asset thumbnails
+    if (renderingData.cameraData.isSceneViewCamera) return;
+    // Ignore feature for scene view
     renderer.EnqueuePass(_idPass);
     renderer.EnqueuePass(_sobelishPass);
     renderer.EnqueuePass(_jfaPass);
