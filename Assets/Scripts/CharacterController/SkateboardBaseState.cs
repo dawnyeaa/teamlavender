@@ -102,6 +102,8 @@ public abstract class SkateboardBaseState : State {
         if (sm.AirTimeCounter > sm.MinimumAirTime) {
           sm.PointManager.Validate();
         }
+
+        sm.LandEmit.Play();
       }
       sm.Grounded = true;
     }
@@ -178,6 +180,10 @@ public abstract class SkateboardBaseState : State {
     sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
     sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
     sm.BodyMesh.position = sm.HipHelper.position;
+  }
+
+  protected void SetSpeedyLines() {
+    sm.SpeedyLinesMat.SetFloat("_amount", Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.MaxSpeed, sm.MainRB.velocity.magnitude));
   }
 
   protected void ApplyRotationToModels() {
@@ -272,6 +278,17 @@ public abstract class SkateboardBaseState : State {
     if (sm.MainRB.velocity.magnitude > sm.MaxSpeed)
       sm.MainRB.velocity = sm.MainRB.velocity.normalized * sm.MaxSpeed;
     sm.ProceduralCrouchFactor = sm.MainRB.velocity.magnitude / sm.MaxSpeed;
+  }
+
+  protected void SetWheelSpinParticleChance() {
+    foreach (WheelSpinParticleHandler spinner in sm.WheelSpinParticles) {
+      if (sm.Grounded) {
+        spinner.SetChance(math.remap(sm.MinWheelSpinParticleSpeed, sm.MaxSpeed, sm.MinWheelSpinParticleChance, sm.MaxWheelSpinParticleChance, sm.MainRB.velocity.magnitude));
+      }
+      else {
+        spinner.SetChance(0);
+      }
+    }
   }
 
   protected void SetCrouching() {

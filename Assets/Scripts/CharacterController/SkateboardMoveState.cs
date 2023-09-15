@@ -33,6 +33,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     BodyUprightCorrect();
     ApplyFrictionForce();
     SetHipHelperPos();
+    SetWheelSpinParticleChance();
+    SetSpeedyLines();
 
     SaveDebugFrame();
   }

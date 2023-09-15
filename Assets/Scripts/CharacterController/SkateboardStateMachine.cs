@@ -60,6 +60,10 @@ public class SkateboardStateMachine : StateMachine {
   public float RailStartBoostForce = 10f;
   public float ExitRailForce = 20f;
   public float HipHelperFPS = 12f;
+  public float MinWheelSpinParticleSpeed = 1f;
+  public float MinWheelSpinParticleChance = 0.1f;
+  public float MaxWheelSpinParticleChance = 0.75f;
+  public float MinSpeedyLineSpeed = 2f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -117,9 +121,13 @@ public class SkateboardStateMachine : StateMachine {
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
   public PauseMenuManager PauseMenuManager;
-  public DebugFrameHandler DebugFrameHandler;
   public RailManager RailManager;
   public List<Transform> RailLockTransforms;
+  public WheelSpinParticleHandler[] WheelSpinParticles;
+  public EmitterBundle LandEmit;
+  public MeshRenderer SpeedyLines;
+  public Material SpeedyLinesMat;
+  public DebugFrameHandler DebugFrameHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -128,6 +136,7 @@ public class SkateboardStateMachine : StateMachine {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
+    SpeedyLinesMat = SpeedyLines.material;
 
     SwitchState(new SkateboardMoveState(this));
 

@@ -94,8 +94,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   }
   
   public void OnDisable() {
-    controls.player.Disable();
-    controls = null;
+    if (controls != null) {
+      controls.player.Disable();
+      controls = null;
+    }
   }
 
   public void OnMove(InputAction.CallbackContext context) {

@@ -15,19 +15,18 @@ public class SaveManager : MonoBehaviour
     void Start()
     {
          
-            PlayerData data = SaveSystem.LoadMoney();
+        // PlayerData data = SaveSystem.LoadMoney();
 
-        if (data != null)
-        {
-            _menuManager.volume = data.volume;
-            _menuManager.SetVolume();
-            Debug.Log("Volume set to: " + data.volume);
-        }
-        else
-        {
-            _menuManager.volume = 20;
-            Debug.Log("Started");
-        }
+        // if (data != null)
+        // {
+        //     _menuManager.volume = data.volume;
+        //     _menuManager.SetVolume();
+        //     Debug.Log("Volume set to: " + data.volume);
+        // }
+        // else
+        // {
+        //     _menuManager.volume = 20;
+        // }
     }
     public void save()
     {
