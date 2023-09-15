@@ -7,6 +7,7 @@ public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
 
   public Action OnUnpausePerformed;
   public Action OnMenuRPerformed, OnMenuLPerformed;
+  public float RSX = 0;
 
   private Controls controls;
 
@@ -42,5 +43,9 @@ public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
     if (!context.performed)
       return;
     OnMenuRPerformed?.Invoke();
+  }
+
+  public void OnRightStickX(InputAction.CallbackContext context) {
+    RSX = context.ReadValue<float>();
   }
 }

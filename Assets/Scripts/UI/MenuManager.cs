@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.LowLevel;
 
 public class MenuManager : MonoBehaviour
 {
@@ -47,10 +48,9 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void EnableMenu() 
     {
-        
+        menus[currentMenu].SetActive(true);
     }
 
     public void ChangeMenu(int menu)

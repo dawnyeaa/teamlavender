@@ -1002,6 +1002,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightStickX"",
+                    ""type"": ""Value"",
+                    ""id"": ""41074cbe-6750-481c-a457-1d9487ede323"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1022,7 +1031,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""gamepad"",
                     ""action"": ""MenuL"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1033,7 +1042,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick/left"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""gamepad"",
                     ""action"": ""MenuL"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1044,7 +1053,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/leftStick/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""gamepad"",
                     ""action"": ""MenuR"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1055,8 +1064,19 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""gamepad"",
                     ""action"": ""MenuR"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8c21d55-aecd-4a48-b57d-18593dd6aecb"",
+                    ""path"": ""<Gamepad>/rightStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""RightStickX"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1125,6 +1145,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
         m_UI_MenuL = m_UI.FindAction("MenuL", throwIfNotFound: true);
         m_UI_MenuR = m_UI.FindAction("MenuR", throwIfNotFound: true);
+        m_UI_RightStickX = m_UI.FindAction("RightStickX", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1421,6 +1442,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Unpause;
     private readonly InputAction m_UI_MenuL;
     private readonly InputAction m_UI_MenuR;
+    private readonly InputAction m_UI_RightStickX;
     public struct UIActions
     {
         private @Controls m_Wrapper;
@@ -1428,6 +1450,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
         public InputAction @MenuL => m_Wrapper.m_UI_MenuL;
         public InputAction @MenuR => m_Wrapper.m_UI_MenuR;
+        public InputAction @RightStickX => m_Wrapper.m_UI_RightStickX;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1446,6 +1469,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MenuR.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
                 @MenuR.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
                 @MenuR.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
+                @RightStickX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
+                @RightStickX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
+                @RightStickX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -1459,6 +1485,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MenuR.started += instance.OnMenuR;
                 @MenuR.performed += instance.OnMenuR;
                 @MenuR.canceled += instance.OnMenuR;
+                @RightStickX.started += instance.OnRightStickX;
+                @RightStickX.performed += instance.OnRightStickX;
+                @RightStickX.canceled += instance.OnRightStickX;
             }
         }
     }
@@ -1515,5 +1544,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnUnpause(InputAction.CallbackContext context);
         void OnMenuL(InputAction.CallbackContext context);
         void OnMenuR(InputAction.CallbackContext context);
+        void OnRightStickX(InputAction.CallbackContext context);
     }
 }

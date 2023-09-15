@@ -980,6 +980,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "RightStickX",
+                    "type": "Value",
+                    "id": "41074cbe-6750-481c-a457-1d9487ede323",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1000,7 +1009,7 @@
                     "path": "<Gamepad>/dpad/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "gamepad",
                     "action": "MenuL",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -1011,7 +1020,7 @@
                     "path": "<Gamepad>/leftStick/left",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "gamepad",
                     "action": "MenuL",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -1022,7 +1031,7 @@
                     "path": "<Gamepad>/leftStick/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "gamepad",
                     "action": "MenuR",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -1033,8 +1042,19 @@
                     "path": "<Gamepad>/dpad/right",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "gamepad",
                     "action": "MenuR",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f8c21d55-aecd-4a48-b57d-18593dd6aecb",
+                    "path": "<Gamepad>/rightStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "RightStickX",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
