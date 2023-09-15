@@ -102,6 +102,8 @@ public abstract class SkateboardBaseState : State {
         if (sm.AirTimeCounter > sm.MinimumAirTime) {
           sm.PointManager.Validate();
         }
+
+        sm.LandEmit.Play();
       }
       sm.Grounded = true;
     }
@@ -178,6 +180,10 @@ public abstract class SkateboardBaseState : State {
     sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
     sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
     sm.BodyMesh.position = sm.HipHelper.position;
+  }
+
+  protected void SetSpeedyLines() {
+    sm.SpeedyLinesMat.SetFloat("_amount", Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.MaxSpeed, sm.MainRB.velocity.magnitude));
   }
 
   protected void ApplyRotationToModels() {
