@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
+using Cinemachine;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -115,6 +116,7 @@ public class SkateboardStateMachine : StateMachine {
   public SpawnPointManager SpawnPointManager;
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
+  public PauseMenuManager PauseMenuManager;
   public DebugFrameHandler DebugFrameHandler;
   public RailManager RailManager;
   public List<Transform> RailLockTransforms;
@@ -186,6 +188,15 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void ExitDebugMode() {
+    SwitchState(new SkateboardMoveState(this));
+  }
+
+  public void Pause() {
+    SwitchState(new SkateboardPauseState(this));
+    PauseMenuManager.PauseGame();
+  }
+
+  public void Unpause() {
     SwitchState(new SkateboardMoveState(this));
   }
 

@@ -31,31 +31,27 @@ public class SobelishPass : ScriptableRenderPass {
   }
 
   public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData) {
-    _idMapIdentifier = new RenderTargetIdentifier(_idMapId);
-  }
-
-  public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor) {
-    RenderTextureDescriptor osSobelTexDesc = cameraTextureDescriptor;
+    RenderTextureDescriptor osSobelTexDesc = renderingData.cameraData.cameraTargetDescriptor;
     osSobelTexDesc.colorFormat = RenderTextureFormat.ARGB32;
 
-    cmd.GetTemporaryRT(_renderTargetIdSobel, cameraTextureDescriptor);
+    cmd.GetTemporaryRT(_renderTargetIdSobel, renderingData.cameraData.cameraTargetDescriptor);
     cmd.GetTemporaryRT(_renderTargetIdSobelOS, osSobelTexDesc);
-    cmd.GetTemporaryRT(Shader.PropertyToID("_depthBufTemp"), cameraTextureDescriptor);
+    // cmd.GetTemporaryRT(Shader.PropertyToID("_depthBufTemp"), cameraTextureDescriptor);
 
     _renderTargetIdentifiers = new RenderTargetIdentifier[2];
     _renderTargetIdentifiers[0] = new RenderTargetIdentifier(_renderTargetIdSobel);
     _renderTargetIdentifiers[1] = new RenderTargetIdentifier(_renderTargetIdSobelOS);
-    _depthBufTemp = new RenderTargetIdentifier(Shader.PropertyToID("_depthBufTemp"));
+    // _depthBufTemp = new RenderTargetIdentifier(Shader.PropertyToID("_depthBufTemp"));
 
     _osMap = new RenderTargetIdentifier(_osMapId);
+    _idMapIdentifier = new RenderTargetIdentifier(_idMapId);
+    ConfigureTarget(_renderTargetIdentifiers, renderingData.cameraData.renderer.cameraDepthTarget);
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
     CommandBuffer cmd = CommandBufferPool.Get();
     using (new ProfilingScope(cmd, _profilingSampler)) {      
-      ConfigureTarget(_renderTargetIdentifiers);
       // render the sobel (and sobel object space coordinates)
-      cmd.SetRenderTarget(_renderTargetIdentifiers, _depthBufTemp);
       cmd.SetViewProjectionMatrices(Matrix4x4.identity, Matrix4x4.identity);
       cmd.SetGlobalTexture(Shader.PropertyToID("_MainTex"), _idMapIdentifier);
       cmd.SetGlobalTexture(Shader.PropertyToID("_OSTex"), _osMap);
@@ -66,5 +62,10 @@ public class SobelishPass : ScriptableRenderPass {
     cmd.Clear();
 
     CommandBufferPool.Release(cmd);
+  }
+
+  public override void OnCameraCleanup(CommandBuffer cmd) {
+    cmd.ReleaseTemporaryRT(_idMapId);
+    cmd.ReleaseTemporaryRT(_osMapId);
   }
 }
