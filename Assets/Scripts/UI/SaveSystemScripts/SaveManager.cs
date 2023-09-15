@@ -26,7 +26,6 @@ public class SaveManager : MonoBehaviour
         else
         {
             _menuManager.volume = 20;
-            Debug.Log("Started");
         }
     }
     public void save()

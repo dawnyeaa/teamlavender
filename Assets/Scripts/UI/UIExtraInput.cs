@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
 
   public Action OnUnpausePerformed;
+  public Action OnMenuRPerformed, OnMenuLPerformed;
 
   private Controls controls;
 
@@ -29,5 +30,17 @@ public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
     if (!context.performed)
       return;
     OnUnpausePerformed?.Invoke();
+  }
+
+  public void OnMenuL(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnMenuLPerformed?.Invoke();
+  }
+
+  public void OnMenuR(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnMenuRPerformed?.Invoke();
   }
 }

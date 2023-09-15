@@ -15,7 +15,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] int currentMenu;
     int currentResolutionShowing;
     public int volume;
-    [SerializeField] Button SettingMenuDefault, MainMenuDefault, ControlsMenuDefault;
+    [SerializeField] Button SettingMenuDefault, MainMenuDefault, ControlsMenuDefault, CustoMenuDefault;
     [SerializeField] AudioMixer audioMixer;
     [SerializeField] AudioListener audioListener;
     [SerializeField] Slider volumeSlider;
@@ -65,11 +65,15 @@ public class MenuManager : MonoBehaviour
             break;
             
             case 1:
-                ControlsMenuDefault.Select();
+                CustoMenuDefault.Select();
             break;
             
             case 2:
                 SettingMenuDefault.Select();
+            break;
+
+            case 3:
+                ControlsMenuDefault.Select();
             break;
         }
     }

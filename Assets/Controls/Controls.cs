@@ -984,6 +984,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuL"",
+                    ""type"": ""Button"",
+                    ""id"": ""0dd1ca72-01d6-4f81-98f3-8cb00a3fd922"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuR"",
+                    ""type"": ""Button"",
+                    ""id"": ""2926de13-7672-4737-99f4-d0fedc9c2781"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -995,6 +1013,50 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""23bdda03-f9c9-4014-aca1-dc489ad4e280"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuL"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b05dfc11-8c8b-45a3-8e40-97868381dc04"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuL"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5f0c1409-c48a-4ac3-ae4a-8f346d723416"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuR"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e36a2cbd-87ee-4350-8283-c4f4387cb108"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuR"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1061,6 +1123,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
+        m_UI_MenuL = m_UI.FindAction("MenuL", throwIfNotFound: true);
+        m_UI_MenuR = m_UI.FindAction("MenuR", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1355,11 +1419,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UI;
     private IUIActions m_UIActionsCallbackInterface;
     private readonly InputAction m_UI_Unpause;
+    private readonly InputAction m_UI_MenuL;
+    private readonly InputAction m_UI_MenuR;
     public struct UIActions
     {
         private @Controls m_Wrapper;
         public UIActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
+        public InputAction @MenuL => m_Wrapper.m_UI_MenuL;
+        public InputAction @MenuR => m_Wrapper.m_UI_MenuR;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1372,6 +1440,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Unpause.started -= m_Wrapper.m_UIActionsCallbackInterface.OnUnpause;
                 @Unpause.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnUnpause;
                 @Unpause.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnUnpause;
+                @MenuL.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuL;
+                @MenuL.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuL;
+                @MenuL.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuL;
+                @MenuR.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
+                @MenuR.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
+                @MenuR.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -1379,6 +1453,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Unpause.started += instance.OnUnpause;
                 @Unpause.performed += instance.OnUnpause;
                 @Unpause.canceled += instance.OnUnpause;
+                @MenuL.started += instance.OnMenuL;
+                @MenuL.performed += instance.OnMenuL;
+                @MenuL.canceled += instance.OnMenuL;
+                @MenuR.started += instance.OnMenuR;
+                @MenuR.performed += instance.OnMenuR;
+                @MenuR.canceled += instance.OnMenuR;
             }
         }
     }
@@ -1433,5 +1513,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     public interface IUIActions
     {
         void OnUnpause(InputAction.CallbackContext context);
+        void OnMenuL(InputAction.CallbackContext context);
+        void OnMenuR(InputAction.CallbackContext context);
     }
 }
