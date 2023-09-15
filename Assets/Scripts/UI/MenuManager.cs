@@ -17,6 +17,7 @@ public class MenuManager : MonoBehaviour
     int currentResolutionShowing;
     public int volume;
     [SerializeField] Button SettingMenuDefault, MainMenuDefault, ControlsMenuDefault, CustoMenuDefault;
+    [SerializeField] GameObject TitleLogo;
     [SerializeField] AudioMixer audioMixer;
     [SerializeField] AudioListener audioListener;
     [SerializeField] Slider volumeSlider;
@@ -56,12 +57,14 @@ public class MenuManager : MonoBehaviour
     public void ChangeMenu(int menu)
     {
         menus[currentMenu].SetActive(false);
+        if (currentMenu == 0) TitleLogo.SetActive(false);
         currentMenu = menu;
         menus[menu].SetActive(true);
         switch (menu)
         {
             case 0:
                 MainMenuDefault.Select();
+                TitleLogo.SetActive(true);
             break;
             
             case 1:

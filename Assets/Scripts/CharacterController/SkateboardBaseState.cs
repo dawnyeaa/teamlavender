@@ -274,6 +274,17 @@ public abstract class SkateboardBaseState : State {
     sm.ProceduralCrouchFactor = sm.MainRB.velocity.magnitude / sm.MaxSpeed;
   }
 
+  protected void SetWheelSpinParticleChance() {
+    foreach (WheelSpinParticleHandler spinner in sm.WheelSpinParticles) {
+      if (sm.Grounded) {
+        spinner.SetChance(math.remap(sm.MinWheelSpinParticleSpeed, sm.MaxSpeed, sm.MinWheelSpinParticleChance, sm.MaxWheelSpinParticleChance, sm.MainRB.velocity.magnitude));
+      }
+      else {
+        spinner.SetChance(0);
+      }
+    }
+  }
+
   protected void SetCrouching() {
     // if input is crouching, we're crouching (and the recover timer should be reset)
     // if input is not crouching

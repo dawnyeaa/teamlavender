@@ -555,6 +555,9 @@ MonoBehaviour:
   RailStartBoostForce: 50
   ExitRailForce: 20
   HipHelperFPS: 6
+  MinWheelSpinParticleSpeed: 2
+  MinWheelSpinParticleChance: 0.05
+  MaxWheelSpinParticleChance: 0.45
   FacingForward: 1
   Friction: 0
   Grounded: 1
@@ -617,13 +620,14 @@ MonoBehaviour:
   HeadSensZone: {fileID: 5858372948550401881}
   PointManager: {fileID: 0}
   PauseMenuManager: {fileID: 0}
-  DebugFrameHandler: {fileID: 0}
   RailManager: {fileID: 0}
   RailLockTransforms:
   - {fileID: 1975493928145027987}
   - {fileID: 8440393142309110186}
   - {fileID: 7140412983062899094}
   - {fileID: 497523644630318794}
+  WheelSpinParticles: []
+  DebugFrameHandler: {fileID: 0}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
