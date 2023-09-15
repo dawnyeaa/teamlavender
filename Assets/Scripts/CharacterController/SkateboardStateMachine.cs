@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
+using Cinemachine;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -85,9 +86,12 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 GrindBoardLockPoint;
   [ReadOnly] public Vector3 LastGrindPos;
   [ReadOnly] public PIDController3 GrindOffsetPID;
+  [ReadOnly] public int CurrentOllieTrickIndex;
   [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
     { "ollie", null },
-    { "kickflip", null }
+    { "kickflip", null },
+    { "heelflip", null },
+    { "popShuvit", null }
   };
   [ReadOnly] public DebugFrame debugFrame;
 
@@ -112,6 +116,7 @@ public class SkateboardStateMachine : StateMachine {
   public SpawnPointManager SpawnPointManager;
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
+  public PauseMenuManager PauseMenuManager;
   public DebugFrameHandler DebugFrameHandler;
   public RailManager RailManager;
   public List<Transform> RailLockTransforms;
@@ -133,7 +138,7 @@ public class SkateboardStateMachine : StateMachine {
     Input.OnSlamPerformed += SlamRumble;
   }
 
-  public void OnOllie() {
+  public void OnOllieForce() {
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
   }
 
@@ -183,6 +188,15 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void ExitDebugMode() {
+    SwitchState(new SkateboardMoveState(this));
+  }
+
+  public void Pause() {
+    SwitchState(new SkateboardPauseState(this));
+    PauseMenuManager.PauseGame();
+  }
+
+  public void Unpause() {
     SwitchState(new SkateboardMoveState(this));
   }
 

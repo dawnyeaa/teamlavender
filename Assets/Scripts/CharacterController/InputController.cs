@@ -68,6 +68,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnResetPerformed;
   public Action OnOlliePerformed;
   public Action OnSlamPerformed;
+  public Action OnPausePerformed;
   public Action OnStartBraking, OnEndBraking;
   public Action EnterDebugMode;
 
@@ -255,6 +256,12 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       rsNumpad = stickNumpad;
       rsLastNumpad = stickNumpad;
     }
+  }
+
+  public void OnPause(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnPausePerformed?.Invoke();
   }
 
   public void OnDebugdie(InputAction.CallbackContext context) {

@@ -68,19 +68,14 @@ public class JFAPass : ScriptableRenderPass {
   public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData) {
     _inputRenderTargetIdentifier = new RenderTargetIdentifier(_inputRenderTargetId);
     _osSobelTex = new RenderTargetIdentifier(_osSobelRTId);
-  }
 
-  public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor) {
-    RenderTextureDescriptor desc = cameraTextureDescriptor;
+    RenderTextureDescriptor desc = renderingData.cameraData.cameraTargetDescriptor;
     desc.colorFormat = RenderTextureFormat.ARGBFloat;
     cmd.GetTemporaryRT(_tmpId1, desc);
     cmd.GetTemporaryRT(_tmpId2, desc);
 
     _tmpRT1 = new RenderTargetIdentifier(_tmpId1);
     _tmpRT2 = new RenderTargetIdentifier(_tmpId2);
-
-    ConfigureTarget(_tmpRT1);
-    ConfigureTarget(_tmpRT2);
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
@@ -132,5 +127,12 @@ public class JFAPass : ScriptableRenderPass {
     cmd.Clear();
 
     CommandBufferPool.Release(cmd);
+  }
+
+  public override void OnCameraCleanup(CommandBuffer cmd) {
+    cmd.ReleaseTemporaryRT(_tmpId1);
+    cmd.ReleaseTemporaryRT(_tmpId2);
+    cmd.ReleaseTemporaryRT(_inputRenderTargetId);
+    cmd.ReleaseTemporaryRT(_osSobelRTId);
   }
 }

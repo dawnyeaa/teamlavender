@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -8,6 +9,8 @@ public class IDPass : ScriptableRenderPass {
   private FilteringSettings _filteringSettings;
   // this is the pass to find in shaders to run
   private static readonly ShaderTagId _shaderTag = new("ID");
+
+  public Material _fallbackIdMaterial;
   
   private readonly bool _useMSAA;
   private readonly int _msaaSamples;
@@ -37,35 +40,39 @@ public class IDPass : ScriptableRenderPass {
   }
 
   public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData) {
-    RenderTextureDescriptor blitTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
-    blitTargetDescriptor.colorFormat = RenderTextureFormat.ARGB32;
-    if (_useMSAA) blitTargetDescriptor.msaaSamples = _msaaSamples;
-    cmd.GetTemporaryRT(_renderTargetId, blitTargetDescriptor);
-    cmd.GetTemporaryRT(_osRTId, blitTargetDescriptor);
-    cmd.GetTemporaryRT(Shader.PropertyToID("_depthBufTemp"), renderingData.cameraData.cameraTargetDescriptor);
+    var colorDesc = renderingData.cameraData.cameraTargetDescriptor;
+    colorDesc.colorFormat = RenderTextureFormat.ARGB32;
+    colorDesc.depthBufferBits = 0;
+    if (_useMSAA) colorDesc.msaaSamples = _msaaSamples;
+    cmd.GetTemporaryRT(_renderTargetId, colorDesc);
+    cmd.GetTemporaryRT(_osRTId, colorDesc);
+    // cmd.GetTemporaryRT(Shader.PropertyToID("_depthBufTemp"), renderingData.cameraData.cameraTargetDescriptor);
     _renderTargetIdentifiers = new RenderTargetIdentifier[2];
     _renderTargetIdentifiers[0] = new RenderTargetIdentifier(_renderTargetId);
     _renderTargetIdentifiers[1] = new RenderTargetIdentifier(_osRTId);
-    _depthBufTemp = new RenderTargetIdentifier(Shader.PropertyToID("_depthBufTemp"));
+    // _depthBufTemp = new RenderTargetIdentifier(Shader.PropertyToID("_depthBufTemp"));
+    ConfigureTarget(_renderTargetIdentifiers, renderingData.cameraData.renderer.cameraDepthTarget);
+    ConfigureClear(ClearFlag.Color, Color.clear);
+  }
+
+  public override void OnCameraCleanup(CommandBuffer cmd) {
+    // cmd.ReleaseTemporaryRT(Shader.PropertyToID("_depthBufTemp"));
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
     // some settings we need for drawing the draw renderers
     var drawingSettings = CreateDrawingSettings(_shaderTag, ref renderingData, SortingCriteria.CommonOpaque);
+    drawingSettings.fallbackMaterial = _fallbackIdMaterial;
     
     var cmd = CommandBufferPool.Get();
     // make sure its shown in its own profiler step
     using (new ProfilingScope(cmd, _profilingSampler)) {
-      ConfigureTarget(_renderTargetIdentifiers, _depthBufTemp);
-      ConfigureClear(ClearFlag.All, Color.clear);
-      cmd.SetRenderTarget(_renderTargetIdentifiers, _depthBufTemp);
       // do the rendering!!!
       context.DrawRenderers(renderingData.cullResults, ref drawingSettings, ref _filteringSettings);
-      cmd.ReleaseTemporaryRT(Shader.PropertyToID("_depthBufTemp"));
     }
 
     context.ExecuteCommandBuffer(cmd);
     cmd.Clear();
-    CommandBufferPool.Release(cmd);      
+    CommandBufferPool.Release(cmd);    
   }
 }

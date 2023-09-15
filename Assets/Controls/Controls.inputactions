@@ -42,6 +42,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "pause",
+                    "type": "Button",
+                    "id": "949d2481-fa9b-4b88-b8e7-921bcc882f56",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "switch",
                     "type": "Button",
                     "id": "a3203d16-d2d6-4010-8687-ecb7eac347e7",
@@ -572,6 +581,17 @@
                     "action": "debug.reset",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54ab2544-9a2a-4def-8d82-18a21a3ba6e6",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -925,6 +945,34 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "stepForwards",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "b4db8cf1-fbe1-4640-b800-5dfc428f49f1",
+            "actions": [
+                {
+                    "name": "Unpause",
+                    "type": "Button",
+                    "id": "dc3a6474-b629-42e5-b764-a4e8be20d11b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "27cc3941-9ce3-4424-81b3-f37c5b79f011",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Unpause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

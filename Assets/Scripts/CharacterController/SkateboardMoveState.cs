@@ -8,11 +8,13 @@ public class SkateboardMoveState : SkateboardBaseState {
   public override void Enter() {
     sm.Input.OnPushPerformed += StartPush;
     sm.Input.OnSwitchPerformed += OnSwitch;
-    sm.Input.OnOlliePerformed += OnOllieInput;
+    sm.Input.OnPausePerformed += sm.Pause;
     sm.Input.OnStartBraking += StartBrake;
     sm.Input.OnEndBraking += EndBrake;
-    sm.ComboActions["ollie"] += OnOllieInput;
-    sm.ComboActions["kickflip"] += OnKickflipInput;
+    sm.ComboActions["ollie"] += OnOllieTrickInput;
+    sm.ComboActions["kickflip"] += OnOllieTrickInput;
+    sm.ComboActions["heelflip"] += OnOllieTrickInput;
+    sm.ComboActions["popShuvit"] += OnOllieTrickInput;
   }
 
   public override void Tick() {
@@ -38,10 +40,12 @@ public class SkateboardMoveState : SkateboardBaseState {
   public override void Exit() {
     sm.Input.OnPushPerformed -= StartPush;
     sm.Input.OnSwitchPerformed -= OnSwitch;
-    sm.Input.OnOlliePerformed -= OnOllieInput;
+    sm.Input.OnPausePerformed -= sm.Pause;
     sm.Input.OnStartBraking -= StartBrake;
     sm.Input.OnEndBraking -= EndBrake;
-    sm.ComboActions["ollie"] -= OnOllieInput;
-    sm.ComboActions["kickflip"] -= OnKickflipInput;
+    sm.ComboActions["ollie"] -= OnOllieTrickInput;
+    sm.ComboActions["kickflip"] -= OnOllieTrickInput;
+    sm.ComboActions["heelflip"] -= OnOllieTrickInput;
+    sm.ComboActions["popShuvit"] -= OnOllieTrickInput;
   }
 }
