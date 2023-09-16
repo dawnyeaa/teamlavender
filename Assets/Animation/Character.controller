@@ -850,7 +850,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: legIK
+  m_Name: legIKEnabled
   m_ChildStates: []
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
@@ -998,7 +998,7 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: legIK
+    m_Name: legIKEnabled
     m_StateMachine: {fileID: -688774716807516828}
     m_Mask: {fileID: 0}
     m_Motions:
@@ -1007,13 +1007,13 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 6315771125986767230}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -7305003070711304523}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -5972995783675153780}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 78876860560847548}
       m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
@@ -1034,16 +1034,16 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -6276645771119371460}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 1073030182127028828}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 5733664488544336707}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 3541132167002340339}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 0}
       m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
@@ -1062,6 +1062,60 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: -1458165414125095339}
       m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+    m_Behaviours: []
+    m_BlendingMode: 0
+    m_SyncedLayerIndex: 0
+    m_DefaultWeight: 1
+    m_IKPass: 0
+    m_SyncedLayerAffectsTiming: 0
+    m_Controller: {fileID: 9100000}
+  - serializedVersion: 5
+    m_Name: legIKPos
+    m_StateMachine: {fileID: 7779078827842650320}
+    m_Mask: {fileID: 0}
+    m_Motions:
+    - serializedVersion: 2
+      m_State: {fileID: -4908912062980398795}
+      m_Motion: {fileID: 0}
+    - serializedVersion: 2
+      m_State: {fileID: 78876860560847548}
+      m_Motion: {fileID: 7400000, guid: 3ca9803b1b6bf084b9cd4c9879fc2b00, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6628596414659633773}
+      m_Motion: {fileID: 7400000, guid: 0a7039779abce3644b6a5fa3f11e9edb, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 1427358184514110096}
+      m_Motion: {fileID: 7400000, guid: 57f9107f7d5a2964da4f78263996f3a1, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -3881067863063834355}
+      m_Motion: {fileID: 7400000, guid: 61f55858b72753245a27872276e20f57, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6382431627166064897}
+      m_Motion: {fileID: 7400000, guid: a7376937037d32e418e6a8162be9ce47, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6063862976369003763}
+      m_Motion: {fileID: 7400000, guid: c642e464b058dda409bcdb80257fe2b0, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 3541132167002340339}
+      m_Motion: {fileID: 7400000, guid: 838ddcbbcfee0e74d871fa5ff2fdb747, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 1073030182127028828}
+      m_Motion: {fileID: 7400000, guid: 355d7f1d4e4d25e45a68186967deb337, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 5733664488544336707}
+      m_Motion: {fileID: 7400000, guid: 5cacf0a5dbc1ebc4c8ce7250c5a9d650, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -6276645771119371460}
+      m_Motion: {fileID: 7400000, guid: c7542604dffebe3488c4dd713098bf23, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -7305003070711304523}
+      m_Motion: {fileID: 7400000, guid: ce319fe36e694f442b6146fc4bcb2556, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -5972995783675153780}
+      m_Motion: {fileID: 7400000, guid: 1ae4340c406abe14a956997fe5fbf388, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6315771125986767230}
+      m_Motion: {fileID: 7400000, guid: 0ea63fe87a4e52348a925e145550ac60, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
@@ -1091,13 +1145,13 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 6315771125986767230}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -7305003070711304523}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -5972995783675153780}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -3881067863063834355}
       m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
@@ -1106,16 +1160,16 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -6276645771119371460}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 1073030182127028828}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 5733664488544336707}
       m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 3541132167002340339}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 0}
       m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
@@ -1805,6 +1859,25 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!1107 &7779078827842650320
+AnimatorStateMachine:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: legIKPos
+  m_ChildStates: []
+  m_ChildStateMachines: []
+  m_AnyStateTransitions: []
+  m_EntryTransitions: []
+  m_StateMachineTransitions: {}
+  m_StateMachineBehaviours: []
+  m_AnyStatePosition: {x: 50, y: 20, z: 0}
+  m_EntryPosition: {x: 50, y: 120, z: 0}
+  m_ExitPosition: {x: 800, y: 120, z: 0}
+  m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
+  m_DefaultState: {fileID: 0}
 --- !u!1101 &9121772805966837222
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

@@ -189,7 +189,7 @@ public abstract class SkateboardBaseState : State {
     var height = sm.HipHeight.Tick(smoothHeight, Time.fixedDeltaTime);
     sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
     sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
-    sm.BodyMesh.position = sm.HipHelper.position;
+    // sm.BodyMesh.position = sm.HipHelper.position;
   }
 
   protected void SetSpeedyLines() {
