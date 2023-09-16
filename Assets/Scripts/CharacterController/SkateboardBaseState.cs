@@ -53,8 +53,11 @@ public abstract class SkateboardBaseState : State {
 
     sm.CurrentProjectLength = sm.ProjectLength;
 
+    // this was the old spherecast that *mostly* worked
+    // Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))
+
     // sphere cast from body down - sphere does not need to be the same radius as the collider
-    if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+    if (Physics.BoxCast(sm.transform.position, Vector3.one * sm.ProjectRadius, sm.Down, out RaycastHit hit, Quaternion.identity, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
 
       sm.debugFrame.pointOfContact = hit.point;
       sm.debugFrame.contactNormal = hit.normal;
@@ -165,6 +168,13 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void CalculateAirTurn() {
+    if (!sm.Grounded) {
+      // between you and me, i never added this
+      // sm.Facing.AddTorque(sm.Input.turn*sm.AirTurnForce);
+    }
+  }
+
   protected void SetHipHelperPos() {
     // place hip helper at mainRB height above the board
     var heightVector =  sm.MainRB.transform.position - sm.Board.position;
@@ -179,7 +189,7 @@ public abstract class SkateboardBaseState : State {
     var height = sm.HipHeight.Tick(smoothHeight, Time.fixedDeltaTime);
     sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
     sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
-    sm.BodyMesh.position = sm.HipHelper.position;
+    // sm.BodyMesh.position = sm.HipHelper.position;
   }
 
   protected void SetSpeedyLines() {

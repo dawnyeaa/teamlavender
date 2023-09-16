@@ -8,6 +8,8 @@ public class SkateboardRailState : SkateboardBaseState {
     ApplyRotationToModels();
     StartRailAnim();
     StartRailBoost();
+    
+    sm.HeadSensZone.AddCallback(sm.Die);
   }
 
   public override void Tick() {
@@ -23,5 +25,7 @@ public class SkateboardRailState : SkateboardBaseState {
     PushOffRail();
     EndRailAnim();
     EnableSpinBody();
+    
+    sm.HeadSensZone.RemoveCallback(sm.Die);
   }
 }

@@ -101,7 +101,7 @@ PositionConstraint:
   m_IsContraintActive: 1
   m_IsLocked: 1
   m_Sources:
-  - sourceTransform: {fileID: 7375170241692268669}
+  - sourceTransform: {fileID: 0}
     weight: 1
 --- !u!136 &9131202192249428332
 CapsuleCollider:
@@ -503,7 +503,7 @@ MonoBehaviour:
   RightingStrength: 0.1
   GoingDownThreshold: -4
   LandingAngleGive: 0.8
-  AirTurningDrag: 5
+  AirTurnForce: 1
   TurningEase:
     serializedVersion: 2
     m_Curve:
@@ -559,6 +559,7 @@ MonoBehaviour:
   MinWheelSpinParticleSpeed: 2
   MinWheelSpinParticleChance: 0.05
   MaxWheelSpinParticleChance: 0.45
+  MinSpeedyLineSpeed: 2
   FacingForward: 1
   Friction: 0
   Grounded: 1
@@ -629,6 +630,8 @@ MonoBehaviour:
   - {fileID: 497523644630318794}
   WheelSpinParticles: []
   LandEmit: {fileID: 6427474197278162272}
+  SpeedyLines: {fileID: 0}
+  SpeedyLinesMat: {fileID: 0}
   DebugFrameHandler: {fileID: 0}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
@@ -1017,7 +1020,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb5c28afee0b2d24eab4df33c4cd1e7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angularDrag: 0.05
+  angularDrag: 0.1
   update: 1
   orientation: 0
   angularVelocity: 0
@@ -2305,12 +2308,6 @@ Transform:
 --- !u!95 &7231628970856199054 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 769970106fb6b4e4e9b72c2ced7f0746,
-    type: 3}
-  m_PrefabInstance: {fileID: 3832982824031227423}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7375170241692268669 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -3213138218659121566, guid: 769970106fb6b4e4e9b72c2ced7f0746,
     type: 3}
   m_PrefabInstance: {fileID: 3832982824031227423}
   m_PrefabAsset: {fileID: 0}
