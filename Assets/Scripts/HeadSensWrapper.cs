@@ -34,8 +34,11 @@ public class HeadSensWrapper : MonoBehaviour {
     callbacks += callback;
   }
 
+  public void RemoveCallback(HeadHitCallback callback) {
+    callbacks -= callback;
+  }
+
   private void OnTriggerEnter(Collider other) {
-    // Debug.Log("here");
     callbacks?.Invoke();
   }
 }

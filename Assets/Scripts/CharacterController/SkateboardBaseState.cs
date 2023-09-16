@@ -53,8 +53,11 @@ public abstract class SkateboardBaseState : State {
 
     sm.CurrentProjectLength = sm.ProjectLength;
 
+    // this was the old spherecast that *mostly* worked
+    // Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))
+
     // sphere cast from body down - sphere does not need to be the same radius as the collider
-    if (Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+    if (Physics.BoxCast(sm.transform.position, Vector3.one * sm.ProjectRadius, sm.Down, out RaycastHit hit, Quaternion.identity, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
 
       sm.debugFrame.pointOfContact = hit.point;
       sm.debugFrame.contactNormal = hit.normal;
@@ -162,6 +165,13 @@ public abstract class SkateboardBaseState : State {
         sm.Facing.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition);
         sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       }
+    }
+  }
+
+  protected void CalculateAirTurn() {
+    if (!sm.Grounded) {
+      // between you and me, i never added this
+      // sm.Facing.AddTorque(sm.Input.turn*sm.AirTurnForce);
     }
   }
 

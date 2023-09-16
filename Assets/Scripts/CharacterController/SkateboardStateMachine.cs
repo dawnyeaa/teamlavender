@@ -39,7 +39,7 @@ public class SkateboardStateMachine : StateMachine {
   // public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
   public float LandingAngleGive = 0.8f;
-  public float AirTurningDrag = 1f;
+  public float AirTurnForce = 1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
@@ -140,11 +140,7 @@ public class SkateboardStateMachine : StateMachine {
 
     SwitchState(new SkateboardMoveState(this));
 
-    HeadSensZone.AddCallback(EnterDead);
-    HeadSensZone.AddCallback(SlamRumble);
-
-    Input.OnSlamPerformed += EnterDead;
-    Input.OnSlamPerformed += SlamRumble;
+    Input.OnSlamPerformed += Die;
   }
 
   public void OnOllieForce() {
@@ -168,6 +164,11 @@ public class SkateboardStateMachine : StateMachine {
   public void PushingEnd() {
     PushingAnim = false;
     Pushing = false;
+  }
+
+  public void Die() {
+    EnterDead();
+    SlamRumble();
   }
 
   public async void EnterDead() {
