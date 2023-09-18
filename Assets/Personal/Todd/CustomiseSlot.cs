@@ -15,7 +15,7 @@ public class CustomiseSlot : MonoBehaviour {
 
   void Awake() {
     options = new List<GameObject>(optionMeshes.Count);
-    optionMaterials = new List<Material>();
+    // optionMaterials = new List<Material>();
     selected = defaultOption;
   }
 
@@ -26,14 +26,14 @@ public class CustomiseSlot : MonoBehaviour {
 
   private void InstantiateOptions() {
     for (int i = 0; i < optionMeshes.Count; ++i) {
-      options.Insert(i, Instantiate(optionMeshes[i], transform));
-      optionMaterials.Insert(i, options[i].GetComponent<MeshRenderer>().material);
+      options.Insert(i, optionMeshes[i]);
+      // optionMaterials.Insert(i, options[i].GetComponent<MeshRenderer>().material);
     }
   }
 
   private void SetActiveStates() {
     for (int i = 0; i < options.Count; ++i) {
-      options[i].SetActive(i == selected);
+      if (options[i] != null) options[i].SetActive(i == selected);
     }
   }
 
@@ -48,8 +48,8 @@ public class CustomiseSlot : MonoBehaviour {
   }
 
   public void CustomiseColor(Vector2 uv) {
-    foreach (Material optionMaterial in optionMaterials) {
-      optionMaterial.SetVector("_PickSkin", new Vector4(uv.x, uv.y, 0, 0));
-    }
+    // foreach (Material optionMaterial in optionMaterials) {
+    //   optionMaterial.SetVector("_PickSkin", new Vector4(uv.x, uv.y, 0, 0));
+    // }
   }
 }

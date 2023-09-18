@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.LowLevel;
 
 public class MenuManager : MonoBehaviour
 {
@@ -15,7 +16,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] int currentMenu;
     int currentResolutionShowing;
     public int volume;
-    [SerializeField] Button SettingMenuDefault, MainMenuDefault, ControlsMenuDefault;
+    [SerializeField] Button SettingMenuDefault, MainMenuDefault, ControlsMenuDefault, CustoMenuDefault;
+    [SerializeField] GameObject TitleLogo;
     [SerializeField] AudioMixer audioMixer;
     [SerializeField] AudioListener audioListener;
     [SerializeField] Slider volumeSlider;
@@ -47,29 +49,34 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void EnableMenu() 
     {
-        
+        menus[currentMenu].SetActive(true);
     }
 
     public void ChangeMenu(int menu)
     {
         menus[currentMenu].SetActive(false);
+        if (currentMenu == 0) TitleLogo.SetActive(false);
         currentMenu = menu;
         menus[menu].SetActive(true);
         switch (menu)
         {
             case 0:
                 MainMenuDefault.Select();
+                TitleLogo.SetActive(true);
             break;
             
             case 1:
-                ControlsMenuDefault.Select();
+                CustoMenuDefault.Select();
             break;
             
             case 2:
                 SettingMenuDefault.Select();
+            break;
+
+            case 3:
+                ControlsMenuDefault.Select();
             break;
         }
     }

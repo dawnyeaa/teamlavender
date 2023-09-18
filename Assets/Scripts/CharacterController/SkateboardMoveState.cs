@@ -15,6 +15,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.ComboActions["kickflip"] += OnOllieTrickInput;
     sm.ComboActions["heelflip"] += OnOllieTrickInput;
     sm.ComboActions["popShuvit"] += OnOllieTrickInput;
+
+    sm.HeadSensZone.AddCallback(sm.Die);
   }
 
   public override void Tick() {
@@ -27,12 +29,15 @@ public class SkateboardMoveState : SkateboardBaseState {
     CalculateTurn();
     ApplyRotationToModels();
     CalculatePush();
+    CalculateAirTurn();
     CapSpeed();
     CheckRails();
     CheckWalls();
     BodyUprightCorrect();
     ApplyFrictionForce();
     SetHipHelperPos();
+    SetWheelSpinParticleChance();
+    SetSpeedyLines();
 
     SaveDebugFrame();
   }
@@ -47,5 +52,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.ComboActions["kickflip"] -= OnOllieTrickInput;
     sm.ComboActions["heelflip"] -= OnOllieTrickInput;
     sm.ComboActions["popShuvit"] -= OnOllieTrickInput;
+    
+    sm.HeadSensZone.RemoveCallback(sm.Die);
   }
 }

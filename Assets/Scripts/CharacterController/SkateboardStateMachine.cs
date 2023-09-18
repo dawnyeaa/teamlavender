@@ -23,6 +23,7 @@ public class SkateboardStateMachine : StateMachine {
   public float BrakingFriction = 0.4f;
   public float GrindingFriction = 0.1f;
   public float MaxTruckTurnDeg = 8.34f;
+  public float MaxAnimatedTruckTurnDeg = 15f;
   public float TruckSpacing = 0.205f;
   public float TruckTurnDamping = 0.3f;
   public float SpringConstant = 40f;
@@ -39,7 +40,7 @@ public class SkateboardStateMachine : StateMachine {
   // public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
   public float LandingAngleGive = 0.8f;
-  public float AirTurningDrag = 1f;
+  public float AirTurnForce = 1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
@@ -60,6 +61,10 @@ public class SkateboardStateMachine : StateMachine {
   public float RailStartBoostForce = 10f;
   public float ExitRailForce = 20f;
   public float HipHelperFPS = 12f;
+  public float MinWheelSpinParticleSpeed = 1f;
+  public float MinWheelSpinParticleChance = 0.1f;
+  public float MaxWheelSpinParticleChance = 0.75f;
+  public float MinSpeedyLineSpeed = 2f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -109,6 +114,7 @@ public class SkateboardStateMachine : StateMachine {
   public Transform BodyMesh;
   public Transform Board;
   public Animator CharacterAnimator;
+  public Animator BoardIKTiltAnimator;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
   public ParentConstraint LookatConstraint;
@@ -117,9 +123,13 @@ public class SkateboardStateMachine : StateMachine {
   public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
   public PauseMenuManager PauseMenuManager;
-  public DebugFrameHandler DebugFrameHandler;
   public RailManager RailManager;
   public List<Transform> RailLockTransforms;
+  public WheelSpinParticleHandler[] WheelSpinParticles;
+  public EmitterBundle LandEmit;
+  public MeshRenderer SpeedyLines;
+  public Material SpeedyLinesMat;
+  public DebugFrameHandler DebugFrameHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -128,14 +138,11 @@ public class SkateboardStateMachine : StateMachine {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
+    SpeedyLinesMat = SpeedyLines.material;
 
     SwitchState(new SkateboardMoveState(this));
 
-    HeadSensZone.AddCallback(EnterDead);
-    HeadSensZone.AddCallback(SlamRumble);
-
-    Input.OnSlamPerformed += EnterDead;
-    Input.OnSlamPerformed += SlamRumble;
+    Input.OnSlamPerformed += Die;
   }
 
   public void OnOllieForce() {
@@ -159,6 +166,11 @@ public class SkateboardStateMachine : StateMachine {
   public void PushingEnd() {
     PushingAnim = false;
     Pushing = false;
+  }
+
+  public void Die() {
+    EnterDead();
+    SlamRumble();
   }
 
   public async void EnterDead() {
