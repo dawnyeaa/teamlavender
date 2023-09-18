@@ -107,6 +107,8 @@ public abstract class SkateboardBaseState : State {
         }
 
         sm.LandEmit.Play();
+        SoundEffectsManager.instance.PlaySoundFXClip(sm.LandingHardClip, sm.Board, 1);
+        StartRollingSFX();
       }
       sm.Grounded = true;
     }
@@ -114,6 +116,7 @@ public abstract class SkateboardBaseState : State {
       if (sm.Grounded) {
         sm.CharacterAnimator.SetTrigger("startAirborne");
         sm.AirTimeCounter = 0;
+        StopRollingSFX();
       }
       sm.Grounded = false;
     }
@@ -132,6 +135,24 @@ public abstract class SkateboardBaseState : State {
   protected void AdjustSpringMultiplier() {
     sm.SpringMultiplier = Mathf.Abs(Vector3.Dot(Vector3.up, -sm.Down));
     sm.SpringMultiplier = math.remap(0, 1, sm.SpringMultiplierMin, sm.SpringMultiplierMax, sm.SpringMultiplier);
+  }
+
+  protected void StartRollingSFX() {
+    if (sm.RollingHardClipIndex == -1) {
+      sm.RollingHardClipIndex = SoundEffectsManager.instance.PlayLoopingSoundFXClip(sm.RollingHardClip, sm.Board, 1);
+    }
+  }
+
+  protected void SetRollingVolume() {
+    if (sm.RollingHardClipIndex != -1)
+      SoundEffectsManager.instance.SetLoopingFXVolume(sm.RollingHardClipIndex, sm.MainRB.velocity.magnitude/sm.MaxSpeed);
+  }
+
+  protected void StopRollingSFX() {
+    if (sm.RollingHardClipIndex != -1) {
+      SoundEffectsManager.instance.StopLoopingSoundFXClip(sm.RollingHardClipIndex);
+      sm.RollingHardClipIndex = -1;
+    }
   }
 
   protected void CalculateTurn() {
