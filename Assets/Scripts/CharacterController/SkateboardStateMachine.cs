@@ -23,6 +23,7 @@ public class SkateboardStateMachine : StateMachine {
   public float BrakingFriction = 0.4f;
   public float GrindingFriction = 0.1f;
   public float MaxTruckTurnDeg = 8.34f;
+  public float MaxAnimatedTruckTurnDeg = 15f;
   public float TruckSpacing = 0.205f;
   public float TruckTurnDamping = 0.3f;
   public float SpringConstant = 40f;
@@ -113,6 +114,7 @@ public class SkateboardStateMachine : StateMachine {
   public Transform BodyMesh;
   public Transform Board;
   public Animator CharacterAnimator;
+  public Animator BoardIKTiltAnimator;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
   public ParentConstraint LookatConstraint;

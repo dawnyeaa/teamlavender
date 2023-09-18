@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class FootIKPosBakerWindow : EditorWindow {
   Animator animator;
   Transform leftFoot, rightFoot;
-  Transform destParent;
+  Transform destParentL, destParentR;
 
   private AnimationCurve[] leftFootCurrentCurve, rightFootCurrentCurve;
   private readonly int fps = 30;
@@ -22,7 +22,8 @@ public class FootIKPosBakerWindow : EditorWindow {
     animator = (Animator)EditorGUILayout.ObjectField("Animator", animator, typeof(Animator), true);
     leftFoot = (Transform)EditorGUILayout.ObjectField("Left Foot", leftFoot, typeof(Transform), true);
     rightFoot = (Transform)EditorGUILayout.ObjectField("Right Foot", rightFoot, typeof(Transform), true);
-    destParent = (Transform)EditorGUILayout.ObjectField("Destination Parent", destParent, typeof(Transform), true);
+    destParentL = (Transform)EditorGUILayout.ObjectField("Destination Parent Left", destParentL, typeof(Transform), true);
+    destParentR = (Transform)EditorGUILayout.ObjectField("Destination Parent Right", destParentR, typeof(Transform), true);
     if (GUILayout.Button("Bake Foot IK To Clips")) {
       BakeFootIKClips();
     }
@@ -50,27 +51,33 @@ public class FootIKPosBakerWindow : EditorWindow {
         
         PlayClipAndRecord(childAnimatorState.state.nameHash);
 
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localPosition.x", leftFootCurrentCurve[0]);
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localPosition.y", leftFootCurrentCurve[1]);
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localPosition.z", leftFootCurrentCurve[2]);
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localRotation.x", leftFootCurrentCurve[3]);
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localRotation.y", leftFootCurrentCurve[4]);
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localRotation.z", leftFootCurrentCurve[5]);
-        clip.SetCurve("LegIK/LeftFoot", typeof(Transform), "localRotation.w", leftFootCurrentCurve[6]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.x", leftFootCurrentCurve[0]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.z", leftFootCurrentCurve[2]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.y", leftFootCurrentCurve[1]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localRotation.x", leftFootCurrentCurve[3]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localRotation.y", leftFootCurrentCurve[4]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localRotation.z", leftFootCurrentCurve[5]);
+        clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localRotation.w", leftFootCurrentCurve[6]);
         
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localPosition.x", rightFootCurrentCurve[0]);
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localPosition.y", rightFootCurrentCurve[1]);
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localPosition.z", rightFootCurrentCurve[2]);
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localRotation.x", rightFootCurrentCurve[3]);
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localRotation.y", rightFootCurrentCurve[4]);
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localRotation.z", rightFootCurrentCurve[5]);
-        clip.SetCurve("LegIK/RightFoot", typeof(Transform), "localRotation.w", rightFootCurrentCurve[6]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localPosition.x", rightFootCurrentCurve[0]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localPosition.y", rightFootCurrentCurve[1]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localPosition.z", rightFootCurrentCurve[2]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localRotation.x", rightFootCurrentCurve[3]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localRotation.y", rightFootCurrentCurve[4]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localRotation.z", rightFootCurrentCurve[5]);
+        clip.SetCurve("LegIK/RightRotator/RightFoot", typeof(Transform), "localRotation.w", rightFootCurrentCurve[6]);
 
         clip.frameRate = fps;
 
         var newClipName = $"Assets/Animation/Clips/IKGenerated/IK{childAnimatorState.state.name}.anim";
         AssetDatabase.DeleteAsset(newClipName);
         AssetDatabase.CreateAsset(clip, newClipName);
+      }
+
+      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
+        foreach (var transition in childAnimatorState.state.transitions) {
+          transition.mute = false;
+        }
       }
     }
   }
@@ -94,11 +101,11 @@ public class FootIKPosBakerWindow : EditorWindow {
     for (int f = 0; f <= numFrames; ++f) {
       var currentTime = f/(float)fps;
 
-      var lpos = destParent.InverseTransformPoint(leftFoot.position);
-      var rpos = destParent.InverseTransformPoint(rightFoot.position);
+      var lpos = destParentL.InverseTransformPoint(leftFoot.position);
+      var rpos = destParentR.InverseTransformPoint(rightFoot.position);
 
-      var lrot = Quaternion.Inverse(destParent.rotation) * leftFoot.rotation;
-      var rrot = Quaternion.Inverse(destParent.rotation) * rightFoot.rotation;
+      var lrot = Quaternion.Inverse(destParentL.rotation) * leftFoot.rotation;
+      var rrot = Quaternion.Inverse(destParentR.rotation) * rightFoot.rotation;
 
       leftFootCurrentCurve[0].AddKey(currentTime, lpos.x);
       leftFootCurrentCurve[1].AddKey(currentTime, lpos.y);

@@ -126,6 +126,7 @@ public abstract class SkateboardBaseState : State {
     sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
     sm.Board.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
     sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.MainRB.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
+    sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
   }
 
   protected void AdjustSpringMultiplier() {
@@ -138,7 +139,9 @@ public abstract class SkateboardBaseState : State {
       float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
       if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
       sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
-      sm.CharacterAnimator.SetFloat("leanValue", (sm.TruckTurnPercent*0.5f) + 0.5f);
+      var leanValue = (sm.TruckTurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
+      sm.CharacterAnimator.SetFloat("leanValue", leanValue);
+      sm.BoardIKTiltAnimator.SetFloat("leanValue", leanValue);
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
