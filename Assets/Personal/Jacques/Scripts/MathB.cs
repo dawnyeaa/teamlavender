@@ -12,7 +12,7 @@ public static class MathB
     /// <param name="amount">Pillar amount</param>
     /// <param name="shape"></param>
     /// <returns></returns>
-    public static List<GameObject> ShapesOfGameObjects(GameObject pf, float radius, int amount, Shapes shape)
+    public static List<GameObject> ShapesOfGameObjects(GameObject pf, Transform parent, float radius, int amount, Shapes shape)
     {
         List<GameObject> objects = new List<GameObject>(amount);
 
@@ -21,9 +21,11 @@ public static class MathB
             for (int i = 0; i < amount; i++)
             {
                 float wallPos = -radius + i*radius/amount*2;//maybe remove raduis/2
-                var pos = new Vector3(wallPos, 0, 1);
+                var pos = new Vector3(wallPos, 0, 0) + pf.transform.position;
                 //Instantiate
-                GameObject obj = Object.Instantiate(pf, pos, Quaternion.identity) as GameObject;
+                GameObject obj = Object.Instantiate(pf, parent.position, Quaternion.identity) as GameObject;
+                var rect = obj.transform as RectTransform;
+                rect.anchoredPosition = new Vector2(wallPos, 0);
                 objects.Add(obj);
             }
         }
