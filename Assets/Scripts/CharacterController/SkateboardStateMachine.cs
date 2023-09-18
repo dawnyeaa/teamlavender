@@ -127,6 +127,7 @@ public class SkateboardStateMachine : StateMachine {
   public RailManager RailManager;
   public List<Transform> RailLockTransforms;
   public WheelSpinParticleHandler[] WheelSpinParticles;
+  public GameObject GrindParticles;
   public EmitterBundle LandEmit;
   public MeshRenderer SpeedyLines;
   public Material SpeedyLinesMat;

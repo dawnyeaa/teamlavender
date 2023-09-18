@@ -8,6 +8,7 @@ public class SkateboardRailState : SkateboardBaseState {
     ApplyRotationToModels();
     StartRailAnim();
     StartRailBoost();
+    StartGrindingParticles();
     
     sm.HeadSensZone.AddCallback(sm.Die);
   }
@@ -25,6 +26,7 @@ public class SkateboardRailState : SkateboardBaseState {
     PushOffRail();
     EndRailAnim();
     EnableSpinBody();
+    StopGrindingParticles();
     
     sm.HeadSensZone.RemoveCallback(sm.Die);
   }
