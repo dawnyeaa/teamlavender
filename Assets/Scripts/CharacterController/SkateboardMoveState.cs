@@ -17,6 +17,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.ComboActions["popShuvit"] += OnOllieTrickInput;
 
     sm.HeadSensZone.AddCallback(sm.Die);
+
+    StartRollingSFX();
   }
 
   public override void Tick() {
@@ -38,6 +40,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetHipHelperPos();
     SetWheelSpinParticleChance();
     SetSpeedyLines();
+    SetRollingVolume();
 
     SaveDebugFrame();
   }
@@ -54,5 +57,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.ComboActions["popShuvit"] -= OnOllieTrickInput;
     
     sm.HeadSensZone.RemoveCallback(sm.Die);
+
+    StopRollingSFX();
   }
 }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public class SpectrumAnalyzer : MonoBehaviour
 {
     public AnalyzerSettings settings; //All of our settings
+    public GameObject folderGO;
 
     //private
     private float[] spectrum; //Audio Source data
@@ -28,16 +29,17 @@ public class SpectrumAnalyzer : MonoBehaviour
         //get current pillar types
         GameObject currentPrefabType = settings.pillar.type == PillarTypes.Cylinder ? settings.Prefabs.CylPrefab : settings.Prefabs.BoxPrefab;
        
-        
-        pillars = MathB.ShapesOfGameObjects(currentPrefabType, settings.pillar.radius, (int) settings.pillar.amount,settings.pillar.shape);
-
         //Organize pillars nicely in this folder under this transform
-        folder = new GameObject("Pillars-" + pillars.Count);
+        folder = Instantiate(folderGO);
         folder.transform.SetParent(transform);
+        var rect = folder.transform as RectTransform;
+        rect.anchoredPosition = new Vector2(93.3f, -19.9f);
+        
+        pillars = MathB.ShapesOfGameObjects(currentPrefabType, folder.transform, settings.pillar.radius, (int) settings.pillar.amount, settings.pillar.shape);
 
-        foreach (var piller in pillars)
+        foreach (var pillar in pillars)
         {
-            piller.transform.SetParent(folder.transform);
+            pillar.transform.SetParent(folder.transform, false);
         }
 
         isBuilding = false;
