@@ -4,6 +4,7 @@ public class SkateboardDeadState : SkateboardBaseState {
   public SkateboardDeadState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
   ConstraintSource CharacterSource, RagdollSource;
   public override void Enter() {
+    SoundEffectsManager.instance.PlaySoundFXClip(sm.DeathClip, sm.transform, 1);
     // change to ragdoll here
     CharacterSource = sm.LookatConstraint.GetSource(0);
     CharacterSource.weight = 0;
