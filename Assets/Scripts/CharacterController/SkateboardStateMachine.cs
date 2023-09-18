@@ -98,6 +98,7 @@ public class SkateboardStateMachine : StateMachine {
     { "heelflip", null },
     { "popShuvit", null }
   };
+  [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
 
   // Objects to link
@@ -129,6 +130,10 @@ public class SkateboardStateMachine : StateMachine {
   public EmitterBundle LandEmit;
   public MeshRenderer SpeedyLines;
   public Material SpeedyLinesMat;
+  public AudioClip LandingHardClip;
+  public AudioClip DeathClip;
+  public AudioClip PushClip;
+  public AudioClip RollingHardClip;
   public DebugFrameHandler DebugFrameHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
@@ -154,6 +159,7 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void StartPushForce(float duration) {
+    SoundEffectsManager.instance.PlaySoundFXClip(PushClip, transform, 1);
     Pushing = true;
     MaxPushT = duration;
     CurrentPushT = duration;
