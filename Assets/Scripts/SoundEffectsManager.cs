@@ -63,8 +63,10 @@ public class SoundEffectsManager : MonoBehaviour {
   }
 
   public void StopLoopingSoundFXClip(int index) {
-    availableSlots.Add(index, index);
-    Destroy(loopingSounds[index].gameObject);
+    if (index < loopingSounds.Count) {
+      availableSlots.Add(index, index);
+      Destroy(loopingSounds[index].gameObject);
+    }
   }
 
   private int GetNextAvailableSlot() {
@@ -72,11 +74,12 @@ public class SoundEffectsManager : MonoBehaviour {
       return loopingSounds.Count;
     }
     var slot = availableSlots.Keys[0];
-    availableSlots.RemoveAt(slot);
+    availableSlots.Remove(slot);
     return slot;
   }
 
   public void SetLoopingFXVolume(int index, float volume) {
-    loopingSounds[index].volume = volume;
+    if (index < loopingSounds.Count)
+      loopingSounds[index].volume = volume;
   }
 }
