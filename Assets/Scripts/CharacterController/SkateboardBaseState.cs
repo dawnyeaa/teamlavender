@@ -393,7 +393,7 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void FaceAlongRail() {
-    sm.FacingParent.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
+    sm.Facing.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
   }
 
   protected void DisableSpinBody() {
@@ -403,6 +403,14 @@ public abstract class SkateboardBaseState : State {
 
   protected void EnableSpinBody() {
     sm.Facing.update = true;
+  }
+
+  protected void StartGrindingParticles() {
+    sm.GrindParticles.SetActive(true);
+  }
+
+  protected void StopGrindingParticles() {
+    sm.GrindParticles.SetActive(false);
   }
 
   protected void StartRailBoost() {

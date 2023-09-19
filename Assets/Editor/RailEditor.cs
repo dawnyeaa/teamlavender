@@ -20,7 +20,7 @@ public class RailEditor : Editor {
     }
 
     Handles.color = Color.red;
-    Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+    Handles.zTest = UnityEngine.Rendering.CompareFunction.Always;
     Handles.DrawLine(t.TransformA.position, t.TransformB.position, 10);
 
     Handles.color = orange;

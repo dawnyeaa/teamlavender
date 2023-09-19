@@ -23,6 +23,9 @@
         },
         {
             "m_Id": "409a76526a154c1ca5965d6f389a5eb6"
+        },
+        {
+            "m_Id": "b61f0c0ad8e542a9975e5eb1be4f8726"
         }
     ],
     "m_Keywords": [],
@@ -248,6 +251,9 @@
         },
         {
             "m_Id": "f0b2288232a84c9bbbdeed6dd972a8f2"
+        },
+        {
+            "m_Id": "0a8fc6b11a18477184a97e4cedc77ecc"
         }
     ],
     "m_GroupDatas": [],
@@ -293,6 +299,20 @@
                     "m_Id": "b770e4173eef49d8b19452dd391d5c71"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "0a8fc6b11a18477184a97e4cedc77ecc"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "63484897bb2549b4a10bde1e47878b7a"
+                },
+                "m_SlotId": 1
             }
         },
         {
@@ -1761,6 +1781,9 @@
         },
         {
             "m_Id": "409a76526a154c1ca5965d6f389a5eb6"
+        },
+        {
+            "m_Id": "b61f0c0ad8e542a9975e5eb1be4f8726"
         }
     ]
 }
@@ -1855,6 +1878,41 @@
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "0a8fc6b11a18477184a97e4cedc77ecc",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -2162.68408203125,
+            "y": 768.0418701171875,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "57038c666a124939bd28210df83688f2"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "b61f0c0ad8e542a9975e5eb1be4f8726"
     }
 }
 
@@ -4050,6 +4108,21 @@
 }
 
 {
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "57038c666a124939bd28210df83688f2",
+    "m_Id": 0,
+    "m_DisplayName": "densityx",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
     "m_SGVersion": 1,
     "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
     "m_ObjectId": "57387806f8ba40b79e126b9cf5e76701",
@@ -4577,7 +4650,7 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1919.0,
+            "x": -1853.0001220703125,
             "y": 542.0,
             "width": 208.0,
             "height": 302.0
@@ -7511,6 +7584,33 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "b61f0c0ad8e542a9975e5eb1be4f8726",
+    "m_Guid": {
+        "m_GuidSerialized": "fb64f075-b9f4-49ec-89dc-7c332a16298e"
+    },
+    "m_Name": "densityx",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "densityx",
+    "m_DefaultReferenceName": "_densityx",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.5,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "b6950b0b77d84fe289eb73a7e3c9a12d",
@@ -8024,7 +8124,7 @@
     "m_ShaderOutputName": "B",
     "m_StageCapability": 3,
     "m_Value": {
-        "e00": 0.10000000149011612,
+        "e00": 1.0,
         "e01": 2.0,
         "e02": 2.0,
         "e03": 2.0,

@@ -127,6 +127,7 @@ public class SkateboardStateMachine : StateMachine {
   public RailManager RailManager;
   public List<Transform> RailLockTransforms;
   public WheelSpinParticleHandler[] WheelSpinParticles;
+  public GameObject GrindParticles;
   public EmitterBundle LandEmit;
   public MeshRenderer SpeedyLines;
   public Material SpeedyLinesMat;
@@ -134,6 +135,7 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip DeathClip;
   public AudioClip PushClip;
   public AudioClip RollingHardClip;
+  public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
@@ -182,6 +184,7 @@ public class SkateboardStateMachine : StateMachine {
   public async void EnterDead() {
     SwitchState(new SkateboardDeadState(this));
     await Task.Delay((int)(DeadTime*1000));
+    SoundEffectsManager.instance.PlaySoundFXClip(FartClip, transform, 1);
     SwitchState(new SkateboardMoveState(this));
   }
 
