@@ -23,12 +23,21 @@ public class CharCustoUI : MonoBehaviour {
     "kicks",
     "bits"
   };
-  void OnEnable() {
+  void Start() {
     var slotsarray = customiserChar.GetComponents<CustomiseSlot>();
     slots = new();
+    bool newCustoInstance = CharCustoArrangement.instance.selectedSlots.Count == 0;
     foreach (CustomiseSlot slot in slotsarray) {
       slots.Add(slot.slotName, slot);
+      if (newCustoInstance) {
+        CharCustoArrangement.instance.selectedSlots.Add(slot.slotName, slot.defaultOption);
+      }
+      else {
+        slots[slot.slotName].SetSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
+      }
     }
+  }
+  void OnEnable() {
     input.OnMenuRPerformed += NextInCurrentSlot;
     input.OnMenuLPerformed += PrevInCurrentSlot;
   }
@@ -69,11 +78,19 @@ public class CharCustoUI : MonoBehaviour {
     if (slot < slotNames.Length) {
       slots[slotNames[slot]].SelectNextOption();
     }
+    SaveSelected();
   }
   
   public void PrevInSlot(int slot) {
     if (slot < slotNames.Length) {
       slots[slotNames[slot]].SelectPreviousOption();
+    }
+    SaveSelected();
+  }
+
+  private void SaveSelected() {
+    foreach (var slot in slots) {
+      CharCustoArrangement.instance.selectedSlots[slot.Key] = slot.Value.GetSelected();
     }
   }
 }
