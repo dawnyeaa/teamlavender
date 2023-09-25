@@ -82,6 +82,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
   [ReadOnly] public float TruckTurnPercent;
+  [ReadOnly] public float ReallyDampedTruckTurnPercent;
   [ReadOnly] public float SpringMultiplier;
   [ReadOnly] public Vector3 Down = Vector3.down;
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
@@ -116,6 +117,7 @@ public class SkateboardStateMachine : StateMachine {
   public Transform Board;
   public Animator CharacterAnimator;
   public Animator BoardIKTiltAnimator;
+  public Animator CharacterLeanAnimator;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
   public ParentConstraint LookatConstraint;

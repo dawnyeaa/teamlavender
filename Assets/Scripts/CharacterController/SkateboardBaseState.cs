@@ -7,6 +7,7 @@ using RootMotion.FinalIK;
 public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
   protected float TurnSpeed = 0.0f;
+  protected float ReallyDampedTurnSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
   protected Vector3 boardRailSnapVel = Vector3.zero;
 
@@ -160,9 +161,12 @@ public abstract class SkateboardBaseState : State {
       float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
       if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
       sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
+      sm.ReallyDampedTruckTurnPercent = Mathf.SmoothDamp(sm.ReallyDampedTruckTurnPercent, turnTarget, ref ReallyDampedTurnSpeed, sm.TruckTurnDamping*8);
       var leanValue = (sm.TruckTurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
+      var reallyDampedLeanValue = (sm.ReallyDampedTruckTurnPercent * (sm.MainRB.velocity.magnitude/(sm.TurnLockSpeed/3))*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
       sm.CharacterAnimator.SetFloat("leanValue", leanValue);
       sm.BoardIKTiltAnimator.SetFloat("leanValue", leanValue);
+      sm.CharacterLeanAnimator.SetFloat("leanValue", reallyDampedLeanValue);
       float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
       for (int i = 0; i < 2; ++i) {
         Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;

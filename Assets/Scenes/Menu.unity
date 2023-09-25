@@ -524,6 +524,11 @@ PrefabInstance:
       propertyPath: m_UpdateWhenOffscreen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7730816183545344951, guid: 769970106fb6b4e4e9b72c2ced7f0746,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 036b23df2d6ec5646827238a0de389ef, type: 2}
     - target: {fileID: -7294576268871161774, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
       propertyPath: m_Layer
@@ -534,6 +539,11 @@ PrefabInstance:
       propertyPath: m_UpdateWhenOffscreen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6932895554924970673, guid: 769970106fb6b4e4e9b72c2ced7f0746,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 036b23df2d6ec5646827238a0de389ef, type: 2}
     - target: {fileID: -6727009119315498570, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
       propertyPath: m_Layer
@@ -659,6 +669,11 @@ PrefabInstance:
       propertyPath: m_UpdateWhenOffscreen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -1923984264912934092, guid: 769970106fb6b4e4e9b72c2ced7f0746,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 036b23df2d6ec5646827238a0de389ef, type: 2}
     - target: {fileID: -1871330705297227681, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
       propertyPath: m_Layer
@@ -689,6 +704,11 @@ PrefabInstance:
       propertyPath: m_UpdateWhenOffscreen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -1257934761395479445, guid: 769970106fb6b4e4e9b72c2ced7f0746,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 036b23df2d6ec5646827238a0de389ef, type: 2}
     - target: {fileID: -966833438771529636, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
       propertyPath: m_UpdateWhenOffscreen
@@ -1175,7 +1195,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 313149400}
-  m_LocalRotation: {x: 0, y: 0, z: -0.055821575, w: 0.99844074}
+  m_LocalRotation: {x: -0, y: -0, z: -0.09827775, w: 0.9951591}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 0.90763915, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1187,12 +1207,12 @@ RectTransform:
   - {fileID: 1087675316}
   - {fileID: 1747656742}
   - {fileID: 272681692}
-  m_Father: {fileID: 1238398933}
+  m_Father: {fileID: 1528780529}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -6.4}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: 422}
+  m_AnchoredPosition: {x: -244.58301, y: 238.67162}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &336213348
@@ -3328,7 +3348,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1528780529}
-  - {fileID: 313149401}
   - {fileID: 1546142004}
   - {fileID: 1786512386}
   - {fileID: 1706634836}
@@ -3640,6 +3659,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1071626751}
+  - {fileID: 313149401}
   m_Father: {fileID: 1238398933}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3779,7 +3799,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1238398933}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3879,7 +3899,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1238398933}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4123,7 +4143,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1238398933}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
