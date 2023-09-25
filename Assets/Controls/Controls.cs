@@ -100,15 +100,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ollie"",
-                    ""type"": ""Button"",
-                    ""id"": ""ecd1b5fc-f94b-45e4-956a-b332c5a2cc42"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""debug.reset"",
                     ""type"": ""Button"",
                     ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
@@ -326,28 +317,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""rightStick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""9313f699-0839-4aed-831a-555ed45236f8"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""ollie"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ab7c3cd8-e37b-4fc8-949a-4b71c4fe71f6"",
-                    ""path"": ""<Keyboard>/o"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB + M"",
-                    ""action"": ""ollie"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1123,7 +1092,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
         m_player_ollieCrouch = m_player.FindAction("ollieCrouch", throwIfNotFound: true);
-        m_player_ollie = m_player.FindAction("ollie", throwIfNotFound: true);
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
         m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
         m_player_debugchangeScene = m_player.FindAction("debug.changeScene", throwIfNotFound: true);
@@ -1213,7 +1181,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_switch;
     private readonly InputAction m_player_rightStick;
     private readonly InputAction m_player_ollieCrouch;
-    private readonly InputAction m_player_ollie;
     private readonly InputAction m_player_debugreset;
     private readonly InputAction m_player_debugdie;
     private readonly InputAction m_player_debugchangeScene;
@@ -1232,7 +1199,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @switch => m_Wrapper.m_player_switch;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
         public InputAction @ollieCrouch => m_Wrapper.m_player_ollieCrouch;
-        public InputAction @ollie => m_Wrapper.m_player_ollie;
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputAction @debugdie => m_Wrapper.m_player_debugdie;
         public InputAction @debugchangeScene => m_Wrapper.m_player_debugchangeScene;
@@ -1272,9 +1238,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @ollieCrouch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
                 @ollieCrouch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
                 @ollieCrouch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
-                @ollie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
-                @ollie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
-                @ollie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllie;
                 @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
@@ -1321,9 +1284,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @ollieCrouch.started += instance.OnOllieCrouch;
                 @ollieCrouch.performed += instance.OnOllieCrouch;
                 @ollieCrouch.canceled += instance.OnOllieCrouch;
-                @ollie.started += instance.OnOllie;
-                @ollie.performed += instance.OnOllie;
-                @ollie.canceled += instance.OnOllie;
                 @debugreset.started += instance.OnDebugreset;
                 @debugreset.performed += instance.OnDebugreset;
                 @debugreset.canceled += instance.OnDebugreset;
@@ -1520,7 +1480,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnSwitch(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
         void OnOllieCrouch(InputAction.CallbackContext context);
-        void OnOllie(InputAction.CallbackContext context);
         void OnDebugreset(InputAction.CallbackContext context);
         void OnDebugdie(InputAction.CallbackContext context);
         void OnDebugchangeScene(InputAction.CallbackContext context);
