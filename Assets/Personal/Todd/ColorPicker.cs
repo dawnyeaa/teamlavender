@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ColorPicker : UIBehaviour, IDragHandler {
-  public CustomiseCharacter character;
+  public CustomiseCharacter1 character;
   RectTransform RectTransform;
   public RectTransform handle;
   public float width, height;
