@@ -12,17 +12,29 @@ public class Torquer : MonoBehaviour {
   [ReadOnly] public float angularVelocity = 0;
   [ReadOnly] public float torque = 0;
 
+  [ReadOnly] public float lastFixedUpdateTime = 0;
+  [ReadOnly] public float lastOrientation = 0;
+
   void FixedUpdate() {
     if (update) {
       AddTorque(angularVelocity * -angularDrag);
       angularVelocity += torque * Time.fixedDeltaTime;
+      lastOrientation = orientation;
       orientation = (orientation + angularVelocity * Time.fixedDeltaTime) % 1;
       ClearTorque();
-
-      ShowRotation();
+      lastFixedUpdateTime = Time.time;
     }
     else {
       angularVelocity = 0;
+    }
+  }
+
+  void Update() {
+    if (update) {
+      var fixedUpdateElapseRatio = (Time.time - lastFixedUpdateTime)/Time.fixedDeltaTime;
+      if (fixedUpdateElapseRatio < 1 && fixedUpdateElapseRatio > 0) {
+        ShowDisplayRotation(Mathf.LerpAngle(lastOrientation*360f, orientation*360f, fixedUpdateElapseRatio));
+      }
     }
   }
 
@@ -32,6 +44,10 @@ public class Torquer : MonoBehaviour {
 
   private void ShowRotation() {
     transform.localRotation = Quaternion.Euler(0, orientation*360f, 0);
+  }
+
+  private void ShowDisplayRotation(float displayOrientation) {
+    transform.localRotation = Quaternion.Euler(0, displayOrientation, 0);
   }
 
   public void AddTorque(float newTorque) {
