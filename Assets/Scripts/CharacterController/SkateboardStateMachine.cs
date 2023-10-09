@@ -17,6 +17,8 @@ public class SkateboardStateMachine : StateMachine {
   public float MaxSpeed = 20f;
   public float TurnLockSpeed = 30f;
   public float PushForce = 10f;
+  public float PushStartMultiplier = 3f;
+  public float PushStartEpsilon = 0.1f;
   public AnimationCurve PushForceCurve;
   // public float MaxPushDuration = 1f;
   public float WheelFriction = 0.01f;
