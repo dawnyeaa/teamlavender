@@ -28,6 +28,7 @@ public class SkateboardStateMachine : StateMachine {
   public float MaxAnimatedTruckTurnDeg = 15f;
   public float TruckSpacing = 0.205f;
   public float TruckTurnDamping = 0.3f;
+  public float ReallyTruckTurnDamping = 0.64f;
   public float SpringConstant = 40f;
   public float SpringMultiplierMin = 0.5f;
   public float SpringMultiplierMax = 1f;

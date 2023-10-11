@@ -7,6 +7,10 @@ public class PointManager : MonoBehaviour {
   public static PointManager instance;
   public TextMeshProUGUI pendingPointsDisplay, newPointsDisplay, totalPointsDisplay;
   public TextMeshProUGUI newPointsMessageDisplay;
+  public TextMeshProUGUI pendingPointsDebugDisplay, newPointsDebugDisplay, currentLinePointsDebugDisplay, totalPointsDebugDisplay;
+  public TextMeshProUGUI pendingPointsDebugTimerDisplay;
+
+  public GameObject pointsDebugContainer;
 
   public float pendingPointsTimeout = 20f;
   public float newPointsDisplayTimeout = 10f;
@@ -16,6 +20,7 @@ public class PointManager : MonoBehaviour {
 
   [ReadOnly] public int pendingPoints;
   [ReadOnly] public int newPoints;
+  [ReadOnly] public int currentLinePoints;
   [ReadOnly] public int totalPoints;
   
   [ReadOnly] public bool pendingNewToggle = false;
@@ -30,7 +35,10 @@ public class PointManager : MonoBehaviour {
   public void Start() {
     pendingPoints = 0;
     newPoints = 0;
+    currentLinePoints = 0;
     totalPoints = 0;
+
+    InputController.instance.OnShowDebugPointsPerformed += ToggleDebugPointsDisplay;
   }
 
   public void Update() {
@@ -66,12 +74,19 @@ public class PointManager : MonoBehaviour {
 
   public void Validate() {
     newPoints = pendingPoints;
+    currentLinePoints += newPoints;
     totalPoints += newPoints;
     TrashPending();
     showPoints = true;
     pendingNewToggle = true;
     pendingPointsTimer = 0;
     newPointsDisplayTimer = newPointsDisplayTimeout;
+    Display();
+  }
+
+  public void EndLine() {
+    currentLinePoints = 0;
+    TrashPending();
     Display();
   }
 
@@ -97,5 +112,21 @@ public class PointManager : MonoBehaviour {
       newPointsDisplay.text = "";
       newPointsMessageDisplay.text = "";
     }
+    DisplayDebugPoints(pendingPointsDebugDisplay, pendingPoints);
+    DisplayDebugPoints(newPointsDebugDisplay, newPoints);
+    DisplayDebugPoints(currentLinePointsDebugDisplay, currentLinePoints);
+    DisplayDebugPoints(totalPointsDebugDisplay, totalPoints);
+  }
+
+  private void DisplayDebugPoints(TextMeshProUGUI textMesh, int points) {
+    string displayText = textMesh.text;
+    if (displayText[^1] != ':')
+      displayText = displayText.Remove(displayText.IndexOf(':') + 1);
+    displayText += ' ' + points.ToString();
+    textMesh.text = displayText;
+  }
+
+  private void ToggleDebugPointsDisplay() {
+    pointsDebugContainer.SetActive(!pointsDebugContainer.activeSelf);
   }
 }
