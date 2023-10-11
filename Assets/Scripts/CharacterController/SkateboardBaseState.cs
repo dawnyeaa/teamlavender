@@ -158,41 +158,60 @@ public abstract class SkateboardBaseState : State {
 
   protected void CalculateTurn() {
     if (sm.Grounded) {
+      sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
+
       float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
       if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
-      sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
-      sm.ReallyDampedTruckTurnPercent = Mathf.SmoothDamp(sm.ReallyDampedTruckTurnPercent, turnTarget, ref ReallyDampedTurnSpeed, sm.TruckTurnDamping*8);
-      var leanValue = (sm.TruckTurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
-      var reallyDampedLeanValue = (sm.ReallyDampedTruckTurnPercent * (sm.MainRB.velocity.magnitude/(sm.TurnLockSpeed/3))*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
-      sm.CharacterAnimator.SetFloat("leanValue", leanValue);
-      sm.BoardIKTiltAnimator.SetFloat("leanValue", leanValue);
-      sm.CharacterLeanAnimator.SetFloat("leanValue", reallyDampedLeanValue);
-      float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
-      for (int i = 0; i < 2; ++i) {
-        Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
-        Vector3 newLeft = Vector3.Cross(sm.Facing.transform.forward, sm.Down);
-        Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
-        Vector3 turnForcePosition = sm.Facing.transform.position + truckOffset * (i == 0 ? 1 : -1);
-        truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
-        localTruckTurnPercent *= i == 0 ? 1 : -1;
-        // get the new forward for the truck
-        Vector3 accelDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * truckOffset.normalized;
-        // rotate the truck transforms - can easily see from debug axes
-        truckTransform.rotation = Quaternion.LookRotation(accelDir, truckTransform.up);
-        // get the truck's steering axis (right-left)
-        Vector3 steeringDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * -newLeft * (i == 0 ? 1 : -1);
-        // get the current velocity of the truck
-        Vector3 truckWorldVel = sm.MainRB.GetPointVelocity(turnForcePosition) + sm.Facing.GetPointVelocity(turnForcePosition);
-        // get the speed in the trucks steering direction (right-left)
-        float steeringVel = Vector3.Dot(steeringDir, truckWorldVel);
-        // get the desired change in velocity (that would cancel sliding)
-        float desiredVelChange = -steeringVel * sm.TruckGripFactor;
-        // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
-        float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
-        sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
-        sm.Facing.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition);
-        sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
-      }
+      // sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
+      sm.TurnPercent = turnTarget;
+      var turnDeg = sm.TurnPercent * sm.MaxTurnDeg;
+      sm.Facing.transform.localEulerAngles += Vector3.up * turnDeg;
+
+      var velocity = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.DampedDown);
+      
+      var velProjectedForwards = Vector3.Dot(velocity, sm.Facing.transform.forward);
+      var desiredVel = Mathf.Lerp(Mathf.Abs(velProjectedForwards), velocity.magnitude, sm.TurnSpeedConservation) * (sm.Facing.transform.forward * Mathf.Sign(velProjectedForwards));
+      var desiredVelChange = desiredVel - velocity;
+      var requiredAccel = desiredVelChange / Time.fixedDeltaTime;
+
+
+      sm.MainRB.AddForce(requiredAccel, ForceMode.Acceleration);
+      Debug.DrawRay(sm.MainRB.transform.position, requiredAccel, Color.cyan);
+
+      // sm.ReallyDampedTruckTurnPercent = Mathf.SmoothDamp(sm.ReallyDampedTruckTurnPercent, turnTarget, ref ReallyDampedTurnSpeed, sm.TruckTurnDamping*8);
+      // var leanValue = (sm.TurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
+      // var reallyDampedLeanValue = (sm.ReallyDampedTruckTurnPercent * (sm.MainRB.velocity.magnitude/(sm.TurnLockSpeed/3))*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
+      // sm.CharacterAnimator.SetFloat("leanValue", leanValue);
+      // sm.BoardIKTiltAnimator.SetFloat("leanValue", leanValue);
+      // sm.CharacterLeanAnimator.SetFloat("leanValue", reallyDampedLeanValue);
+
+      // float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
+
+      // for (int i = 0; i < 2; ++i) {
+      //   Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
+      //   Vector3 newLeft = Vector3.Cross(sm.Facing.transform.forward, sm.Down);
+      //   Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
+      //   Vector3 turnForcePosition = sm.Facing.transform.position + truckOffset * (i == 0 ? 1 : -1);
+      //   truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
+      //   localTruckTurnPercent *= i == 0 ? 1 : -1;
+      //   // get the new forward for the truck
+      //   Vector3 accelDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * truckOffset.normalized;
+      //   // rotate the truck transforms - can easily see from debug axes
+      //   truckTransform.rotation = Quaternion.LookRotation(accelDir, truckTransform.up);
+      //   // get the truck's steering axis (right-left)
+      //   Vector3 steeringDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * -newLeft * (i == 0 ? 1 : -1);
+      //   // get the current velocity of the truck
+      //   Vector3 truckWorldVel = sm.MainRB.GetPointVelocity(turnForcePosition) + sm.Facing.GetPointVelocity(turnForcePosition);
+      //   // get the speed in the trucks steering direction (right-left)
+      //   float steeringVel = Vector3.Dot(steeringDir, truckWorldVel);
+      //   // get the desired change in velocity (that would cancel sliding)
+      //   float desiredVelChange = -steeringVel * sm.TruckGripFactor;
+      //   // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
+      //   float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
+      //   sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
+      //   sm.Facing.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition);
+      //   sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
+      // }
     }
   }
 
@@ -486,7 +505,7 @@ public abstract class SkateboardBaseState : State {
     sm.Down = Vector3.down;
     sm.DampedDown = Vector3.down;
     sm.Grounded = false;
-    sm.TruckTurnPercent = 0;
+    sm.TurnPercent = 0;
     sm.HeadSensZone.SetT(0);
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);

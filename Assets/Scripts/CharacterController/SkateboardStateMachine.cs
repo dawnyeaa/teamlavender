@@ -24,7 +24,8 @@ public class SkateboardStateMachine : StateMachine {
   public float WheelFriction = 0.01f;
   public float BrakingFriction = 0.4f;
   public float GrindingFriction = 0.1f;
-  public float MaxTruckTurnDeg = 8.34f;
+  public float MaxTurnDeg = 8.34f;
+  [Range(0, 1)] public float TurnSpeedConservation = 0.5f;
   public float MaxAnimatedTruckTurnDeg = 15f;
   public float TruckSpacing = 0.205f;
   public float TruckTurnDamping = 0.3f;
@@ -84,7 +85,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float CurrentPushT = 0;
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
-  [ReadOnly] public float TruckTurnPercent;
+  [ReadOnly] public float TurnPercent;
   [ReadOnly] public float ReallyDampedTruckTurnPercent;
   [ReadOnly] public float SpringMultiplier;
   [ReadOnly] public Vector3 Down = Vector3.down;
