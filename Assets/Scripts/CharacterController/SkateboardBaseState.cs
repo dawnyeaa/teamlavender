@@ -160,12 +160,13 @@ public abstract class SkateboardBaseState : State {
     if (sm.Grounded) {
       sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
 
-      float turnTarget = sm.Input.turn * (1-(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed));
+      float turnTarget = sm.Input.turn;
       if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
       // sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
       sm.TurnPercent = turnTarget;
-      var turnDeg = sm.TurnPercent * sm.MaxTurnDeg;
-      sm.Facing.transform.localEulerAngles += Vector3.up * turnDeg;
+      var turnDeg = sm.TurnEaseBySpeed.Evaluate(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed) * sm.TurnPercent * sm.MaxTurnDeg;
+      // sm.Facing.transform.localEulerAngles += Vector3.up * turnDeg;
+      sm.Facing.MoveRotation(sm.Facing.rotation * Quaternion.Euler(0, turnDeg, 0));
 
       var velocity = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.DampedDown);
       
@@ -174,9 +175,7 @@ public abstract class SkateboardBaseState : State {
       var desiredVelChange = desiredVel - velocity;
       var requiredAccel = desiredVelChange / Time.fixedDeltaTime;
 
-
       sm.MainRB.AddForce(requiredAccel, ForceMode.Acceleration);
-      Debug.DrawRay(sm.MainRB.transform.position, requiredAccel, Color.cyan);
 
       // sm.ReallyDampedTruckTurnPercent = Mathf.SmoothDamp(sm.ReallyDampedTruckTurnPercent, turnTarget, ref ReallyDampedTurnSpeed, sm.TruckTurnDamping*8);
       // var leanValue = (sm.TurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
@@ -213,12 +212,14 @@ public abstract class SkateboardBaseState : State {
       //   sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       // }
     }
+    Debug.Log("this is being called");
+    sm.Facing.MovePosition(sm.FacingParent.position);
   }
 
   protected void CalculateAirTurn() {
     if (!sm.Grounded) {
       // between you and me, i never added this
-      sm.Facing.AddTorque(sm.Input.turn*sm.AirTurnForce);
+      // sm.Facing.AddTorque(sm.Input.turn*sm.AirTurnForce);
     }
   }
 
@@ -243,10 +244,10 @@ public abstract class SkateboardBaseState : State {
     sm.SpeedyLinesMat.SetFloat("_amount", Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.MaxSpeed, sm.MainRB.velocity.magnitude));
   }
 
-  protected void ApplyRotationToModels() {
-    sm.BodyMesh.rotation = sm.Facing.transform.rotation;
-    sm.Board.rotation = sm.Facing.transform.rotation;
-  }
+  // protected void ApplyRotationToModels() {
+  //   sm.BodyMesh.rotation = sm.Facing.transform.rotation;
+  //   sm.Board.rotation = sm.Facing.transform.rotation;
+  // }
 
   protected void StartPush() {
     if (sm.Grounded) {
@@ -259,8 +260,8 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void OnSwitch() {
-    if (sm.Grounded)
-      sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
+    // if (sm.Grounded)
+      // sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
   }
 
   protected void CalculatePush() {
@@ -421,12 +422,12 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void DisableSpinBody() {
-    sm.Facing.update = false;
-    sm.Facing.transform.localRotation = Quaternion.identity;
+    // sm.Facing.update = false;
+    // sm.Facing.transform.localRotation = Quaternion.identity;
   }
 
   protected void EnableSpinBody() {
-    sm.Facing.update = true;
+    // sm.Facing.update = true;
   }
 
   protected void StartGrindingParticles() {
@@ -500,7 +501,7 @@ public abstract class SkateboardBaseState : State {
     sm.MainRB.angularVelocity = Vector3.zero;
 
     sm.FacingParent.localRotation = Quaternion.identity;
-    sm.Facing.Reset();
+    // sm.Facing.Reset();
 
     sm.Down = Vector3.down;
     sm.DampedDown = Vector3.down;

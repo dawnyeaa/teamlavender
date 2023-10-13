@@ -12,10 +12,11 @@ public class SkateboardStateMachine : StateMachine {
   // User Constants - Runtime only
   // [Header("Constants - Only read at runtime")]
 
-  // User Constants - Live update
+  // User Constants - Live update 
   [Header("Constants - Live update")]
   public float MaxSpeed = 20f;
   public float TurnLockSpeed = 30f;
+  public AnimationCurve TurnEaseBySpeed;
   public float PushForce = 10f;
   public float PushStartMultiplier = 3f;
   public float PushStartEpsilon = 0.1f;
@@ -111,7 +112,7 @@ public class SkateboardStateMachine : StateMachine {
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
   public Transform FacingParent;
-  public Torquer Facing;
+  public Rigidbody Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
