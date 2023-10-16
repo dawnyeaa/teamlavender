@@ -5,7 +5,7 @@ public class SkateboardRailState : SkateboardBaseState {
     DisableSpinBody();
     FaceAlongRail();
     InitRailPos();
-    ApplyRotationToModels();
+    // ApplyRotationToModels();
     StartRailAnim();
     StartRailBoost();
     StartGrindingParticles();

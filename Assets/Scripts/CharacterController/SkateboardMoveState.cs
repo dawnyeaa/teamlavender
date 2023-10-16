@@ -29,7 +29,6 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetCrouching();
     VertBodySpring();
     CalculateTurn();
-    ApplyRotationToModels();
     CalculatePush();
     CalculateAirTurn();
     CapSpeed();
