@@ -216,6 +216,11 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void PassGroundSpeedToPointSystem() {
+    Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.Down);
+    sm.PointHandler.SetSpeed(flatMovement.magnitude);
+  }
+
   protected void CalculateAirTurn() {
     if (!sm.Grounded) {
       // between you and me, i never added this

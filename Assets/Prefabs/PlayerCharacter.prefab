@@ -456,6 +456,7 @@ GameObject:
   - component: {fileID: 3832982824073343646}
   - component: {fileID: 5959250916401455701}
   - component: {fileID: 2908417279074541027}
+  - component: {fileID: 782263955143857083}
   m_Layer: 7
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -588,6 +589,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  MaxTurnDeg: 3
+  MaxAnimatedTruckTurnDeg: 15
+  TurnSpeedConservation: 0.5
+  LeanDamping: 0.64
+  TruckSpacing: 0.23
   PushForce: 15
   PushStartMultiplier: 10
   PushStartEpsilon: 0.5
@@ -636,12 +642,6 @@ MonoBehaviour:
   WheelFriction: 0.03
   BrakingFriction: 1.5
   GrindingFriction: 0.3
-  MaxTurnDeg: 3
-  TurnSpeedConservation: 0.5
-  MaxAnimatedTruckTurnDeg: 15
-  TruckSpacing: 0.23
-  TruckTurnDamping: 0.08
-  ReallyTruckTurnDamping: 0.64
   SpringConstant: 150
   SpringMultiplierMin: 0.6
   SpringMultiplierMax: 1
@@ -724,7 +724,7 @@ MonoBehaviour:
   MaxPushT: 0
   PushBuffered: 0
   TurnPercent: 0
-  ReallyDampedTruckTurnPercent: 0
+  LeanPercent: 0
   SpringMultiplier: 0
   Down: {x: 0, y: -1, z: 0}
   DampedDown: {x: 0, y: -1, z: 0}
@@ -794,6 +794,7 @@ MonoBehaviour:
   RollingHardClip: {fileID: 8300000, guid: d0c0533c7460a1b4dbfc4f7a985e0900, type: 3}
   FartClip: {fileID: 8300000, guid: 6d950170566b8a84e99a3d659d543efa, type: 3}
   DebugFrameHandler: {fileID: 0}
+  PointHandler: {fileID: 782263955143857083}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
@@ -830,6 +831,24 @@ MonoBehaviour:
   duration: 1
   transitionTime: 0.1
   coolTimeScale: 0.2
+--- !u!114 &782263955143857083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3832982824073343645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f2f9ad35b8e9b948b297761750e17b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundSpeedDisplay: {fileID: 0}
+  slowSpeedDisplay: {fileID: 0}
+  maxSpeedDisplay: {fileID: 0}
+  speedometerDisplay: {fileID: 0}
+  groundSpeedSlowSpeed: 6
+  groundSpeedSlowDuration: 2
 --- !u!1 &3832982824258907184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,7 +1202,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientation: 0
   angularVelocity: 0
-  torque: 0
   update: 1
   lastFixedUpdateTime: 0
   lastOrientation: 0

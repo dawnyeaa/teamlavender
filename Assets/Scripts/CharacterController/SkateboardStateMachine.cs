@@ -143,6 +143,7 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip RollingHardClip;
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
+  public CharacterPointHandler PointHandler;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -156,6 +157,8 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
+
+    PointHandler.SetMaxSpeed(MaxSpeed);
   }
 
   public void OnOllieForce() {
@@ -183,6 +186,7 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void Die() {
+    PointHandler.Die();
     EnterDead();
     SlamRumble();
   }

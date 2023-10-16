@@ -22,6 +22,8 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public int newPoints;
   [ReadOnly] public int currentLinePoints;
   [ReadOnly] public int totalPoints;
+
+  [ReadOnly] public float pointHeat;
   
   [ReadOnly] public bool pendingNewToggle = false;
   [ReadOnly] public bool showPoints = false;

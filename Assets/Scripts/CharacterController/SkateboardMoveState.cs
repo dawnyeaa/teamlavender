@@ -40,6 +40,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetWheelSpinParticleChance();
     SetSpeedyLines();
     SetRollingVolume();
+    PassGroundSpeedToPointSystem();
 
     SaveDebugFrame();
   }

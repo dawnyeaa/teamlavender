@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CharacterPointHandler : MonoBehaviour {
@@ -9,7 +11,19 @@ public class CharacterPointHandler : MonoBehaviour {
   // 3. grind time
   // 4. ???
   PointManager pointSystem;
+  [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
+  [SerializeField] Material speedometerDisplay;
+  float groundSpeed = 0;
+  public float groundSpeedSlowSpeed = 0.1f;
+  public float groundSpeedSlowDuration = 1f;
+  float slowDurationTimer = 0;
   public Dictionary<string, int> trickPoints;
+
+  public void Start() {
+    pointSystem = PointManager.instance;
+    slowSpeedDisplay.text = groundSpeedSlowSpeed.ToString("F");
+    speedometerDisplay.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
+  }
 
   public void CompleteTrick(string trickName) {
     // depending on the trick, add points corresponding to that trick
@@ -24,5 +38,32 @@ public class CharacterPointHandler : MonoBehaviour {
   public void CompleteAndValidateTrick(string trickName) {
     CompleteTrick(trickName);
     ValidateTricks();
+  }
+
+  public void Die() {
+    pointSystem.EndLine();
+  }
+
+  public void SetMaxSpeed(float maxSpeed) {
+    maxSpeedDisplay.text = maxSpeed.ToString("F");
+    speedometerDisplay.SetFloat("_maxSpeed", maxSpeed);
+  }
+
+  public void SetSpeed(float speed) {
+    groundSpeed = speed;
+    groundSpeedDisplay.text = groundSpeed.ToString("F");
+    speedometerDisplay.SetFloat("_currentSpeed", speed);
+    if (groundSpeed < groundSpeedSlowSpeed) {
+      if (slowDurationTimer < groundSpeedSlowDuration) {
+        slowDurationTimer += Time.deltaTime;
+      }
+      else {
+        slowDurationTimer = 0;
+        pointSystem.EndLine();
+      }
+    }
+    else {
+      slowDurationTimer = 0;
+    }
   }
 }
