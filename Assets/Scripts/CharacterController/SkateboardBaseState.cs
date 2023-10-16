@@ -6,8 +6,7 @@ using RootMotion.FinalIK;
 
 public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
-  protected float TurnSpeed = 0.0f;
-  protected float ReallyDampedTurnSpeed = 0.0f;
+  protected float LeanSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
   protected Vector3 boardRailSnapVel = Vector3.zero;
 
@@ -166,7 +165,7 @@ public abstract class SkateboardBaseState : State {
       sm.TurnPercent = turnTarget;
       var turnDeg = sm.TurnEaseBySpeed.Evaluate(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed) * sm.TurnPercent * sm.MaxTurnDeg;
       // sm.Facing.transform.localEulerAngles += Vector3.up * turnDeg;
-      sm.Facing.MoveRotation(sm.Facing.rotation * Quaternion.Euler(0, turnDeg, 0));
+      sm.Facing.AddVelocity(turnDeg);
 
       var velocity = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.DampedDown);
       
@@ -177,12 +176,15 @@ public abstract class SkateboardBaseState : State {
 
       sm.MainRB.AddForce(requiredAccel, ForceMode.Acceleration);
 
+      sm.LeanPercent = Mathf.SmoothDamp(sm.LeanPercent, turnTarget, ref LeanSpeed, sm.LeanDamping);
+      var leanValue = (sm.MainRB.velocity.magnitude/sm.TurnLockSpeed*sm.LeanPercent*0.5f)+0.5f;
+
       // sm.ReallyDampedTruckTurnPercent = Mathf.SmoothDamp(sm.ReallyDampedTruckTurnPercent, turnTarget, ref ReallyDampedTurnSpeed, sm.TruckTurnDamping*8);
       // var leanValue = (sm.TurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
       // var reallyDampedLeanValue = (sm.ReallyDampedTruckTurnPercent * (sm.MainRB.velocity.magnitude/(sm.TurnLockSpeed/3))*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
-      // sm.CharacterAnimator.SetFloat("leanValue", leanValue);
-      // sm.BoardIKTiltAnimator.SetFloat("leanValue", leanValue);
-      // sm.CharacterLeanAnimator.SetFloat("leanValue", reallyDampedLeanValue);
+      sm.CharacterAnimator.SetFloat("leanValue", 0.5f*turnDeg/sm.MaxAnimatedTruckTurnDeg + 0.5f);
+      sm.BoardIKTiltAnimator.SetFloat("leanValue", 0.5f*turnDeg/sm.MaxAnimatedTruckTurnDeg + 0.5f);
+      sm.CharacterLeanAnimator.SetFloat("leanValue", leanValue);
 
       // float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
 
@@ -212,8 +214,6 @@ public abstract class SkateboardBaseState : State {
       //   sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
       // }
     }
-    Debug.Log("this is being called");
-    sm.Facing.MovePosition(sm.FacingParent.position);
   }
 
   protected void CalculateAirTurn() {
@@ -422,12 +422,12 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void DisableSpinBody() {
-    // sm.Facing.update = false;
-    // sm.Facing.transform.localRotation = Quaternion.identity;
+    sm.Facing.update = false;
+    sm.Facing.transform.localRotation = Quaternion.identity;
   }
 
   protected void EnableSpinBody() {
-    // sm.Facing.update = true;
+    sm.Facing.update = true;
   }
 
   protected void StartGrindingParticles() {
