@@ -13,20 +13,22 @@ public class SkateboardStateMachine : StateMachine {
   // User Constants - Runtime only
   // [Header("Constants - Only read at runtime")]
 
-  // User Constants - Live update
+  // User Constants - Live update 
   [Header("Constants - Live update")]
   public float MaxSpeed = 20f;
   public float TurnLockSpeed = 30f;
+  public AnimationCurve TurnEaseBySpeed;
+  public float MaxTurnDeg = 8.34f;
+  public float MaxAnimatedTruckTurnDeg = 15f;
+  [Range(0, 1)] public float TurnSpeedConservation = 0.5f;
+  public float LeanDamping = 0.64f;
+  public float TruckSpacing = 0.205f;
   public float PushForce = 10f;
   public AnimationCurve PushForceCurve;
   // public float MaxPushDuration = 1f;
   public float WheelFriction = 0.01f;
   public float BrakingFriction = 0.4f;
   public float GrindingFriction = 0.1f;
-  public float MaxTruckTurnDeg = 8.34f;
-  public float MaxAnimatedTruckTurnDeg = 15f;
-  public float TruckSpacing = 0.205f;
-  public float TruckTurnDamping = 0.3f;
   public float SpringConstant = 40f;
   public float SpringMultiplierMin = 0.5f;
   public float SpringMultiplierMax = 1f;
@@ -82,8 +84,8 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float CurrentPushT = 0;
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
-  [ReadOnly] public float TruckTurnPercent;
-  [ReadOnly] public float ReallyDampedTruckTurnPercent;
+  [ReadOnly] public float TurnPercent;
+  [ReadOnly] public float LeanPercent;
   [ReadOnly] public float SpringMultiplier;
   [ReadOnly] public Vector3 Down = Vector3.down;
   [ReadOnly] public Vector3 DampedDown = Vector3.down;
@@ -108,7 +110,7 @@ public class SkateboardStateMachine : StateMachine {
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
   public Transform FacingParent;
-  public Torquer Facing;
+  public Spinner Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;

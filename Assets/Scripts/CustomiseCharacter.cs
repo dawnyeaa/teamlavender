@@ -11,7 +11,8 @@ public class CustomiseCharacter : MonoBehaviour {
     slots = new();
     foreach (CustomiseSlot slot in slotsarray) {
       slots.Add(slot.slotName, slot);
-      slot.SetSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
+      if (CharCustoArrangement.instance != null)
+        slot.SetSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
     }
   }
 }

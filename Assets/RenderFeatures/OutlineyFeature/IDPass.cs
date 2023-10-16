@@ -41,11 +41,14 @@ public class IDPass : ScriptableRenderPass {
 
   public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData) {
     var colorDesc = renderingData.cameraData.cameraTargetDescriptor;
+    var IDMapDesc = colorDesc;
     colorDesc.colorFormat = RenderTextureFormat.ARGB32;
     colorDesc.depthBufferBits = 0;
+    IDMapDesc.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
+    IDMapDesc.depthBufferBits = 0;
     if (_useMSAA) colorDesc.msaaSamples = _msaaSamples;
     cmd.GetTemporaryRT(_renderTargetId, colorDesc);
-    cmd.GetTemporaryRT(_osRTId, colorDesc);
+    cmd.GetTemporaryRT(_osRTId, IDMapDesc);
     // cmd.GetTemporaryRT(Shader.PropertyToID("_depthBufTemp"), renderingData.cameraData.cameraTargetDescriptor);
     _renderTargetIdentifiers = new RenderTargetIdentifier[2];
     _renderTargetIdentifiers[0] = new RenderTargetIdentifier(_renderTargetId);
