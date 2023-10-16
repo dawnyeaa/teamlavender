@@ -41,6 +41,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetWheelSpinParticleChance();
     SetSpeedyLines();
     SetRollingVolume();
+    
+    sm.collisionProcessor.FixedUpdate(sm);
 
     SaveDebugFrame();
   }

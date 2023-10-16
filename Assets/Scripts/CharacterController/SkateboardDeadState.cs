@@ -1,7 +1,14 @@
 using UnityEngine;
 using UnityEngine.Animations;
-public class SkateboardDeadState : SkateboardBaseState {
-  public SkateboardDeadState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
+public class SkateboardDeadState : SkateboardBaseState
+{
+  private Vector3? velocity;
+
+  public SkateboardDeadState(SkateboardStateMachine stateMachine, Vector3? velocity) : base(stateMachine)
+  {
+    this.velocity = velocity;
+  }
+  
   ConstraintSource CharacterSource, RagdollSource;
   public override void Enter() {
     SoundEffectsManager.instance.PlaySoundFXClip(sm.DeathClip, sm.transform, 1);
@@ -18,7 +25,7 @@ public class SkateboardDeadState : SkateboardBaseState {
     foreach (Rigidbody rb in sm.RagdollTransformsToPush) {
       rb.velocity = Vector3.zero;
       rb.angularVelocity = Vector3.zero;
-      Vector3 targetVelocity = sm.MainRB.velocity;
+      Vector3 targetVelocity = velocity ?? sm.MainRB.velocity;
       rb.AddForce(targetVelocity/Time.fixedDeltaTime, ForceMode.Acceleration);
     }
     sm.MainRB.velocity = Vector3.zero;

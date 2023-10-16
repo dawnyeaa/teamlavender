@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
+using CharacterController;
 using Cinemachine;
 
 [RequireComponent(typeof(InputController))]
@@ -140,6 +141,9 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
 
+  [Space]
+  public SkateboardCollisionProcessor collisionProcessor;
+
   [HideInInspector] public Transform ball1, ball2, ball3;
 
   private void Start() {
@@ -178,13 +182,14 @@ public class SkateboardStateMachine : StateMachine {
     Pushing = false;
   }
 
-  public void Die() {
-    EnterDead();
+  public void Die() => Die(null);
+  public void Die(Vector3? velocityOverride) {
+    EnterDead(velocityOverride);
     SlamRumble();
   }
 
-  public async void EnterDead() {
-    SwitchState(new SkateboardDeadState(this));
+  public async void EnterDead(Vector3? velocityOverride) {
+    SwitchState(new SkateboardDeadState(this, velocityOverride));
     await Task.Delay((int)(DeadTime*1000));
     SoundEffectsManager.instance.PlaySoundFXClip(FartClip, transform, 1);
     SwitchState(new SkateboardMoveState(this));
