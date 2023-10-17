@@ -226,9 +226,8 @@ public abstract class SkateboardBaseState : State {
     if (sm.Pushing && sm.CurrentPushT > Mathf.Epsilon) {
       if (sm.Grounded && Vector3.Angle(Vector3.down, sm.Down) < sm.PushingMaxSlope && !sm.Crouching) {
         // we're pushing
-        var pushStartHelperOn = sm.MainRB.velocity.magnitude < sm.PushStartEpsilon;
         float t = 1-(sm.CurrentPushT/sm.MaxPushT);
-        sm.MainRB.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.Facing.transform.forward * (pushStartHelperOn ? sm.PushStartMultiplier : 1f), ForceMode.Acceleration);
+        sm.MainRB.AddForce(sm.PushForce * sm.PushForceCurve.Evaluate(t) * sm.Facing.transform.forward, ForceMode.Acceleration);
         sm.CurrentPushT -= Time.fixedDeltaTime;
         if (sm.CurrentPushT < 0) {
           if (sm.PushBuffered) {
