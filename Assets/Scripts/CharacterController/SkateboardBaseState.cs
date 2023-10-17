@@ -26,15 +26,15 @@ public abstract class SkateboardBaseState : State {
         sm.debugFrame.predictedLandingPosition = hit.point;
         Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
         Vector3 normal = hit.normal;
-        sm.Down = Vector3.Slerp(sm.Down, -normal, sm.RightingStrength);
-        sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+        sm.RawDown = Vector3.Slerp(sm.RawDown, -normal, sm.RightingStrength);
+        sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.RawDown;
 
-        // sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.Down), -sm.Down);
+        // sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.RawDown), -sm.RawDown);
         sm.FacingParent.rotation = Quaternion.identity;
         
-        sm.BodyMesh.rotation = sm.Facing.transform.rotation;
-        sm.Board.rotation = sm.Facing.transform.rotation;
-        // sm.Board.localPosition = sm.Down * sm.BodyMesh.localPosition.magnitude;
+        // sm.BodyMesh.rotation = sm.Facing.transform.rotation;
+        // sm.Board.rotation = sm.Facing.transform.rotation;
+        // sm.Board.localPosition = sm.RawDown * sm.BodyMesh.localPosition.magnitude;
       }
     }
     else {
@@ -42,8 +42,8 @@ public abstract class SkateboardBaseState : State {
     }
 
     if (goingDown) {
-      sm.Down = Vector3.Slerp(sm.Down, Vector3.down, sm.RightingStrength);
-      sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.Down;
+      sm.RawDown = Vector3.Slerp(sm.RawDown, Vector3.down, sm.RightingStrength);
+      sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.RawDown;
     }
   }
 
@@ -54,29 +54,29 @@ public abstract class SkateboardBaseState : State {
     sm.CurrentProjectLength = sm.ProjectLength;
 
     // this was the old spherecast that *mostly* worked
-    // Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.Down, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))
+    // Physics.SphereCast(sm.transform.position, sm.ProjectRadius, sm.RawDown, out RaycastHit hit, sm.ProjectLength, LayerMask.GetMask("Ground"))
 
-    // sphere cast from body down - sphere does not need to be the same radius as the collider
-    if (Physics.BoxCast(sm.transform.position, Vector3.one * sm.ProjectRadius, sm.Down, out RaycastHit hit, Quaternion.identity, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
+    // box cast from body down - box does not need to be the same radius as the collider
+    if (Physics.BoxCast(sm.transform.position, Vector3.one * sm.ProjectRadius, sm.RawDown, out RaycastHit hit, Quaternion.identity, sm.ProjectLength, LayerMask.GetMask("Ground"))) {
 
       sm.debugFrame.pointOfContact = hit.point;
       sm.debugFrame.contactNormal = hit.normal;
 
-      Vector3 truckRelative = Vector3.Cross(sm.Down, Vector3.Cross(sm.Facing.transform.forward, sm.Down)).normalized*sm.TruckSpacing;
+      Vector3 truckRelative = Vector3.Cross(sm.RawDown, Vector3.Cross(sm.Facing.transform.forward, sm.RawDown)).normalized*sm.TruckSpacing;
 
       Vector3 frontHitPos, backHitPos;
       Vector3 tempNormal;
       float bonusDistance = 0.25f;
 
-      Debug.DrawRay(sm.transform.position + truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
-      Debug.DrawRay(sm.transform.position - truckRelative, sm.Down*(sm.ProjectLength + bonusDistance), Color.white);
+      Debug.DrawRay(sm.transform.position + truckRelative, sm.RawDown*(sm.ProjectLength + bonusDistance), Color.white);
+      Debug.DrawRay(sm.transform.position - truckRelative, sm.RawDown*(sm.ProjectLength + bonusDistance), Color.white);
 
-      bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.Down, out RaycastHit rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
+      bool frontHit = Physics.Raycast(sm.transform.position + truckRelative, sm.RawDown, out RaycastHit rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
       if (frontHit) {
         // front truck hit!!!
         frontHitPos = rayHit.point;
         tempNormal = rayHit.normal;
-        bool backHit = Physics.Raycast(sm.transform.position - truckRelative, sm.Down, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
+        bool backHit = Physics.Raycast(sm.transform.position - truckRelative, sm.RawDown, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
         if (backHit) {
           // back truck hit!!!
           backHitPos = rayHit.point;
@@ -85,7 +85,7 @@ public abstract class SkateboardBaseState : State {
 
           var newForward = backHitPos - frontHitPos;
           var newNormal = Vector3.Cross(newForward, Vector3.Cross(newForward, -tempNormal)).normalized;
-          sm.Down = -newNormal;
+          sm.RawDown = -newNormal;
         }
       }
 
@@ -93,9 +93,9 @@ public abstract class SkateboardBaseState : State {
       sm.CurrentProjectLength = hit.distance;
       float compression = sm.ProjectLength - sm.CurrentProjectLength;
 
-      sm.MainRB.AddForce((-sm.Down * (compression * sm.SpringConstant + Vector3.Dot(sm.Down, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier, ForceMode.Acceleration);
+      sm.MainRB.AddForce((-sm.RawDown * (compression * sm.SpringConstant + Vector3.Dot(sm.RawDown, sm.MainRB.velocity) * sm.SpringDamping))*sm.SpringMultiplier, ForceMode.Acceleration);
       if (!sm.Grounded) {
-        Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.Down).normalized;
+        Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.RawDown).normalized;
         if (flatMovement.magnitude > 0.2f && Mathf.Abs(Vector3.Dot(flatMovement, sm.Facing.transform.forward)) < sm.LandingAngleGive) {
           // sm.EnterDead();
         }
@@ -125,39 +125,38 @@ public abstract class SkateboardBaseState : State {
         sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
       sm.AirTimeCounter += Time.fixedDeltaTime;
     }
-    sm.DampedDown = Vector3.Slerp(sm.DampedDown, sm.Down, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
-    sm.footRepresentation.localPosition = sm.DampedDown * sm.CurrentProjectLength;
-    sm.Board.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
-    sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.DampedDown, Vector3.down)), sm.MainRB.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
-    sm.BodyMesh.localPosition = sm.DampedDown * (sm.CurrentProjectLength + sm.ProjectRadius);
+    sm.Down = Vector3.Slerp(sm.Down, sm.RawDown, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
+    sm.footRepresentation.localPosition = sm.Down * sm.CurrentProjectLength;
+    sm.Board.localPosition = sm.Down * (sm.CurrentProjectLength + sm.ProjectRadius);
+    sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.Down, Vector3.down)), sm.MainRB.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
+    sm.BodyMesh.localPosition = sm.Down * (sm.CurrentProjectLength + sm.ProjectRadius);
   }
 
   protected void AdjustSpringMultiplier() {
-    sm.SpringMultiplier = Mathf.Abs(Vector3.Dot(Vector3.up, -sm.Down));
+    sm.SpringMultiplier = Mathf.Abs(Vector3.Dot(Vector3.up, -sm.RawDown));
     sm.SpringMultiplier = math.remap(0, 1, sm.SpringMultiplierMin, sm.SpringMultiplierMax, sm.SpringMultiplier);
   }
 
-  protected void StartRollingSFX() {
-    if (sm.RollingHardClipIndex == -1) {
-      sm.RollingHardClipIndex = SoundEffectsManager.instance.PlayLoopingSoundFXClip(sm.RollingHardClip, sm.Board, 1);
-    }
-  }
+  protected void SetHipHelperPos() {
+    // place hip helper at mainRB height above the board
+    var heightVector =  sm.MainRB.transform.position - sm.Board.position;
+    var smoothHeight = Vector3.Dot(heightVector, -sm.Down);
+    // add crouching offset to height
+    
+    // smoothHeight -= sm.ProceduralCrouchFactor*sm.MaxProceduralCrouchDistance;
+    // Debug.Log(smoothHeight);
 
-  protected void SetRollingVolume() {
-    if (sm.RollingHardClipIndex != -1)
-      SoundEffectsManager.instance.SetLoopingFXVolume(sm.RollingHardClipIndex, sm.MainRB.velocity.magnitude/sm.MaxSpeed);
-  }
-
-  protected void StopRollingSFX() {
-    if (sm.RollingHardClipIndex != -1) {
-      SoundEffectsManager.instance.StopLoopingSoundFXClip(sm.RollingHardClipIndex);
-      sm.RollingHardClipIndex = -1;
-    }
+    // step height
+    sm.HipHeight ??= new ContinuousDataStepper(smoothHeight, sm.HipHelperFPS);
+    var height = sm.HipHeight.Tick(smoothHeight, Time.fixedDeltaTime);
+    sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
+    sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
+    // sm.BodyMesh.position = sm.HipHelper.position;
   }
 
   protected void CalculateTurn() {
     if (sm.Grounded) {
-      sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
+      sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.Down, Vector3.Cross(sm.MainRB.transform.forward, sm.Down)), -sm.Down);
 
       float turnTarget = sm.Input.turn;
       if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
@@ -167,7 +166,7 @@ public abstract class SkateboardBaseState : State {
       // sm.Facing.transform.localEulerAngles += Vector3.up * turnDeg;
       sm.Facing.AddVelocity(turnDeg);
 
-      var velocity = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.DampedDown);
+      var velocity = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.Down);
       
       var velProjectedForwards = Vector3.Dot(velocity, sm.Facing.transform.forward);
       var desiredVel = Mathf.Lerp(Mathf.Abs(velProjectedForwards), velocity.magnitude, sm.TurnSpeedConservation) * (sm.Facing.transform.forward * Mathf.Sign(velProjectedForwards));
@@ -185,74 +184,16 @@ public abstract class SkateboardBaseState : State {
       sm.CharacterAnimator.SetFloat("leanValue", 0.5f*turnDeg/sm.MaxAnimatedTruckTurnDeg + 0.5f);
       sm.BoardIKTiltAnimator.SetFloat("leanValue", 0.5f*turnDeg/sm.MaxAnimatedTruckTurnDeg + 0.5f);
       sm.CharacterLeanAnimator.SetFloat("leanValue", leanValue);
-
-      // float localTruckTurnPercent = sm.TurningEase.Evaluate(Mathf.Abs(sm.TruckTurnPercent))*Mathf.Sign(sm.TruckTurnPercent);
-
-      // for (int i = 0; i < 2; ++i) {
-      //   Transform truckTransform = i == 0 ? sm.frontAxis : sm.backAxis;
-      //   Vector3 newLeft = Vector3.Cross(sm.Facing.transform.forward, sm.Down);
-      //   Vector3 truckOffset = Vector3.Cross(sm.Down, newLeft) * sm.TruckSpacing;
-      //   Vector3 turnForcePosition = sm.Facing.transform.position + truckOffset * (i == 0 ? 1 : -1);
-      //   truckTransform.SetPositionAndRotation(turnForcePosition, Quaternion.LookRotation(truckOffset, -sm.Down));
-      //   localTruckTurnPercent *= i == 0 ? 1 : -1;
-      //   // get the new forward for the truck
-      //   Vector3 accelDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * truckOffset.normalized;
-      //   // rotate the truck transforms - can easily see from debug axes
-      //   truckTransform.rotation = Quaternion.LookRotation(accelDir, truckTransform.up);
-      //   // get the truck's steering axis (right-left)
-      //   Vector3 steeringDir = Quaternion.AngleAxis(localTruckTurnPercent*sm.MaxTruckTurnDeg, truckTransform.up) * -newLeft * (i == 0 ? 1 : -1);
-      //   // get the current velocity of the truck
-      //   Vector3 truckWorldVel = sm.MainRB.GetPointVelocity(turnForcePosition) + sm.Facing.GetPointVelocity(turnForcePosition);
-      //   // get the speed in the trucks steering direction (right-left)
-      //   float steeringVel = Vector3.Dot(steeringDir, truckWorldVel);
-      //   // get the desired change in velocity (that would cancel sliding)
-      //   float desiredVelChange = -steeringVel * sm.TruckGripFactor;
-      //   // get, in turn, the desired acceleration that would achieve the change of velocity we want in 1 tick
-      //   float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
-      //   sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.DampedDown, Vector3.Cross(sm.MainRB.transform.forward, sm.DampedDown)), -sm.DampedDown);
-      //   sm.Facing.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition);
-      //   sm.MainRB.AddForceAtPosition(steeringDir * desiredAccel, turnForcePosition, ForceMode.Acceleration);
-      // }
     }
-  }
-
-  protected void PassGroundSpeedToPointSystem() {
-    Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.Down);
-    sm.PointHandler.SetSpeed(flatMovement.magnitude);
   }
 
   protected void CalculateAirTurn() {
     if (!sm.Grounded) {
       // between you and me, i never added this
       // sm.Facing.AddTorque(sm.Input.turn*sm.AirTurnForce);
+      sm.Facing.AddVelocity(sm.Input.turn*sm.AirTurnStrength);
     }
   }
-
-  protected void SetHipHelperPos() {
-    // place hip helper at mainRB height above the board
-    var heightVector =  sm.MainRB.transform.position - sm.Board.position;
-    var smoothHeight = Vector3.Dot(heightVector, -sm.DampedDown);
-    // add crouching offset to height
-    
-    // smoothHeight -= sm.ProceduralCrouchFactor*sm.MaxProceduralCrouchDistance;
-    // Debug.Log(smoothHeight);
-
-    // step height
-    sm.HipHeight ??= new ContinuousDataStepper(smoothHeight, sm.HipHelperFPS);
-    var height = sm.HipHeight.Tick(smoothHeight, Time.fixedDeltaTime);
-    sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
-    sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
-    // sm.BodyMesh.position = sm.HipHelper.position;
-  }
-
-  protected void SetSpeedyLines() {
-    sm.SpeedyLinesMat.SetFloat("_amount", Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.MaxSpeed, sm.MainRB.velocity.magnitude));
-  }
-
-  // protected void ApplyRotationToModels() {
-  //   sm.BodyMesh.rotation = sm.Facing.transform.rotation;
-  //   sm.Board.rotation = sm.Facing.transform.rotation;
-  // }
 
   protected void StartPush() {
     if (sm.Grounded) {
@@ -262,11 +203,6 @@ public abstract class SkateboardBaseState : State {
         sm.CharacterAnimator.SetTrigger("push");
       }
     }
-  }
-
-  protected void OnSwitch() {
-    // if (sm.Grounded)
-      // sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
   }
 
   protected void CalculatePush() {
@@ -298,13 +234,19 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
+  protected void CapSpeed() {
+    if (sm.MainRB.velocity.magnitude > sm.MaxSpeed)
+      sm.MainRB.velocity = sm.MainRB.velocity.normalized * sm.MaxSpeed;
+    sm.ProceduralCrouchFactor = sm.MainRB.velocity.magnitude / sm.MaxSpeed;
+  }
+
   protected void CheckWalls() {
-    var raycastOrigin = sm.Board.position+sm.ForwardCollisionOriginYOffset*-sm.DampedDown;
+    var raycastOrigin = sm.Board.position+sm.ForwardCollisionOriginYOffset*-sm.Down;
     var raycastDirection = sm.Facing.transform.forward;
     var collisionDistance = sm.ForwardCollisionDistance;
     if (Physics.Raycast(raycastOrigin, raycastDirection, out RaycastHit hit, collisionDistance * 2f, LayerMask.GetMask("Ground"))) {
       if (hit.distance < collisionDistance) {
-        var right = Vector3.Cross(sm.DampedDown, sm.Facing.transform.forward);
+        var right = Vector3.Cross(sm.Down, sm.Facing.transform.forward);
         var verticalWallNormal = Vector3.ProjectOnPlane(hit.normal, right);
         var forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.Facing.transform.forward);
         // if the hit distance is too close, then we've hit a wall
@@ -327,6 +269,11 @@ public abstract class SkateboardBaseState : State {
     }
   }
   
+  protected void PassGroundSpeedToPointSystem() {
+    Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.RawDown);
+    sm.PointHandler.SetSpeed(flatMovement.magnitude);
+  }
+
   protected void SetMovingFriction() {
     if (sm.Input.braking)
       sm.Friction = sm.BrakingFriction;
@@ -338,21 +285,56 @@ public abstract class SkateboardBaseState : State {
     sm.Friction = sm.GrindingFriction;
   }
 
-  protected void CapSpeed() {
-    if (sm.MainRB.velocity.magnitude > sm.MaxSpeed)
-      sm.MainRB.velocity = sm.MainRB.velocity.normalized * sm.MaxSpeed;
-    sm.ProceduralCrouchFactor = sm.MainRB.velocity.magnitude / sm.MaxSpeed;
+  protected void ApplyFrictionForce() {
+    Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.Facing.transform.forward);
+    float frictionMag = sm.Friction * forwardVelocity.magnitude;
+    sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
   }
 
-  protected void SetWheelSpinParticleChance() {
-    foreach (WheelSpinParticleHandler spinner in sm.WheelSpinParticles) {
-      if (sm.Grounded) {
-        spinner.SetChance(math.remap(sm.MinWheelSpinParticleSpeed, sm.MaxSpeed, sm.MinWheelSpinParticleChance, sm.MaxWheelSpinParticleChance, sm.MainRB.velocity.magnitude));
-      }
-      else {
-        spinner.SetChance(0);
-      }
+  protected void StartBrake() {
+    if (sm.PlayingBufferedPush) {
+      sm.PushingAnim = false;
+      sm.PushBuffered = false;
     }
+    sm.CharacterAnimator.SetBool("stopping", true);
+    if (sm.MainRB.velocity.magnitude > 1f) {
+      sm.CharacterAnimator.SetBool("hardStop", true);
+    }
+    else {
+      sm.CharacterAnimator.SetBool("hardStop", false);
+    }
+  }
+
+  protected void EndBrake() {
+    sm.Input.braking = false;
+    sm.CharacterAnimator.SetBool("stopping", false);
+  }
+
+  protected void StartRollingSFX() {
+    if (sm.RollingHardClipIndex == -1) {
+      sm.RollingHardClipIndex = SoundEffectsManager.instance.PlayLoopingSoundFXClip(sm.RollingHardClip, sm.Board, 1);
+    }
+  }
+
+  protected void SetRollingVolume() {
+    if (sm.RollingHardClipIndex != -1)
+      SoundEffectsManager.instance.SetLoopingFXVolume(sm.RollingHardClipIndex, sm.MainRB.velocity.magnitude/sm.MaxSpeed);
+  }
+
+  protected void StopRollingSFX() {
+    if (sm.RollingHardClipIndex != -1) {
+      SoundEffectsManager.instance.StopLoopingSoundFXClip(sm.RollingHardClipIndex);
+      sm.RollingHardClipIndex = -1;
+    }
+  }
+
+  protected void SetSpeedyLines() {
+    sm.SpeedyLinesMat.SetFloat("_amount", Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.MaxSpeed, sm.MainRB.velocity.magnitude));
+  }
+
+  protected void OnSwitch() {
+    // if (sm.Grounded)
+      // sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
   }
 
   protected void SetCrouching() {
@@ -383,56 +365,19 @@ public abstract class SkateboardBaseState : State {
     sm.CharacterAnimator.SetInteger("ollieTrickIndex", sm.CurrentOllieTrickIndex);
   }
 
-  // protected void OnOllieInput() {
-  //   // if (sm.Crouching) {
-  //   //   sm.CharacterAnimator.SetTrigger("ollie");
-  //   // }
-  //   sm.CharacterAnimator.SetInteger("ollieTrickIndex", 1);
-  // }
-
-  // protected void OnKickflipInput() {
-  //   // if (sm.Crouching) {
-  //   //   sm.CharacterAnimator.SetTrigger("kickflip");
-  //   // }
-  //   sm.CharacterAnimator.SetInteger("ollieTrickIndex", 2);
-  // }
-
-  protected void ApplyFrictionForce() {
-    Vector3 forwardVelocity = Vector3.Project(sm.MainRB.velocity, sm.Facing.transform.forward);
-    float frictionMag = sm.Friction * forwardVelocity.magnitude;
-    sm.MainRB.AddForce(-forwardVelocity.normalized*frictionMag, ForceMode.Acceleration);
-  }
-
-  protected void StartBrake() {
-    if (sm.PlayingBufferedPush) {
-      sm.PushingAnim = false;
-      sm.PushBuffered = false;
+  protected void SetWheelSpinParticleChance() {
+    foreach (WheelSpinParticleHandler spinner in sm.WheelSpinParticles) {
+      if (sm.Grounded) {
+        spinner.SetChance(math.remap(sm.MinWheelSpinParticleSpeed, sm.MaxSpeed, sm.MinWheelSpinParticleChance, sm.MaxWheelSpinParticleChance, sm.MainRB.velocity.magnitude));
+      }
+      else {
+        spinner.SetChance(0);
+      }
     }
-    sm.CharacterAnimator.SetBool("stopping", true);
-    if (sm.MainRB.velocity.magnitude > 1f) {
-      sm.CharacterAnimator.SetBool("hardStop", true);
-    }
-    else {
-      sm.CharacterAnimator.SetBool("hardStop", false);
-    }
-  }
-
-  protected void EndBrake() {
-    sm.Input.braking = false;
-    sm.CharacterAnimator.SetBool("stopping", false);
   }
 
   protected void FaceAlongRail() {
     sm.Facing.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
-  }
-
-  protected void DisableSpinBody() {
-    sm.Facing.update = false;
-    sm.Facing.transform.localRotation = Quaternion.identity;
-  }
-
-  protected void EnableSpinBody() {
-    sm.Facing.update = true;
   }
 
   protected void StartGrindingParticles() {
@@ -508,8 +453,8 @@ public abstract class SkateboardBaseState : State {
     sm.FacingParent.localRotation = Quaternion.identity;
     // sm.Facing.Reset();
 
+    sm.RawDown = Vector3.down;
     sm.Down = Vector3.down;
-    sm.DampedDown = Vector3.down;
     sm.Grounded = false;
     sm.TurnPercent = 0;
     sm.HeadSensZone.SetT(0);
@@ -531,8 +476,8 @@ public abstract class SkateboardBaseState : State {
 
   protected void SaveDebugFrame() {
     sm.debugFrame.centerOfMass = sm.transform.position;
-    sm.debugFrame.downVector = sm.Down;
-    sm.debugFrame.dampedDownVector = sm.DampedDown;
+    sm.debugFrame.downVector = sm.RawDown;
+    sm.debugFrame.dampedDownVector = sm.Down;
 
     sm.DebugFrameHandler.PutFrame(sm.debugFrame);
   }
