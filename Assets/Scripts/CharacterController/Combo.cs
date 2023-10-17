@@ -8,6 +8,7 @@ public class Combo : ScriptableObject {
   public List<Input> _ComboInputs;
   public int _OllieTrickIndex;
   public UnityEvent _ExtraComboEvents;
+  // public int _TrickValue;
 
   private SkateboardStateMachine sm;
 

@@ -29,7 +29,6 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetCrouching();
     VertBodySpring();
     CalculateTurn();
-    ApplyRotationToModels();
     CalculatePush();
     CalculateAirTurn();
     CapSpeed();
@@ -41,6 +40,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetWheelSpinParticleChance();
     SetSpeedyLines();
     SetRollingVolume();
+    PassGroundSpeedToPointSystem();
 
     SaveDebugFrame();
   }

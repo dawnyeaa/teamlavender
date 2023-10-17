@@ -40,6 +40,7 @@ public enum Input {
 }
 
 public class InputController : MonoBehaviour, Controls.IPlayerActions {
+  public static InputController instance;
   private const float ONEONROOT2 = 0.7071067811865475f;
   public float turn;
   public bool braking;
@@ -70,6 +71,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnSlamPerformed;
   public Action OnPausePerformed;
   public Action OnStartBraking, OnEndBraking;
+  public Action OnShowDebugPointsPerformed;
   public Action EnterDebugMode;
 
   public SkateboardStateMachine character;
@@ -98,6 +100,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       controls.player.Disable();
       controls = null;
     }
+  }
+
+  public void Awake() {
+    instance ??= this;
   }
 
   public void OnMove(InputAction.CallbackContext context) {
@@ -289,6 +295,12 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     }
 
     SceneManager.LoadScene(namey);
+  }
+
+  public void OnDebugpointsDisplay(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnShowDebugPointsPerformed?.Invoke();
   }
 
   public void OnDebugflyMode(InputAction.CallbackContext context) {
