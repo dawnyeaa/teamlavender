@@ -9,8 +9,8 @@ public class HarryFantasticCameraController : MonoBehaviour
     [SerializeField] private Vector3 positionOffset;
     [SerializeField] private Vector3 lookAtOffset;
 
-    [SerializeField] private Vector3 smoothing = Vector3.one;
-    [SerializeField][Range(0.0f, 1.0f)] private float arg0;
+    [SerializeField] private Vector3 smoothing = Vector3.one * 0.05f;
+    [SerializeField] private float lead;
     [SerializeField] private float baseFov = 40.0f;
     [SerializeField] private float dollySlope = 0.1f;
     [SerializeField] private float dollyFov = 70.0f;
@@ -55,7 +55,7 @@ public class HarryFantasticCameraController : MonoBehaviour
     private void Finalise()
     {
         transform.position += ComponentWise(f => (f(positionTarget) - f(transform.position)) / Mathf.Max(Time.deltaTime, f(smoothing)) * Time.deltaTime);
-        transform.rotation = Quaternion.LookRotation(lookAtTarget - Vector3.Lerp(transform.position, positionTarget, arg0), Vector3.up) * rotationOffset;
+        transform.rotation = Quaternion.LookRotation(lookAtTarget - Vector3.LerpUnclamped(transform.position, positionTarget, lead), Vector3.up) * rotationOffset;
 
         if (!target) return;
 
