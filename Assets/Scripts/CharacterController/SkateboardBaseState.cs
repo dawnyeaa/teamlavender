@@ -3,6 +3,7 @@ using Unity.Mathematics;
 
 using UnityEditor;
 using RootMotion.FinalIK;
+using System;
 
 public abstract class SkateboardBaseState : State {
   protected readonly SkateboardStateMachine sm;
@@ -76,16 +77,32 @@ public abstract class SkateboardBaseState : State {
         // front truck hit!!!
         frontHitPos = rayHit.point;
         tempNormal = rayHit.normal;
+        var frontHitDistance = rayHit.distance;
         bool backHit = Physics.Raycast(sm.transform.position - truckRelative, sm.RawDown, out rayHit, sm.ProjectLength + bonusDistance, LayerMask.GetMask("Ground"));
         if (backHit) {
           // back truck hit!!!
           backHitPos = rayHit.point;
 
+          // bool weGood = true;
+
+          // if (Vector3.Dot(sm.MainRB.velocity, sm.Facing.transform.forward) > 0) {
+          //   if (frontHitDistance > rayHit.distance) {
+          //     weGood = false;
+          //   }
+          // }
+          // else {
+          //   if (rayHit.distance > frontHitDistance) {
+          //     weGood = false;
+          //   }
+          // }
+
+          // if (weGood && (Vector3.Dot(tempNormal, rayHit.normal)*0.5+0.5) > sm.LipAngleTolerance) {
           tempNormal = (tempNormal + rayHit.normal)/2f;
 
           var newForward = backHitPos - frontHitPos;
           var newNormal = Vector3.Cross(newForward, Vector3.Cross(newForward, -tempNormal)).normalized;
           sm.RawDown = -newNormal;
+          // }
         }
       }
 
@@ -378,6 +395,15 @@ public abstract class SkateboardBaseState : State {
 
   protected void FaceAlongRail() {
     sm.Facing.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
+  }
+
+  protected void DisableSpinBody() {
+    sm.Facing.update = false;
+    sm.Facing.transform.localRotation = Quaternion.identity;
+  }
+
+  protected void EnableSpinBody() {
+    sm.Facing.update = true;
   }
 
   protected void StartGrindingParticles() {
