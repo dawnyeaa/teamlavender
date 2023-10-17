@@ -4,18 +4,16 @@ using UnityEngine;
 public class HarryFantasticCameraController : MonoBehaviour
 {
     [SerializeField] private SkateboardStateMachine player;
-    [SerializeField] private Transform positionSource;
-    [SerializeField] private Transform lookAtSource;
-    [SerializeField] private Vector3 positionOffset;
-    [SerializeField] private Vector3 lookAtOffset;
+    [SerializeField] private Vector3 positionOffset = new (0.0f, 1.0f, -5.0f);
+    [SerializeField] private Vector3 lookAtOffset = new (0.0f, 0.5f, 0.0f);
 
     [SerializeField] private Vector3 smoothing = Vector3.one * 0.05f;
-    [SerializeField] private float lead;
+    [SerializeField] private float lead = 0.85f;
     [SerializeField] private float baseFov = 40.0f;
     [SerializeField] private float dollySlope = 0.1f;
-    [SerializeField] private float dollyFov = 70.0f;
-    [SerializeField] private Vector3 dollyOffset = Vector3.forward * 7.0f;
-    [SerializeField] private float dollySmoothing = 0.2f;
+    [SerializeField] private float dollyFov = 55.0f;
+    [SerializeField] private Vector3 dollyOffset = new (0.0f, -1.0f, 2.0f);
+    [SerializeField] private float dollySmoothing = 0.4f;
     [SerializeField][Range(0.0f, 1.0f)] private float maxDolly = 1.0f;
     [SerializeField][Range(0.0f, 1.0f)][ReadOnly] private float dolly;
 
@@ -25,7 +23,10 @@ public class HarryFantasticCameraController : MonoBehaviour
     private Vector3 lookAtTarget;
     private Quaternion rotationOffset;
     private Quaternion targetRotation;
-    
+
+    private Transform positionSource => player.Facing.transform;
+    private Transform lookAtSource => player.LookatConstraint.transform;
+
     private void LateUpdate()
     {
         if (!target) target = FindObjectOfType<Camera>();
