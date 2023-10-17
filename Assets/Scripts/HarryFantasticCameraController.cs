@@ -4,18 +4,8 @@ using UnityEngine;
 public class HarryFantasticCameraController : MonoBehaviour
 {
     [SerializeField] private SkateboardStateMachine player;
-    [SerializeField] private Vector3 positionOffset = new (0.0f, 1.0f, -5.0f);
-    [SerializeField] private Vector3 lookAtOffset = new (0.0f, 0.5f, 0.0f);
-
-    [SerializeField] private Vector3 smoothing = Vector3.one * 0.05f;
-    [SerializeField] private float lead = 0.85f;
-    [SerializeField] private float baseFov = 40.0f;
-    [SerializeField] private float dollySlope = 0.1f;
-    [SerializeField] private float dollyFov = 55.0f;
-    [SerializeField] private Vector3 dollyOffset = new (0.0f, -1.0f, 2.0f);
-    [SerializeField] private float dollySmoothing = 0.4f;
-    [SerializeField][Range(0.0f, 1.0f)] private float maxDolly = 1.0f;
-    [SerializeField][Range(0.0f, 1.0f)][ReadOnly] private float dolly;
+    [SerializeField] private HarryFantasticCameraControllerSettings settings;
+    [Range(0.0f, 1.0f)] [ReadOnly] public float dolly;
 
     private Camera target;
 
@@ -29,6 +19,7 @@ public class HarryFantasticCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!settings) return;
         if (!target) target = FindObjectOfType<Camera>();
 
         GetSourcePosition();
@@ -42,21 +33,21 @@ public class HarryFantasticCameraController : MonoBehaviour
     private void ApplyDolly()
     {
         var forwardSpeed = Vector3.Dot(player.MainRB.velocity, player.Facing.transform.forward);
-        var tDolly = 2.0f * Mathf.Atan(forwardSpeed * dollySlope) / Mathf.PI;
-        tDolly = Mathf.Min(tDolly, maxDolly);
+        var tDolly = 2.0f * Mathf.Atan(forwardSpeed * settings.dollySlope) / Mathf.PI;
+        tDolly = Mathf.Min(tDolly, settings.maxDolly);
         
-        dolly += (tDolly - dolly) / Mathf.Max(Time.deltaTime, dollySmoothing) * Time.deltaTime;
+        dolly += (tDolly - dolly) / Mathf.Max(Time.deltaTime, settings.dollySmoothing) * Time.deltaTime;
         
-        if (target) target.fieldOfView = Mathf.Lerp(baseFov, dollyFov, dolly);
-        positionTarget += targetRotation * dollyOffset * dolly;
+        if (target) target.fieldOfView = Mathf.Lerp(settings.baseFov, settings.dollyFov, dolly);
+        positionTarget += targetRotation * settings.dollyOffset * dolly;
     }
 
     private void ApplyDamping() { }
 
     private void Finalise()
     {
-        transform.position += ComponentWise(f => (f(positionTarget) - f(transform.position)) / Mathf.Max(Time.deltaTime, f(smoothing)) * Time.deltaTime);
-        transform.rotation = Quaternion.LookRotation(lookAtTarget - Vector3.LerpUnclamped(transform.position, positionTarget, lead), Vector3.up) * rotationOffset;
+        transform.position += ComponentWise(f => (f(positionTarget) - f(transform.position)) / Mathf.Max(Time.deltaTime, f(settings.translationSmoothing)) * Time.deltaTime);
+        transform.rotation = Quaternion.LookRotation(lookAtTarget - Vector3.LerpUnclamped(transform.position, positionTarget, settings.lead), Vector3.up) * rotationOffset;
 
         if (!target) return;
 
@@ -68,8 +59,8 @@ public class HarryFantasticCameraController : MonoBehaviour
     {
         targetRotation = Quaternion.Euler(0.0f, Mathf.Atan2(positionSource.forward.x, positionSource.forward.z) * Mathf.Rad2Deg, 0.0f);
         
-        if (positionSource) positionTarget = positionSource.position + targetRotation * positionOffset;
-        if (lookAtSource) lookAtTarget = lookAtSource.position + targetRotation * lookAtOffset;
+        if (positionSource) positionTarget = positionSource.position + targetRotation * settings.positionOffset;
+        if (lookAtSource) lookAtTarget = lookAtSource.position + targetRotation * settings.lookAtOffset;
         rotationOffset = Quaternion.identity;
     }
 
