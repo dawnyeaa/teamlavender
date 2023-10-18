@@ -70,6 +70,7 @@ public class SkateboardStateMachine : StateMachine {
   public float MaxWheelSpinParticleChance = 0.75f;
   public float MinSpeedyLineSpeed = 2f;
   public float LipAngleTolerance = 0.75f;
+  public float MaxMotionBlur = 35f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -145,6 +146,7 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
   public CharacterPointHandler PointHandler;
+  public Material MotionBlurMat;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 

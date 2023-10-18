@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 public class JFAPass : ScriptableRenderPass {
@@ -35,8 +36,8 @@ public class JFAPass : ScriptableRenderPass {
   private float _outlineWobbleStrength;
   private float _outlineWobbleFPS;
   private Vector3 _outlineWobbleTexScrollDir;
-  private static readonly int _tmpId1 = Shader.PropertyToID("tmpJFART1"), _tmpId2 = Shader.PropertyToID("tmpJFART2");
-  RenderTargetIdentifier _tmpRT1, _tmpRT2;
+  private static readonly int _tmpId1 = Shader.PropertyToID("tmpJFART1"), _tmpId2 = Shader.PropertyToID("tmpJFART2"), _tmpId3 = Shader.PropertyToID("tmpJFART3");
+  RenderTargetIdentifier _tmpRT1, _tmpRT2, _tmpRT3;
   public JFAPass(string profilerTag, 
                  int blurSize, 
                  int outlineWidth,
@@ -71,47 +72,50 @@ public class JFAPass : ScriptableRenderPass {
 
     RenderTextureDescriptor desc = renderingData.cameraData.cameraTargetDescriptor;
     desc.colorFormat = RenderTextureFormat.ARGBFloat;
+    // desc.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
     cmd.GetTemporaryRT(_tmpId1, desc);
     cmd.GetTemporaryRT(_tmpId2, desc);
+    cmd.GetTemporaryRT(_tmpId3, desc);
 
     _tmpRT1 = new RenderTargetIdentifier(_tmpId1);
     _tmpRT2 = new RenderTargetIdentifier(_tmpId2);
+    _tmpRT3 = new RenderTargetIdentifier(_tmpId3);
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
     var cmd = CommandBufferPool.Get();
-    cmd.Clear();
+    // cmd.Clear();
     int passes = Mathf.FloorToInt(Mathf.Log(_outlineWidth, 2));
     var maxPassSize = (int)Mathf.Pow(2,passes);
 
     using (new ProfilingScope(cmd, _profilingSampler)) {
 
       // init the JFA
-      cmd.Blit(_inputRenderTargetIdentifier, _tmpRT1, _jfaMaterial, 0);
+      cmd.Blit(_inputRenderTargetIdentifier, _tmpRT3, _jfaMaterial, 0);
 
       // do all the JFA passes
       for (int jump = maxPassSize; jump >= 1; jump /= 2) {
         cmd.SetGlobalInt(_jumpProperty, jump);
-        cmd.Blit(_tmpRT1, _tmpRT2, _jfaMaterial, 1);
+        cmd.Blit(_tmpRT3, _tmpRT2, _jfaMaterial, 1);
 
         // ping pong
-        (_tmpRT2, _tmpRT1) = (_tmpRT1, _tmpRT2);
+        (_tmpRT2, _tmpRT3) = (_tmpRT3, _tmpRT2);
       }
 
       cmd.SetGlobalTexture(_osSobelProperty, _osSobelTex);
       
       // create the distance field from the JFA
-      cmd.Blit(_tmpRT1, _tmpRT2, _jfaMaterial, 2);
+      cmd.Blit(_tmpRT3, _tmpRT2, _jfaMaterial, 2);
 
 
       cmd.SetGlobalInt(_kernelSizeProperty, _blurSize);
       // blur the distance field
-      cmd.Blit(_tmpRT2, _tmpRT1, _boxBlurMaterial, 0);
-      cmd.Blit(_tmpRT1, _tmpRT2, _boxBlurMaterial, 1);
+      cmd.Blit(_tmpRT2, _tmpRT3, _boxBlurMaterial, 0);
+      cmd.Blit(_tmpRT3, _tmpRT2, _boxBlurMaterial, 1);
 
       // turn it into outline on screen
-      cmd.Blit(renderingData.cameraData.renderer.cameraColorTarget, _tmpRT1);
-      cmd.SetGlobalTexture(_screenProperty, _tmpRT1);
+      cmd.Blit(renderingData.cameraData.renderer.cameraColorTarget, _tmpRT3);
+      cmd.SetGlobalTexture(_screenProperty, _tmpRT3);
       cmd.SetGlobalFloat(_lineThicknessProperty, _outlineWidth);
       cmd.SetGlobalColor(_lineColorProperty, _outlineColor);
       cmd.SetGlobalTexture(_modTexProperty, _outlineWobbleTex);
@@ -132,6 +136,7 @@ public class JFAPass : ScriptableRenderPass {
   public override void OnCameraCleanup(CommandBuffer cmd) {
     cmd.ReleaseTemporaryRT(_tmpId1);
     cmd.ReleaseTemporaryRT(_tmpId2);
+    cmd.ReleaseTemporaryRT(_tmpId3);
     cmd.ReleaseTemporaryRT(_inputRenderTargetId);
     cmd.ReleaseTemporaryRT(_osSobelRTId);
   }

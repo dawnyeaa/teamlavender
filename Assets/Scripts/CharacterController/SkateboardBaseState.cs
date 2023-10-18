@@ -290,6 +290,10 @@ public abstract class SkateboardBaseState : State {
     sm.PointHandler.SetSpeed(flatMovement.magnitude);
   }
 
+  protected void PassSpeedToMotionBlur() {
+    sm.MotionBlurMat.SetFloat("_MaxBlurSize", sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed);
+  }
+
   protected void SetMovingFriction() {
     if (sm.Input.braking)
       sm.Friction = sm.BrakingFriction;
