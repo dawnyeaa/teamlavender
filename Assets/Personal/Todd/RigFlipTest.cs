@@ -7,28 +7,18 @@ public class RigFlipTest : MonoBehaviour {
   public Transform parentTransform;
   public bool flipIt = false;
   private Dictionary<string, (Vector3 pos, Quaternion rot)> savedTransforms;
-  // we flipping sagitally (xz plane)
+  // we flipping sagitally
   private readonly Vector3 mirrorPlaneNormal = Vector3.right;
-
-  public bool FLIPPY = false;
-  public Transform a;
   
   void Update() {
     if (flipIt) {
       flipIt = false;
       FlipRig();
     }
-    if (FLIPPY) {
-      FLIPPY = !FLIPPY;
-      (Vector3 fwd, Vector3 up) = (a.rotation * Vector3.forward, a.rotation * Vector3.up);
-      fwd = MirrorVector(fwd, mirrorPlaneNormal);
-      up = MirrorVector(up, mirrorPlaneNormal);
-      a.rotation = Quaternion.LookRotation(fwd, up);
-    }
   }
 
   void FlipRig() {
-    savedTransforms ??= new Dictionary<string, (Vector3 pos, Quaternion rot)>();
+    savedTransforms = new Dictionary<string, (Vector3 pos, Quaternion rot)>();
     // first we do a pass to grab the rotations of all the bones
 
     for (int i = 0; i < parentTransform.childCount; ++i) {
@@ -75,27 +65,20 @@ public class RigFlipTest : MonoBehaviour {
       sourceTransform = savedTransforms[name];
     }
 
-    if (sideBone)
-      bone.position = sourceTransform.pos;
-    else
-      bone.position = MirrorVector(sourceTransform.pos, mirrorPlaneNormal);
+    bone.position = MirrorVector(sourceTransform.pos, mirrorPlaneNormal);
 
     (Vector3 fwd, Vector3 up) = (sourceTransform.rot * Vector3.forward, sourceTransform.rot * Vector3.up);
-    
-    // if (sideBone) {
-    //   fwd *= -1;
-    //   up *= -1;
-    // }
 
-    // fwd = MirrorVector(fwd, mirrorPlaneNormal);
-    // up = MirrorVector(up, mirrorPlaneNormal);
+    fwd = MirrorVector(fwd, mirrorPlaneNormal);
+    up = MirrorVector(up, mirrorPlaneNormal);
 
-    // if (sideBone) {
-    //   fwd *= -1;
-    //   up *= -1;
-    // }
+    if (sideBone) {
+      // needs to be rotated 180 around x in order to be correct for opposite limb
+      fwd *= -1;
+      up *= -1;
+    }
 
-    // bone.rotation = Quaternion.LookRotation(fwd, up);
+    bone.rotation = Quaternion.LookRotation(fwd, up);
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
@@ -123,9 +106,5 @@ public class RigFlipTest : MonoBehaviour {
     var projectOntoNormal = Vector3.Project(input, mirrorNormal);
 
     return input-(2*projectOntoNormal);
-  }
-
-  private (Vector3 a, Vector3 b, Vector3 c) Mirror3((Vector3 a, Vector3 b, Vector3 c) input, Vector3 mirrorNormal) {
-    return (MirrorVector(input.a, mirrorNormal), MirrorVector(input.b, mirrorNormal), MirrorVector(input.c, mirrorNormal));
   }
 }
