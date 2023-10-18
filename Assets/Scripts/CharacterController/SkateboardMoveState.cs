@@ -41,6 +41,7 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetSpeedyLines();
     SetRollingVolume();
     PassGroundSpeedToPointSystem();
+    PassSpeedToMotionBlur();
 
     SaveDebugFrame();
   }
