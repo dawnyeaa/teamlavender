@@ -385,6 +385,11 @@ public abstract class SkateboardBaseState : State {
     sm.CharacterAnimator.SetInteger("ollieTrickIndex", sm.CurrentOllieTrickIndex);
   }
 
+  protected void RollIdleAnimation() {
+    if (UnityEngine.Random.value > (1-(Time.fixedDeltaTime/sm.AverageSecondsPerBreath)))
+      sm.CharacterAnimator.SetTrigger("breathe");
+  }
+
   protected void SetWheelSpinParticleChance() {
     foreach (WheelSpinParticleHandler spinner in sm.WheelSpinParticles) {
       if (sm.Grounded) {

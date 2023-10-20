@@ -4,13 +4,22 @@ using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using UnityEditor.Animations;
+using NUnit.Framework;
+using System.Globalization;
 
 public class AnimationMirrorWindow : EditorWindow {
   Animator animator;
   Transform boneParent;
   Transform animationRoot;
+  string[] clipNameBlacklist = {
+    "BoardLock",
+    "BoardTilt",
+    "IK",
+    "Mirror"
+  };
   private Dictionary<string, (Vector3 pos, Quaternion rot)> savedTransforms;
-  private readonly Vector3 mirrorPlaneNormal = Vector3.forward;
+  private readonly Vector3 mirrorPlaneNormal = Vector3.right;
 
   private Dictionary<string, AnimationCurve[]> boneCurves;
   private Dictionary<string, string> fullPaths;
@@ -18,8 +27,8 @@ public class AnimationMirrorWindow : EditorWindow {
 
   private readonly string[] channelNames = {
     "localPosition.x",
-    "localPosition.z",
     "localPosition.y",
+    "localPosition.z",
     "localRotation.x",
     "localRotation.y",
     "localRotation.z",
@@ -44,7 +53,6 @@ public class AnimationMirrorWindow : EditorWindow {
     if (animator == null) return;
     
     if (!animator.isInitialized) {
-      Debug.Log("rebinding");
       animator.Rebind();
     }
     
@@ -55,16 +63,30 @@ public class AnimationMirrorWindow : EditorWindow {
     foreach (var animatorLayer in animatorController.layers) {
       if (animatorLayer.name != "Base Layer") continue;
 
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        foreach (var transition in childAnimatorState.state.transitions) {
-          transition.mute = true;
-        }
+      // foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
+      //   var state = childAnimatorState.state;
+      //   if (state.motion != null && state.motion.name == "Blend Tree") {
+      //     var childMotions = ((BlendTree)state.motion).children;
+      //     foreach (var childMotion in childMotions) {
+      //       if (childMotion.motion != null)
+      //         Debug.Log(childMotion.motion.name);
+      //     }
+      //   }
+      // }
+
+      Dictionary<string, AnimationClip> clips = new();
+
+      foreach (var clip in animatorController.animationClips) {
+        if (!clips.ContainsKey(clip.name) && !IsBlacklistedClip(clip.name))
+          clips.Add(clip.name, clip);
       }
 
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        var clipPath = $"Assets/Animation/Clips/MirrorGenerated/Mirrored{childAnimatorState.state.name}.anim";
+      // then we do the following for *every animation clip*
 
-        var newClip = string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(clipPath));
+      foreach (var baseClip in clips) {
+        var clipPath = $"Assets/Animation/Clips/MirrorGenerated/Mirrored{ToMiniTitleCase(baseClip.Key)}.anim";
+
+        var newClip = string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(clipPath, AssetPathToGUIDOptions.OnlyExistingAssets));
 
         AnimationClip clip;
 
@@ -74,10 +96,14 @@ public class AnimationMirrorWindow : EditorWindow {
         else {
           clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
         }
+
+        var newState = animatorLayer.stateMachine.AddState("new state");
+
+        newState.motion = baseClip.Value;
         
-        Debug.Log(childAnimatorState.state.name);
-        
-        PlayClipAndRecord(childAnimatorState.state.nameHash);
+        PlayClipAndRecord(newState.nameHash);
+
+        animatorLayer.stateMachine.RemoveState(newState);
 
         clip.ClearCurves();
 
@@ -94,13 +120,15 @@ public class AnimationMirrorWindow : EditorWindow {
           AssetDatabase.SaveAssets();
         }
       }
-
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        foreach (var transition in childAnimatorState.state.transitions) {
-          transition.mute = false;
-        }
-      }
     }
+  }
+
+  bool IsBlacklistedClip(string name) {
+    foreach (var phrase in clipNameBlacklist) {
+      if (name.Contains(phrase))
+        return true;
+    }
+    return false;
   }
 
   void PlayClipAndRecord(int clipHash) {
@@ -118,7 +146,7 @@ public class AnimationMirrorWindow : EditorWindow {
     var currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
     var duration = currentStateInfo.length;
     var numFrames = duration*fps;
-    Debug.Log($"duration: {duration}, frames: {numFrames}");
+    // Debug.Log($"duration: {duration}, frames: {numFrames}");
 
     for (int f = 0; f <= numFrames; ++f) {
       var currentTime = f/(float)fps;
@@ -138,9 +166,7 @@ public class AnimationMirrorWindow : EditorWindow {
   void CreateAllCurves() {
     for (int i = 0; i < boneParent.childCount; ++i) {
       var child = boneParent.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        CreateCurves(child);
-      }
+      CreateCurves(child);
     }
   }
 
@@ -158,50 +184,44 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        CreateCurves(child);
-      }
+      CreateCurves(child);
     }
   }
 
   void KeyAllFlippedBones(float time) {
     for (int i = 0; i < boneParent.childCount; ++i) {
       var child = boneParent.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        KeyFlippedBones(child, time);
-      }
+      KeyFlippedBones(child, time);
     }
   }
 
   void KeyFlippedBones(Transform bone, float time) {
     var curves = boneCurves[bone.name];
-    boneCurves[bone.name] = KeyPose(curves, time, bone.position, bone.rotation);
+    boneCurves[bone.name] = KeyPose(curves, time, bone);
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        KeyFlippedBones(child, time);
-      }
+      KeyFlippedBones(child, time);
     }
   }
 
-  AnimationCurve[] KeyPose(AnimationCurve[] curves, float time, Vector3 pos, Quaternion rot) {
-    curves[0].AddKey(time, pos.x);
-    curves[1].AddKey(time, pos.y);
-    curves[2].AddKey(time, pos.z);
-    curves[3].AddKey(time, rot.x);
-    curves[4].AddKey(time, rot.y);
-    curves[5].AddKey(time, rot.z);
-    curves[6].AddKey(time, rot.w);
+  AnimationCurve[] KeyPose(AnimationCurve[] curves, float time, Transform bone) {
+    var lpos = bone.localPosition;
+    var lrot = bone.localRotation;
+    curves[0].AddKey(time, lpos.x);
+    curves[1].AddKey(time, lpos.y);
+    curves[2].AddKey(time, lpos.z);
+    curves[3].AddKey(time, lrot.x);
+    curves[4].AddKey(time, lrot.y);
+    curves[5].AddKey(time, lrot.z);
+    curves[6].AddKey(time, lrot.w);
     return curves;
   }
 
   void SetAllTangentsConstant() {
     for (int i = 0; i < boneParent.childCount; ++i) {
       var child = boneParent.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        SetTangentsConstant(child);
-      }
+      SetTangentsConstant(child);
     }
   }
 
@@ -216,9 +236,7 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        SetTangentsConstant(child);
-      }
+      SetTangentsConstant(child);
     }
   }
 
@@ -227,9 +245,7 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < animationRoot.childCount; ++i) {
       var child = animationRoot.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
-        CreateBoneFullPaths(child, "");
-      }
+      CreateBoneFullPaths(child, "");
     }
   }
 
@@ -239,18 +255,16 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (!parentPath.Contains("JNT") || child.name.Contains("JNT"))
         CreateBoneFullPaths(child, path);
-      }
     }
   }
 
   void SetAllBoneCurves(AnimationClip clip) {
     for (int i = 0; i < boneParent.childCount; ++i) {
       var child = boneParent.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (child.name.Contains("JNT"))
         SetBoneCurves(child, clip);
-      }
     }
   }
 
@@ -262,9 +276,8 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (child.name.Contains("JNT"))
         SetBoneCurves(child, clip);
-      }
     }
   }
 
@@ -274,18 +287,16 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < boneParent.childCount; ++i) {
       var child = boneParent.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (child.name.Contains("JNT"))
         GetBoneTransforms(child);
-      }
     }
 
     // then we do a pass to apply those rotations to them headwise
 
     for (int i = 0; i < boneParent.childCount; ++i) {
       var child = boneParent.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (child.name.Contains("JNT"))
         FlipBones(child);
-      }
     }
   }
 
@@ -296,9 +307,8 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (child.name.Contains("JNT"))
         GetBoneTransforms(child);
-      }
     }
   }
 
@@ -333,24 +343,32 @@ public class AnimationMirrorWindow : EditorWindow {
 
     for (int i = 0; i < bone.childCount; ++i) {
       var child = bone.GetChild(i);
-      if (!child.name.ToLower().Contains("board")) {
+      if (child.name.Contains("JNT"))
         FlipBones(child);
-      }
     }
   }
 
   bool IsSideBone(string name) {
     var end = name[^2..];
+    var start = name[..8];
 
-    return end == "_L" || end == "_R";
+    return end == "_L" || end == "_R" || start == "JNT_Nose" || start == "JNT_Tail";
   }
 
   string MirrorSideBoneName(string name) {
-    var withoutEnd = name[..^2];
-    var end = name[^2..];
-    end = end.Replace("_L", "_SIDE").Replace("_R", "_L").Replace("_SIDE", "_R");
+    var start = name[..8];
+    if (start == "JNT_Nose" || start == "JNT_Tail") {
+      var withoutStart = name[8..];
+      start = start.Replace("JNT_Nose", "JNT_Temp").Replace("JNT_Tail", "JNT_Nose").Replace("JNT_Temp", "JNT_Tail");
+      return start + withoutStart;
+    }
+    else {
+      var withoutEnd = name[..^2];
+      var end = name[^2..];
+      end = end.Replace("_L", "_SIDE").Replace("_R", "_L").Replace("_SIDE", "_R");
 
-    return withoutEnd + end;
+      return withoutEnd + end;
+    }
   }
 
   private Vector3 MirrorVector(Vector3 input, Vector3 mirrorNormal) {
@@ -358,4 +376,6 @@ public class AnimationMirrorWindow : EditorWindow {
 
     return input-(2*projectOntoNormal);
   }
+
+  private string ToMiniTitleCase(string s) => s[0].ToString().ToUpperInvariant() + s[1..];
 }
