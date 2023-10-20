@@ -13,11 +13,11 @@ public class RigFlipTest : MonoBehaviour {
   void Update() {
     if (flipIt) {
       flipIt = false;
-      FlipRig();
+      FlipPose();
     }
   }
 
-  void FlipRig() {
+  void FlipPose() {
     savedTransforms = new Dictionary<string, (Vector3 pos, Quaternion rot)>();
     // first we do a pass to grab the rotations of all the bones
 

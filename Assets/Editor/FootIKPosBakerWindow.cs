@@ -32,8 +32,10 @@ public class FootIKPosBakerWindow : EditorWindow {
   private void BakeFootIKClips() {
     if (animator == null) return;
     
-    if (!animator.isInitialized)
+    if (!animator.isInitialized) {
+      Debug.Log("rebinding");
       animator.Rebind();
+    }
     
     var animatorController = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
 
@@ -47,9 +49,24 @@ public class FootIKPosBakerWindow : EditorWindow {
       }
 
       foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        AnimationClip clip = new();
+        var clipPath = $"Assets/Animation/Clips/IKGenerated/IK{childAnimatorState.state.name}.anim";
+
+        var newClip = string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(clipPath));
+
+        AnimationClip clip;
+
+        if (newClip) {
+          clip = new();
+        }
+        else {
+          clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+        }
+        
+        Debug.Log(childAnimatorState.state.name);
         
         PlayClipAndRecord(childAnimatorState.state.nameHash);
+
+        clip.ClearCurves();
 
         clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.x", leftFootCurrentCurve[0]);
         clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.z", leftFootCurrentCurve[2]);
@@ -69,9 +86,12 @@ public class FootIKPosBakerWindow : EditorWindow {
 
         clip.frameRate = fps;
 
-        var newClipName = $"Assets/Animation/Clips/IKGenerated/IK{childAnimatorState.state.name}.anim";
-        AssetDatabase.DeleteAsset(newClipName);
-        AssetDatabase.CreateAsset(clip, newClipName);
+        if (newClip) {
+          AssetDatabase.CreateAsset(clip, clipPath);
+        }
+        else {
+          AssetDatabase.SaveAssets();
+        }
       }
 
       foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
@@ -92,11 +112,17 @@ public class FootIKPosBakerWindow : EditorWindow {
     }
 
     var layer = animator.GetLayerIndex("Base Layer");
+    
+    if (!animator.isInitialized) {
+      animator.Rebind();
+    }
 
     animator.Play(clipHash, layer);
     animator.Update(0);
-    var duration = animator.GetCurrentAnimatorStateInfo(0).length;
+    var currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
+    var duration = currentStateInfo.length;
     var numFrames = duration*fps;
+    Debug.Log($"duration: {duration}, frames: {numFrames}");
 
     for (int f = 0; f <= numFrames; ++f) {
       var currentTime = f/(float)fps;
