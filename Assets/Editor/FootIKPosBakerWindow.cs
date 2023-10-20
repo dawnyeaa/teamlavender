@@ -4,6 +4,8 @@ using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using UnityEditor.Animations;
+using System.Linq;
 
 public class FootIKPosBakerWindow : EditorWindow {
   Animator animator;
@@ -42,14 +44,25 @@ public class FootIKPosBakerWindow : EditorWindow {
     foreach (var animatorLayer in animatorController.layers) {
       if (animatorLayer.name != "Base Layer") continue;
 
+      var allStates = new List<AnimatorState>();
+
       foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        foreach (var transition in childAnimatorState.state.transitions) {
+        allStates.Add(childAnimatorState.state);
+      }
+      foreach (var childAnimatorStateMachine in animatorLayer.stateMachine.stateMachines) {
+        foreach (var childAnimatorState in childAnimatorStateMachine.stateMachine.states) {
+          allStates.Add(childAnimatorState.state);
+        }
+      }
+
+      foreach (var state in allStates) {
+        foreach (var transition in state.transitions) {
           transition.mute = true;
         }
       }
 
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        var clipPath = $"Assets/Animation/Clips/IKGenerated/IK{childAnimatorState.state.name}.anim";
+      foreach (var state in allStates) {
+        var clipPath = $"Assets/Animation/Clips/IKGenerated/IK{state.name}.anim";
 
         var newClip = string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(clipPath));
 
@@ -62,9 +75,9 @@ public class FootIKPosBakerWindow : EditorWindow {
           clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
         }
         
-        Debug.Log(childAnimatorState.state.name);
+        Debug.Log(state.name);
         
-        PlayClipAndRecord(childAnimatorState.state.nameHash);
+        PlayClipAndRecord(state.nameHash);
 
         clip.ClearCurves();
 
@@ -94,8 +107,8 @@ public class FootIKPosBakerWindow : EditorWindow {
         }
       }
 
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        foreach (var transition in childAnimatorState.state.transitions) {
+      foreach (var state in allStates) {
+        foreach (var transition in state.transitions) {
           transition.mute = false;
         }
       }
