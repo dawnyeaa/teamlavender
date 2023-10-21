@@ -112,6 +112,8 @@ public class AnimationMirrorWindow : EditorWindow {
         SetAllBoneCurves(clip);
 
         clip.frameRate = fps;
+        var events = AnimationUtility.GetAnimationEvents(baseClip.Value);
+        AnimationUtility.SetAnimationEvents(clip, events);
 
         if (newClip) {
           AssetDatabase.CreateAsset(clip, clipPath);
