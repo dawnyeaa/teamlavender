@@ -42,6 +42,8 @@ public class SkateboardMoveState : SkateboardBaseState {
     SetRollingVolume();
     
     sm.collisionProcessor.FixedUpdate(sm);
+    PassGroundSpeedToPointSystem();
+    PassSpeedToMotionBlur();
 
     SaveDebugFrame();
   }

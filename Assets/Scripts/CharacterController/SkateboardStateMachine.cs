@@ -24,6 +24,8 @@ public class SkateboardStateMachine : StateMachine {
   public float LeanDamping = 0.64f;
   public float TruckSpacing = 0.205f;
   public float PushForce = 10f;
+  public float PushStartMultiplier = 3f;
+  public float PushStartEpsilon = 0.1f;
   public AnimationCurve PushForceCurve;
   // public float MaxPushDuration = 1f;
   public float WheelFriction = 0.01f;
@@ -43,7 +45,7 @@ public class SkateboardStateMachine : StateMachine {
   // public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
   public float LandingAngleGive = 0.8f;
-  public float AirTurnForce = 1f;
+  public float AirTurnStrength = 1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
@@ -68,6 +70,8 @@ public class SkateboardStateMachine : StateMachine {
   public float MinWheelSpinParticleChance = 0.1f;
   public float MaxWheelSpinParticleChance = 0.75f;
   public float MinSpeedyLineSpeed = 2f;
+  public float LipAngleTolerance = 0.75f;
+  public float MaxMotionBlur = 35f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -87,8 +91,8 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float TurnPercent;
   [ReadOnly] public float LeanPercent;
   [ReadOnly] public float SpringMultiplier;
+  [ReadOnly] public Vector3 RawDown = Vector3.down;
   [ReadOnly] public Vector3 Down = Vector3.down;
-  [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
   [ReadOnly] public Rail GrindingRail;
@@ -142,6 +146,8 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip RollingHardClip;
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
+  public CharacterPointHandler PointHandler;
+  public Material MotionBlurMat;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
@@ -158,6 +164,8 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
+
+    PointHandler.SetMaxSpeed(MaxSpeed);
   }
 
   public void OnOllieForce() {

@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 
 public class PointManager : MonoBehaviour {
+  public static PointManager instance;
   public TextMeshProUGUI pendingPointsDisplay, newPointsDisplay, totalPointsDisplay;
   public TextMeshProUGUI newPointsMessageDisplay;
   public TextMeshProUGUI pendingPointsDebugDisplay, newPointsDebugDisplay, currentLinePointsDebugDisplay, totalPointsDebugDisplay;
@@ -21,6 +22,8 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public int newPoints;
   [ReadOnly] public int currentLinePoints;
   [ReadOnly] public int totalPoints;
+
+  [ReadOnly] public float pointHeat;
   
   [ReadOnly] public bool pendingNewToggle = false;
   [ReadOnly] public bool showPoints = false;
@@ -28,12 +31,9 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public float pendingPointsTimer;
   [ReadOnly] public float newPointsDisplayTimer;
 
-  // public int TestPointsToAdd = 0;
-
-  // public bool TestAddPoints = false;
-  // public bool TestTrashPending = false;
-  // public bool TestValidate = false;
-
+  void Awake() {
+    instance ??= this;
+  }
   public void Start() {
     pendingPoints = 0;
     newPoints = 0;
@@ -56,19 +56,6 @@ public class PointManager : MonoBehaviour {
         Display();
       }
     }
-
-    // if (TestAddPoints) {
-    //   TestAddPoints = false;
-    //   AddPoints(TestPointsToAdd);
-    // }
-    // if (TestTrashPending) {
-    //   TestTrashPending = false;
-    //   TrashPending();
-    // }
-    // if (TestValidate) {
-    //   TestValidate = false;
-    //   Validate();
-    // }
   }
 
   public void AddPoints(int pointsToAdd) {
