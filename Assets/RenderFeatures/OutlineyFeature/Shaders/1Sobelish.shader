@@ -40,6 +40,18 @@ Shader "OutlineyFeature/1Sobelish" {
         float2(0, 1),
         float2(1, 1)
       };
+      
+      static float3 offsetIDs[9] = {
+        float3(1, 1, 1),
+        float3(1, 0, 0),
+        float3(0, 1, 0),
+        float3(0, 0, 1),
+        float3(1, 1, 0),
+        float3(0, 1, 1),
+        float3(1, 0, 1),
+        float3(1, 0.5, 0),
+        float3(0, 1, 0.5),
+      };
 
       struct VertexInput {
         float4 positionOS : POSITION;
@@ -85,6 +97,7 @@ Shader "OutlineyFeature/1Sobelish" {
 
       float GetDepth(float2 uv) {
         return Linear01Depth(SampleSceneDepth(uv), _ZBufferParams);
+        // return SampleSceneDepth(uv);
       }
 
       float4 objectSpacePos(float2 uv, float stepx, float stepy, float sobelValue) {
@@ -133,7 +146,8 @@ Shader "OutlineyFeature/1Sobelish" {
         float3 osPos = SAMPLE_TEXTURE2D(_OSTex, sampler_OSTex, uv + uvOffset[bestDepthIndex] * float2(stepx, stepy)).xyz;
         
         return float4(osPos, sobelValue);
-        // return float4(depth, 0, 0, 1);
+        // return float4(bestDepth >= 1 ? 0 : offsetIDs[bestDepthIndex], 1);
+        // return float4(bestDepth >= 1 ? 0 : bestDepth, 0, 0, 1);
       }
 
       VertexOutput vert(VertexInput i) {

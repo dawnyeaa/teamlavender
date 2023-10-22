@@ -81,8 +81,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2f21cc68177ac4ba45e6029b0b4ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minZoneSize: 1.3
-  maxZoneSize: 1.5
+  minZoneSize: 0.24
+  maxZoneSize: 0.24
   zoneSize: 0.24
 --- !u!1818360608 &5346404523342230214
 PositionConstraint:
@@ -456,6 +456,7 @@ GameObject:
   - component: {fileID: 3832982824073343646}
   - component: {fileID: 5959250916401455701}
   - component: {fileID: 2908417279074541027}
+  - component: {fileID: 782263955143857083}
   m_Layer: 7
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -555,7 +556,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxSpeed: 15
   TurnLockSpeed: 25
+  TurnEaseBySpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.3176658
+      outSlope: 1.7242411
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.58558816
+    - serializedVersion: 3
+      time: 0.462498
+      value: 1.0000017
+      inSlope: 0.010884917
+      outSlope: 0.010884917
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.46846616
+      outWeight: 0.41040707
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1.4218225
+      outSlope: -1.4218225
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  MaxTurnDeg: 3
+  MaxAnimatedTruckTurnDeg: 15
+  TurnSpeedConservation: 0.5
+  LeanDamping: 0.64
+  TruckSpacing: 0.23
   PushForce: 15
+  PushStartMultiplier: 10
+  PushStartEpsilon: 0.5
   PushForceCurve:
     serializedVersion: 2
     m_Curve:
@@ -601,10 +642,6 @@ MonoBehaviour:
   WheelFriction: 0.03
   BrakingFriction: 1.5
   GrindingFriction: 0.3
-  MaxTruckTurnDeg: 8.34
-  MaxAnimatedTruckTurnDeg: 15
-  TruckSpacing: 0.23
-  TruckTurnDamping: 0.08
   SpringConstant: 150
   SpringMultiplierMin: 0.6
   SpringMultiplierMax: 1
@@ -617,7 +654,7 @@ MonoBehaviour:
   RightingStrength: 0.1
   GoingDownThreshold: -4
   LandingAngleGive: 0.8
-  AirTurnForce: 1
+  AirTurnStrength: 5
   TurningEase:
     serializedVersion: 2
     m_Curve:
@@ -686,10 +723,11 @@ MonoBehaviour:
   CurrentPushT: 0
   MaxPushT: 0
   PushBuffered: 0
-  TruckTurnPercent: 0
+  TurnPercent: 0
+  LeanPercent: 0
   SpringMultiplier: 0
+  RawDown: {x: 0, y: -1, z: 0}
   Down: {x: 0, y: -1, z: 0}
-  DampedDown: {x: 0, y: -1, z: 0}
   CurrentProjectLength: 0
   AirTimeCounter: 0
   GrindingRail: {fileID: 0}
@@ -701,7 +739,7 @@ MonoBehaviour:
   frontAxis: {fileID: 3832982825911100688}
   backAxis: {fileID: 3832982824258907185}
   FacingParent: {fileID: 3832982824583626804}
-  Facing: {fileID: 6646782448552676357}
+  Facing: {fileID: 4738934623971195642}
   footRepresentation: {fileID: 3832982824601065071}
   SmoothHipHelper: {fileID: 4474288110729284100}
   HipHelper: {fileID: 1866958914355683588}
@@ -756,6 +794,7 @@ MonoBehaviour:
   RollingHardClip: {fileID: 8300000, guid: d0c0533c7460a1b4dbfc4f7a985e0900, type: 3}
   FartClip: {fileID: 8300000, guid: 6d950170566b8a84e99a3d659d543efa, type: 3}
   DebugFrameHandler: {fileID: 0}
+  PointHandler: {fileID: 782263955143857083}
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
@@ -792,6 +831,24 @@ MonoBehaviour:
   duration: 1
   transitionTime: 0.1
   coolTimeScale: 0.2
+--- !u!114 &782263955143857083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3832982824073343645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f2f9ad35b8e9b948b297761750e17b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundSpeedDisplay: {fileID: 0}
+  slowSpeedDisplay: {fileID: 0}
+  maxSpeedDisplay: {fileID: 0}
+  speedometerDisplay: {fileID: 0}
+  groundSpeedSlowSpeed: 6
+  groundSpeedSlowDuration: 2
 --- !u!1 &3832982824258907184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,7 +1164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3832982824730551215}
-  - component: {fileID: 6646782448552676357}
+  - component: {fileID: 4738934623971195642}
   m_Layer: 7
   m_Name: facing
   m_TagString: Untagged
@@ -1131,7 +1188,7 @@ Transform:
   m_Father: {fileID: 3832982824583626804}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6646782448552676357
+--- !u!114 &4738934623971195642
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1140,14 +1197,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3832982824730551212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb5c28afee0b2d24eab4df33c4cd1e7a, type: 3}
+  m_Script: {fileID: 11500000, guid: e90fcbb7cc1cda746bf242d48ff468d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angularDrag: 0.1
-  update: 1
   orientation: 0
   angularVelocity: 0
-  torque: 0
+  update: 1
+  lastFixedUpdateTime: 0
+  lastOrientation: 0
 --- !u!1 &3832982825911100695
 GameObject:
   m_ObjectHideFlags: 0
@@ -2573,6 +2630,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 769970106fb6b4e4e9b72c2ced7f0746, type: 3}
+--- !u!4 &1424819243308262102 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2807013738753404105, guid: 769970106fb6b4e4e9b72c2ced7f0746,
+    type: 3}
+  m_PrefabInstance: {fileID: 3832982824031227423}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2064951256861524908 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2997519008937561523, guid: 769970106fb6b4e4e9b72c2ced7f0746,
@@ -5926,6 +5989,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172a655fc7066ad4582238173fe81653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &5892288798514938683
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1424819243308262102}
+    m_Modifications:
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.131
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.031
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495384, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495385, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 0.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585060346838495462, guid: 79fddb19bdffcfd4a8163e52f5a34d47,
+        type: 3}
+      propertyPath: m_Name
+      value: VFX_inkTrail1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 79fddb19bdffcfd4a8163e52f5a34d47, type: 3}
 --- !u!1001 &6966712792060193486
 PrefabInstance:
   m_ObjectHideFlags: 0

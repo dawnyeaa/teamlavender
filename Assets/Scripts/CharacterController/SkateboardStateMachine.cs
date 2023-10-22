@@ -12,20 +12,24 @@ public class SkateboardStateMachine : StateMachine {
   // User Constants - Runtime only
   // [Header("Constants - Only read at runtime")]
 
-  // User Constants - Live update
+  // User Constants - Live update 
   [Header("Constants - Live update")]
   public float MaxSpeed = 20f;
   public float TurnLockSpeed = 30f;
+  public AnimationCurve TurnEaseBySpeed;
+  public float MaxTurnDeg = 8.34f;
+  public float MaxAnimatedTruckTurnDeg = 15f;
+  [Range(0, 1)] public float TurnSpeedConservation = 0.5f;
+  public float LeanDamping = 0.64f;
+  public float TruckSpacing = 0.205f;
   public float PushForce = 10f;
+  public float PushStartMultiplier = 3f;
+  public float PushStartEpsilon = 0.1f;
   public AnimationCurve PushForceCurve;
   // public float MaxPushDuration = 1f;
   public float WheelFriction = 0.01f;
   public float BrakingFriction = 0.4f;
   public float GrindingFriction = 0.1f;
-  public float MaxTruckTurnDeg = 8.34f;
-  public float MaxAnimatedTruckTurnDeg = 15f;
-  public float TruckSpacing = 0.205f;
-  public float TruckTurnDamping = 0.3f;
   public float SpringConstant = 40f;
   public float SpringMultiplierMin = 0.5f;
   public float SpringMultiplierMax = 1f;
@@ -40,7 +44,7 @@ public class SkateboardStateMachine : StateMachine {
   // public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
   public float LandingAngleGive = 0.8f;
-  public float AirTurnForce = 1f;
+  public float AirTurnStrength = 1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
@@ -65,6 +69,8 @@ public class SkateboardStateMachine : StateMachine {
   public float MinWheelSpinParticleChance = 0.1f;
   public float MaxWheelSpinParticleChance = 0.75f;
   public float MinSpeedyLineSpeed = 2f;
+  public float LipAngleTolerance = 0.75f;
+  public float MaxMotionBlur = 35f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -81,11 +87,11 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float CurrentPushT = 0;
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
-  [ReadOnly] public float TruckTurnPercent;
-  [ReadOnly] public float ReallyDampedTruckTurnPercent;
+  [ReadOnly] public float TurnPercent;
+  [ReadOnly] public float LeanPercent;
   [ReadOnly] public float SpringMultiplier;
+  [ReadOnly] public Vector3 RawDown = Vector3.down;
   [ReadOnly] public Vector3 Down = Vector3.down;
-  [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
   [ReadOnly] public Rail GrindingRail;
@@ -107,7 +113,7 @@ public class SkateboardStateMachine : StateMachine {
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
   public Transform FacingParent;
-  public Torquer Facing;
+  public Spinner Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
@@ -139,6 +145,8 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip RollingHardClip;
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
+  public CharacterPointHandler PointHandler;
+  public Material MotionBlurMat;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -152,6 +160,8 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
+
+    PointHandler.SetMaxSpeed(MaxSpeed);
   }
 
   public void OnOllieForce() {
@@ -179,6 +189,7 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void Die() {
+    PointHandler.Die();
     EnterDead();
     SlamRumble();
   }
