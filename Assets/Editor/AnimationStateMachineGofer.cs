@@ -4,7 +4,6 @@ using UnityEditor.Animations;
 using System;
 
 public class AnimationStateMachineGofer : EditorWindow {
-  Animator animator;
   string[] clipNameBlacklist = {
     "BoardLock",
     "BoardTilt",
@@ -18,20 +17,14 @@ public class AnimationStateMachineGofer : EditorWindow {
   }
 
   void OnGUI() {
-    animator = (Animator)EditorGUILayout.ObjectField("Animator", animator, typeof(Animator), true);
     if (GUILayout.Button("Place Mirrored Animations in Animator")) {
       PlaceMirroredAnimations();
     }
   }
 
   private void PlaceMirroredAnimations() {
-    if (animator == null) return;
-    
-    if (!animator.isInitialized) {
-      animator.Rebind();
-    }
-    
-    var animatorController = animator.runtimeAnimatorController as AnimatorController;
+    UnityEngine.Object w = AssetDatabase.LoadAssetAtPath("Assets/Animation/Character.controller", typeof(AnimatorController));
+    var animatorController = w as AnimatorController;
 
     foreach (var animatorLayer in animatorController.layers) {
       if (animatorLayer.name != "Base Layer") continue;
@@ -61,11 +54,15 @@ public class AnimationStateMachineGofer : EditorWindow {
             var blendTree = new BlendTree();
             state.motion = blendTree;
             ArrangeBlendTree(blendTree, true, clip);
+            AssetDatabase.AddObjectToAsset(blendTree, AssetDatabase.GetAssetPath(animatorController));
           }
         }
       });
 
     }
+
+    EditorUtility.SetDirty(animatorController);
+    AssetDatabase.SaveAssets();
 
   }
   void ArrangeBlendTree(BlendTree tree, bool startIsRegular, AnimationClip regularClip) {
