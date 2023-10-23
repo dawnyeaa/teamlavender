@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class SkateboardMoveState : SkateboardBaseState
 {
@@ -9,6 +8,7 @@ public class SkateboardMoveState : SkateboardBaseState
     public bool isOnGround;
     private int wheelsOnGround;
     private Vector2 leanInput;
+    private Vector3 upVector;
 
     public bool jump;
     public bool flipped;
@@ -69,15 +69,53 @@ public class SkateboardMoveState : SkateboardBaseState
         body.inertiaTensor = settings.inertiaTensor;
 
         UpdateTrucks();
+        DoPrediction();
         ApplyResistance();
         ApplyPushForce();
         ApplyLeanForces();
 
-        sm.collisionProcessor.FixedUpdate(sm);
+        //sm.collisionProcessor.FixedUpdate(sm);
         PassGroundSpeedToPointSystem();
         PassSpeedToMotionBlur();
 
         SaveDebugFrame();
+    }
+
+    private void DoPrediction()
+    {
+        if (isOnGround) return;
+
+        var position = body.position;
+        var velocity = body.velocity;
+        var force = Vector3.zero;
+        var deltaTime = settings.predictionTimestep;
+        
+        for (var t = 0.0f; t < settings.predictionMaxTime; t += deltaTime)
+        {
+            var nextPosition = position + velocity * deltaTime;
+
+            if (Physics.Linecast(position, nextPosition, out var hit))
+            {
+                if (!ValidateHit(hit)) return;
+                
+                Debug.DrawLine(position, hit.point, Color.magenta);
+                Debug.DrawRay(hit.point, hit.normal * 2.0f, Color.magenta);
+                upVector = hit.normal * settings.predictionWeight;
+                break;
+            }
+            Debug.DrawLine(position, nextPosition, Color.magenta);
+            
+            position = nextPosition;
+            velocity += force * deltaTime;
+            force = Physics.gravity;
+        }
+    }
+
+    private bool ValidateHit(RaycastHit hit)
+    {
+        if (hit.collider.transform.IsChildOf(transform)) return false;
+
+        return true;
     }
 
     public override void Exit()
@@ -99,11 +137,19 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void ApplyLeanForces()
     {
-        if (isOnGround) return;
+        var up = upVector;
+        var weight = upVector.magnitude;
+        var lean = transform.right * steer * settings.rotationalLean;
+        var target = (up + lean).normalized * weight;
+        var cross = Vector3.Cross(transform.up, target);
 
-        var lean = transform.forward * -leanInput.x + transform.right * leanInput.y;
-        var torque = lean * settings.leanForce - body.angularVelocity * settings.leanDamping;
+        var angularVelocity = body.angularVelocity;
+        angularVelocity -= Vector3.Project(angularVelocity, target);
+        
+        var torque = cross * settings.rotationalForce - angularVelocity * settings.rotationalDamping;
         body.AddTorque(torque * body.mass);
+        
+        Debug.DrawRay(transform.position, target, Color.cyan);
     }
 
     private void ApplyPushForce()
@@ -121,15 +167,19 @@ public class SkateboardMoveState : SkateboardBaseState
     private void UpdateTrucks()
     {
         wheelsOnGround = 0;
+        var up = Vector3.zero;
         foreach (var e in trucks)
         {
             e.Process();
             if (!e.isOnGround) continue;
 
             wheelsOnGround++;
+            up += e.groundHit.normal;
         }
+        
 
         isOnGround = wheelsOnGround > 0;
+        if (isOnGround) upVector = up.normalized;
     }
 
     private void ApplyResistance()

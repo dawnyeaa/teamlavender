@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ba350d2a1ecdbc4388a0173cd6efcfa, type: 3}
   m_Name: Skateboard Move Settings
   m_EditorClassIdentifier: 
-  maxSteer: 2
+  maxSteer: 5
   steerInputSmoothing: 0.9
   maxSpeed: 20
   acceleration: 1
@@ -61,13 +61,17 @@ MonoBehaviour:
     m_RotationOrder: 4
   localCenterOfMass: {x: 0, y: -0.1, z: 0}
   inertiaTensor: {x: 5, y: 5, z: 5}
-  leanForce: 0.2
-  leanDamping: 0.02
+  rotationalForce: 60
+  rotationalDamping: 10
+  rotationalLean: 0
   rollingResistance: 0
   airResistance: 0
   tangentialFriction: 20
   distanceToGround: 0.16
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
-  truckDepenetrationSpring: 2000
-  truckDepenetrationDamper: 150
+  truckDepenetrationSpring: 300
+  truckDepenetrationDamper: 80
   wheelRadius: 0.12
+  predictionMaxTime: 3
+  predictionTimestep: 0.02
+  predictionWeight: 0.2
