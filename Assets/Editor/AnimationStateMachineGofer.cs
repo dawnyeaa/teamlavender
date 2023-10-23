@@ -7,7 +7,6 @@ public class AnimationStateMachineGofer : EditorWindow {
   string[] clipNameBlacklist = {
     "BoardLock",
     "BoardTilt",
-    "IK",
     "Mirror"
   };
 
@@ -26,16 +25,27 @@ public class AnimationStateMachineGofer : EditorWindow {
     UnityEngine.Object w = AssetDatabase.LoadAssetAtPath("Assets/Animation/Character.controller", typeof(AnimatorController));
     var animatorController = w as AnimatorController;
 
+    AnimatorControllerLayer baseLayer = new(), ikLayer = new();
+    bool baseAssigned = false, ikAssigned = false;
     foreach (var animatorLayer in animatorController.layers) {
-      if (animatorLayer.name != "Base Layer") continue;
+      if (animatorLayer.name == "Base Layer") {
+        baseLayer = animatorLayer;
+        baseAssigned = true;
+      }
+      else if (animatorLayer.name == "legIKPos") {
+        ikLayer = animatorLayer;
+        ikAssigned = true;
+      }
+    }
 
-      ForAllStates(animatorLayer.stateMachine, (state) => {
-        if (state.motion != null) {
+    if (baseAssigned && ikAssigned) {
+      ForAllSyncedMotions(ikLayer, baseLayer.stateMachine, (layer, state, motion) => {
+        if (motion != null) {
           // theres either a clip or a blend tree here
 
           // if its a blend tree
-          if (state.motion.GetType() == typeof(BlendTree)) {
-            var blendTree = (BlendTree)state.motion;
+          if (motion.GetType() == typeof(BlendTree)) {
+            var blendTree = (BlendTree)motion;
             var childMotions = blendTree.children;
             bool found = false;
             AnimationClip clip = new();
@@ -47,48 +57,60 @@ public class AnimationStateMachineGofer : EditorWindow {
               }
             }
             if (found)
-              ArrangeBlendTree(blendTree, true, clip);
+              layer.SetOverrideMotion(state, ArrangeBlendTree(blendTree, true, clip));
           }
           else { // its an animation clip
-            var clip = (AnimationClip)state.motion;
+            var clip = (AnimationClip)motion;
             var blendTree = new BlendTree();
-            state.motion = blendTree;
+            motion = blendTree;
+            layer.SetOverrideMotion(state, motion);
             ArrangeBlendTree(blendTree, true, clip);
             AssetDatabase.AddObjectToAsset(blendTree, AssetDatabase.GetAssetPath(animatorController));
           }
         }
       });
 
+      EditorUtility.SetDirty(animatorController);
+      AssetDatabase.SaveAssets();
     }
 
-    EditorUtility.SetDirty(animatorController);
-    AssetDatabase.SaveAssets();
-
   }
-  void ArrangeBlendTree(BlendTree tree, bool startIsRegular, AnimationClip regularClip) {
+  Motion ArrangeBlendTree(BlendTree tree, bool startIsRegular, AnimationClip ikClip) {
+    Debug.Log(ikClip.name);
     tree.name = "Blend Tree";
     tree.blendParameter = "mirrored";
-    var mirroredClipPath = $"Assets/Animation/Clips/MirrorGenerated/Mirrored{ToMiniTitleCase(regularClip.name)}.anim";
+    var ikmirroredClipPath = $"Assets/Animation/Clips/IKGenerated/IKMirrored{ToMiniTitleCase(ikClip.name[2..])}.anim";
 
-    var clipExists = !string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(mirroredClipPath, AssetPathToGUIDOptions.OnlyExistingAssets));
+    var ikmirrorClipExists = !string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(ikmirroredClipPath, AssetPathToGUIDOptions.OnlyExistingAssets));
 
-    if (!clipExists) return;
+    if (!ikmirrorClipExists) return null;
 
-    var mirroredClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(mirroredClipPath);
+    var ikmirroredClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(ikmirroredClipPath);
 
     for (int i = tree.children.Length-1; i >= 0; --i) {
       tree.RemoveChild(i);
     }
 
     if (startIsRegular) {
-      tree.AddChild(regularClip);
-      tree.AddChild(mirroredClip);
+      tree.AddChild(ikClip);
+      tree.AddChild(ikmirroredClip);
     }
     else {
-      tree.AddChild(mirroredClip);
-      tree.AddChild(regularClip);
+      tree.AddChild(ikmirroredClip);
+      tree.AddChild(ikClip);
     }
 
+    return tree;
+  }
+
+  void ForAllSyncedMotions(AnimatorControllerLayer layer, AnimatorStateMachine stateMachine, Action<AnimatorControllerLayer, AnimatorState, Motion> action) {
+    foreach (var childAnimatorState in stateMachine.states) {
+      var motion = layer.GetOverrideMotion(childAnimatorState.state);
+      action.Invoke(layer, childAnimatorState.state, motion);
+    }
+    foreach (var childAnimatorStateMachine in stateMachine.stateMachines) {
+      ForAllSyncedMotions(layer, childAnimatorStateMachine.stateMachine, action);
+    }
   }
 
   void ForAllStates(AnimatorStateMachine stateMachine, Action<AnimatorState> action) {
