@@ -489,7 +489,7 @@ public abstract class SkateboardBaseState : State {
     sm.HeadSensZone.SetT(0);
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
-    sm.FacingParent.rotation = rot;
+    sm.transform.rotation = rot;
   }
 
   protected void CreateDebugFrame() {

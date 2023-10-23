@@ -13,6 +13,8 @@ public class SkateboardStateMachine : StateMachine {
   // User Constants - Runtime only
   // [Header("Constants - Only read at runtime")]
 
+  public SkateboardMoveSettings moveSettings;
+  
   // User Constants - Live update 
   [Header("Constants - Live update")]
   public float MaxSpeed = 20f;

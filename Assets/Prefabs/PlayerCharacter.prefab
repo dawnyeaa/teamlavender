@@ -513,7 +513,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &3832982824073343640
 MonoBehaviour:
@@ -554,6 +554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4247ece03b03b0742a602a4b655a3f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSettings: {fileID: 0}
   MaxSpeed: 15
   TurnLockSpeed: 25
   TurnEaseBySpeed:
@@ -711,6 +712,8 @@ MonoBehaviour:
   MinWheelSpinParticleChance: 0.05
   MaxWheelSpinParticleChance: 0.45
   MinSpeedyLineSpeed: 2
+  LipAngleTolerance: 0.75
+  MaxMotionBlur: 35
   FacingForward: 1
   Friction: 0
   Grounded: 1
@@ -795,6 +798,12 @@ MonoBehaviour:
   FartClip: {fileID: 8300000, guid: 6d950170566b8a84e99a3d659d543efa, type: 3}
   DebugFrameHandler: {fileID: 0}
   PointHandler: {fileID: 782263955143857083}
+  MotionBlurMat: {fileID: 0}
+  collisionProcessor:
+    enabled: 1
+    speedThresholdKmpH: 30
+    peak: 0
+    speed: 0
   ball1: {fileID: 0}
   ball2: {fileID: 0}
   ball3: {fileID: 0}
