@@ -11,10 +11,10 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnPausePerformed += sm.Pause;
     sm.Input.OnStartBraking += StartBrake;
     sm.Input.OnEndBraking += EndBrake;
-    sm.ComboActions["ollie"] += OnOllieTrickInput;
-    sm.ComboActions["kickflip"] += OnOllieTrickInput;
-    sm.ComboActions["heelflip"] += OnOllieTrickInput;
-    sm.ComboActions["popShuvit"] += OnOllieTrickInput;
+    sm.ComboActions["ollie"] += OnHopTrickInput;
+    sm.ComboActions["kickflip"] += OnHopTrickInput;
+    sm.ComboActions["heelflip"] += OnHopTrickInput;
+    sm.ComboActions["popShuvit"] += OnHopTrickInput;
 
     sm.HeadSensZone.AddCallback(sm.Die);
 
@@ -53,10 +53,10 @@ public class SkateboardMoveState : SkateboardBaseState {
     sm.Input.OnPausePerformed -= sm.Pause;
     sm.Input.OnStartBraking -= StartBrake;
     sm.Input.OnEndBraking -= EndBrake;
-    sm.ComboActions["ollie"] -= OnOllieTrickInput;
-    sm.ComboActions["kickflip"] -= OnOllieTrickInput;
-    sm.ComboActions["heelflip"] -= OnOllieTrickInput;
-    sm.ComboActions["popShuvit"] -= OnOllieTrickInput;
+    sm.ComboActions["ollie"] -= OnHopTrickInput;
+    sm.ComboActions["kickflip"] -= OnHopTrickInput;
+    sm.ComboActions["heelflip"] -= OnHopTrickInput;
+    sm.ComboActions["popShuvit"] -= OnHopTrickInput;
     
     sm.HeadSensZone.RemoveCallback(sm.Die);
 

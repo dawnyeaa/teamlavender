@@ -704,7 +704,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7170211813701026305}
@@ -1960,7 +1960,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2850245046387275938}
@@ -2935,7 +2935,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: ollieTrickIndex
+  - m_Name: Ollie
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -2949,6 +2949,12 @@ AnimatorController:
     m_Controller: {fileID: 0}
   - m_Name: mirrored
     m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: Nollie
+    m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -4821,7 +4827,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 4
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1458165414125095339}
@@ -5145,7 +5151,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 3
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7730273522694910716}

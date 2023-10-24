@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
-using Cinemachine;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -99,8 +98,10 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public Vector3 GrindBoardLockPoint;
   [ReadOnly] public Vector3 LastGrindPos;
   [ReadOnly] public PIDController3 GrindOffsetPID;
-  [ReadOnly] public int CurrentOllieTrickIndex;
-  [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
+  [ReadOnly] public int[] CurrentAnimTrickIndexes;
+  [ReadOnly] public float CurrentHopTrickVerticalMult;
+  [ReadOnly] public float CurrentHopTrickHorizontalMult;
+  [ReadOnly] public Dictionary<string, Action<int, float, float>> ComboActions = new() {
     { "ollie", null },
     { "kickflip", null },
     { "heelflip", null },
@@ -158,6 +159,8 @@ public class SkateboardStateMachine : StateMachine {
     Input = GetComponent<InputController>();
     SpeedyLinesMat = SpeedyLines.material;
 
+    CurrentAnimTrickIndexes = new int[Enum.GetValues(typeof(TrickAnimationGroup)).Length];
+
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
@@ -166,11 +169,7 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void OnOllieForce() {
-    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
-  }
-
-  public void OnKickflipForce() {
-    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
+    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce * CurrentHopTrickVerticalMult + Vector3.Project(MainRB.velocity, Facing.transform.forward) * CurrentHopTrickHorizontalMult, ForceMode.Acceleration);
   }
 
   public void StartPushForce(float duration) {
@@ -235,7 +234,7 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
   }
 
-  public void OnCombo(string name) {
-    ComboActions[name]?.Invoke();
+  public void OnCombo(string name, int trickAnimGroup, float verticalForceMult, float horizontalForceMult) {
+    ComboActions[name]?.Invoke(trickAnimGroup, verticalForceMult, horizontalForceMult);
   }
 }
