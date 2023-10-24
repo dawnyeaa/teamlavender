@@ -15,46 +15,73 @@ MonoBehaviour:
   maxSteer: 5
   steerInputSmoothing: 0
   maxSpeed: 20
-  acceleration: 1
+  acceleration: 2
   pushDuration: 1
   pushCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0.0003438395
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.34626007
       value: 0.00011905789
-      inSlope: 6.6114545
-      outSlope: 6.6114545
-      tangentMode: 0
+      inSlope: 0.0003438395
+      outSlope: 126.319145
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0
       outWeight: 0.08064519
     - serializedVersion: 3
-      time: 0.48664552
-      value: 1.0033935
-      inSlope: -0.012125423
-      outSlope: -0.012125423
-      tangentMode: 0
+      time: 0.3700085
+      value: 3
+      inSlope: 126.319145
+      outSlope: -121.61696
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0.17426571
       outWeight: 0.5636675
     - serializedVersion: 3
-      time: 0.9596905
-      value: 0.9282927
-      inSlope: -0.61346495
-      outSlope: -0.61346495
-      tangentMode: 0
+      time: 0.38868243
+      value: 0.7289339
+      inSlope: -121.61696
+      outSlope: -0.4600243
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0.35777825
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
+      time: 0.5699675
+      value: 0.64553833
+      inSlope: -0.4600243
+      outSlope: -5.1299696
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.695805
       value: -0.00000422413
-      inSlope: -6.033232
-      outSlope: -6.033232
-      tangentMode: 0
+      inSlope: -5.1299696
+      outSlope: 0.000013886258
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0.083816044
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.000013886258
+      outSlope: 0
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -65,7 +92,8 @@ MonoBehaviour:
   rotationalDamping: 10
   rotationalLean: 0
   spinAcceleration: 20
-  spinMaxRps: 2
+  spinMaxRps: 1
+  spinMaxRpsCrouching: 3
   spinDelay: 0.1
   rollingResistance: 0
   airResistance: 0
@@ -78,13 +106,13 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 7.089877e-16
+  lastEvaluatedBrakeThreshold: 0.00010215163
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3
   predictionTimestep: 0.02
   predictionWeight: 0.2
-  animationSmoothing: 0.6
+  animationSmoothing: 0.25
   visualLean: {x: 0.02, y: 3}
   hipPBasis: {x: 0, y: 1.1619, z: 0}
   hipRBasis: {x: 0, y: 0, z: 0}
@@ -92,7 +120,7 @@ MonoBehaviour:
   crouchRBasis: {x: 0, y: 0, z: -20}
   globalHorizontalOffset: {x: 0, y: 0, z: 0}
   localHorizontalOffsetLeft: {x: 0.54, y: 0.04, z: 0}
-  localHorizontalOffsetRight: {x: -0.44, y: -0.37, z: 0}
+  localHorizontalOffsetRight: {x: -0.77, y: -0.8, z: 0}
   rotationHorizontalOffsetLeft: {x: 0, y: 0, z: 3.94}
-  rotationHorizontalOffsetRight: {x: 0, y: 0, z: 18.4}
+  rotationHorizontalOffsetRight: {x: 0, y: 0, z: -6.02}
   swapBasis: 0

@@ -21,7 +21,8 @@ public class SkateboardMoveSettings : ScriptableObject
     public float rotationalDamping = 10.0f;
     public float rotationalLean = 10.0f;
     public float spinAcceleration = 10.0f;
-    public float spinMaxRps = 10.0f;
+    public float spinMaxRps = 1.0f;
+    public float spinMaxRpsCrouching = 3.0f;
     public float spinDelay = 0.3f;
     [Range(0.0f, 50.0f)] public float rollingResistance;
     [Range(0.0f, 50.0f)] public float airResistance;

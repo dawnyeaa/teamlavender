@@ -1,17 +1,19 @@
 using CharacterController;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.Rendering;
 
 public class SkateboardMoveState : SkateboardBaseState
 {
     private Camera mainCam;
     private bool useMouse;
-    public bool isOnGround;
     public float airborneTimer;
     private int wheelsOnGround;
     private Vector2 leanInput;
     private Vector3 upVector;
     private Vector3 leanVector;
+
+    private Transform cameraTargetTransform;
+    private Quaternion cameraTargetRotation;
 
     public bool jump;
     public bool flipped;
@@ -26,9 +28,16 @@ public class SkateboardMoveState : SkateboardBaseState
     public Rigidbody body => sm.MainRB;
     public float steer { get; private set; }
 
+    public bool isOnGround
+    {
+        get => sm.Grounded;
+        set => sm.Grounded = value;
+    }
+
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
-        animator = new(this);
+        animator = new SkateboardMoveAnimator(this);
+        cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
     }
 
     public override void Enter()
@@ -51,8 +60,8 @@ public class SkateboardMoveState : SkateboardBaseState
 
         StartRollingSFX();
     }
-    
-    
+
+
     public override void Exit()
     {
         sm.Input.OnPushPerformed -= OnPush;
@@ -67,7 +76,12 @@ public class SkateboardMoveState : SkateboardBaseState
 
         sm.HeadSensZone.RemoveCallback(sm.Die);
 
+        SetWheelSpinParticleChance();
+        SetSpeedyLines();
+        SetRollingVolume();
         StopRollingSFX();
+        PassGroundSpeedToPointSystem();
+        PassSpeedToMotionBlur();
     }
 
     private void OnSwitch2()
@@ -90,6 +104,11 @@ public class SkateboardMoveState : SkateboardBaseState
         pushTimer = 1.0f;
     }
 
+    public override void LateUpdate()
+    {
+        animator.Tick();
+    }
+
     public override void Tick()
     {
         CreateDebugFrame();
@@ -99,6 +118,8 @@ public class SkateboardMoveState : SkateboardBaseState
 
         body.centerOfMass = settings.localCenterOfMass;
         body.inertiaTensor = settings.inertiaTensor;
+        
+        sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
 
         UpdateTrucks();
         DoPrediction();
@@ -107,7 +128,7 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyLeanForces();
         ApplyBrakeForce();
         CheckForWalls();
-        animator.Tick();
+        UpdateCamera();
 
         //sm.collisionProcessor.FixedUpdate(sm);
         PassGroundSpeedToPointSystem();
@@ -115,7 +136,19 @@ public class SkateboardMoveState : SkateboardBaseState
 
         SaveDebugFrame();
     }
-    
+
+    private void UpdateCamera()
+    {
+        if (!cameraTargetTransform) return;
+
+        if (isOnGround)
+        {
+            cameraTargetRotation = sm.FacingParent.rotation;
+        }
+
+        cameraTargetTransform.rotation = cameraTargetRotation;
+    }
+
     private float GetForwardSpeed() => Vector3.Dot(transform.forward, body.velocity);
 
     private void CheckForWalls()
@@ -192,9 +225,10 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var torque = cross * settings.rotationalForce - angularVelocity * settings.rotationalDamping;
 
-        if (!isOnGround && airborneTimer > settings.spinDelay)
+        if (!isOnGround && (airborneTimer > settings.spinDelay || sm.Input.crouching))
         {
-            var targetSpin = settings.spinMaxRps * Mathf.PI * 2.0f * steer / settings.maxSteer;
+            var rps = sm.Input.crouching ? settings.spinMaxRpsCrouching : settings.spinMaxRps;
+            var targetSpin = rps * Mathf.PI * 2.0f * steer / settings.maxSteer;
             var current = Vector3.Dot(transform.up, body.angularVelocity);
             torque += transform.up * (targetSpin - current) * settings.spinAcceleration;
         }
@@ -227,10 +261,12 @@ public class SkateboardMoveState : SkateboardBaseState
             up += e.groundHit.normal;
         }
 
-
+        var wasOnGround = isOnGround;
         isOnGround = wheelsOnGround > 0;
         if (isOnGround)
         {
+            if (!wasOnGround) sm.CharacterAnimator.SetTrigger("startAirborne");
+            
             upVector = up.normalized;
             airborneTimer = 0.0f;
         }
