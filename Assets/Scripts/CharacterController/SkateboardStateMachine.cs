@@ -71,6 +71,7 @@ public class SkateboardStateMachine : StateMachine {
   public float MinSpeedyLineSpeed = 2f;
   public float LipAngleTolerance = 0.75f;
   public float MaxMotionBlur = 35f;
+  public float AverageSecondsPerBreath = 8f;
 
   // Internal State Processing
   [Header("Internal State")]
