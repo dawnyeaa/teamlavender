@@ -104,11 +104,6 @@ public class SkateboardMoveState : SkateboardBaseState
         pushTimer = 1.0f;
     }
 
-    public override void LateUpdate()
-    {
-        animator.Tick();
-    }
-
     public override void Tick()
     {
         CreateDebugFrame();
@@ -129,6 +124,7 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyBrakeForce();
         CheckForWalls();
         UpdateCamera();
+        animator.Tick();
 
         //sm.collisionProcessor.FixedUpdate(sm);
         PassGroundSpeedToPointSystem();
