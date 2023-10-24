@@ -6,7 +6,7 @@ using RootMotion.FinalIK;
 using System;
 
 public abstract class SkateboardBaseState : State {
-  protected readonly SkateboardStateMachine sm;
+  public readonly SkateboardStateMachine sm;
   protected float LeanSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
   protected Vector3 boardRailSnapVel = Vector3.zero;

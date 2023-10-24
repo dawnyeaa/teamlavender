@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skateboard Move Settings
   m_EditorClassIdentifier: 
   maxSteer: 5
-  steerInputSmoothing: 0.9
+  steerInputSmoothing: 0
   maxSpeed: 20
   acceleration: 1
   pushDuration: 1
@@ -64,6 +64,9 @@ MonoBehaviour:
   rotationalForce: 60
   rotationalDamping: 10
   rotationalLean: 0
+  spinAcceleration: 20
+  spinMaxRps: 2
+  spinDelay: 0.1
   rollingResistance: 0
   airResistance: 0
   tangentialFriction: 20
@@ -72,6 +75,24 @@ MonoBehaviour:
   truckDepenetrationSpring: 300
   truckDepenetrationDamper: 80
   wheelRadius: 0.12
+  dynamicBrake: 0.04
+  staticBrake: 1
+  brakeThreshold: 0.3
+  lastEvaluatedBrakeThreshold: 7.089877e-16
+  wallSlideDistance: 2
+  wallSlideTorque: 200
   predictionMaxTime: 3
   predictionTimestep: 0.02
   predictionWeight: 0.2
+  animationSmoothing: 0.6
+  visualLean: {x: 0.02, y: 3}
+  hipPBasis: {x: 0, y: 1.1619, z: 0}
+  hipRBasis: {x: 0, y: 0, z: 0}
+  crouchPBasis: {x: -0.19, y: 0.81, z: 0}
+  crouchRBasis: {x: 0, y: 0, z: -20}
+  globalHorizontalOffset: {x: 0, y: 0, z: 0}
+  localHorizontalOffsetLeft: {x: 0.54, y: 0.04, z: 0}
+  localHorizontalOffsetRight: {x: -0.44, y: -0.37, z: 0}
+  rotationHorizontalOffsetLeft: {x: 0, y: 0, z: 3.94}
+  rotationHorizontalOffsetRight: {x: 0, y: 0, z: 18.4}
+  swapBasis: 0

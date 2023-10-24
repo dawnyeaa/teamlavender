@@ -1,3 +1,4 @@
+using CharacterController;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -6,15 +7,18 @@ public class SkateboardMoveState : SkateboardBaseState
     private Camera mainCam;
     private bool useMouse;
     public bool isOnGround;
+    public float airborneTimer;
     private int wheelsOnGround;
     private Vector2 leanInput;
     private Vector3 upVector;
+    private Vector3 leanVector;
 
     public bool jump;
     public bool flipped;
     public float jumpTimer;
     public float pushTimer;
 
+    private SkateboardMoveAnimator animator;
     public Truck[] trucks = new Truck[4];
 
     public Transform transform => sm.transform;
@@ -22,12 +26,15 @@ public class SkateboardMoveState : SkateboardBaseState
     public Rigidbody body => sm.MainRB;
     public float steer { get; private set; }
 
-    public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine) { }
+    public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
+    {
+        animator = new(this);
+    }
 
     public override void Enter()
     {
         sm.Input.OnPushPerformed += OnPush;
-        sm.Input.OnSwitchPerformed += OnSwitch;
+        sm.Input.OnSwitchPerformed += OnSwitch2;
         sm.Input.OnPausePerformed += sm.Pause;
         sm.Input.OnStartBraking += StartBrake;
         sm.Input.OnEndBraking += EndBrake;
@@ -35,7 +42,7 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["kickflip"] += OnOllieTrickInput;
         sm.ComboActions["heelflip"] += OnOllieTrickInput;
         sm.ComboActions["popShuvit"] += OnOllieTrickInput;
-        
+
         InitTrucks();
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
@@ -43,6 +50,29 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.HeadSensZone.AddCallback(sm.Die);
 
         StartRollingSFX();
+    }
+    
+    
+    public override void Exit()
+    {
+        sm.Input.OnPushPerformed -= OnPush;
+        sm.Input.OnSwitchPerformed -= OnSwitch2;
+        sm.Input.OnPausePerformed -= sm.Pause;
+        sm.Input.OnStartBraking -= StartBrake;
+        sm.Input.OnEndBraking -= EndBrake;
+        sm.ComboActions["ollie"] -= OnOllieTrickInput;
+        sm.ComboActions["kickflip"] -= OnOllieTrickInput;
+        sm.ComboActions["heelflip"] -= OnOllieTrickInput;
+        sm.ComboActions["popShuvit"] -= OnOllieTrickInput;
+
+        sm.HeadSensZone.RemoveCallback(sm.Die);
+
+        StopRollingSFX();
+    }
+
+    private void OnSwitch2()
+    {
+        transform.rotation *= Quaternion.Euler(Vector3.up * 180.0f);
     }
 
     private void InitTrucks()
@@ -52,9 +82,11 @@ public class SkateboardMoveState : SkateboardBaseState
         trucks[2] = new Truck(this, -1, -1);
         trucks[3] = new Truck(this, 1, -1);
     }
-    
+
     private void OnPush()
     {
+        if (pushTimer > 0.0) return;
+        sm.CharacterAnimator.SetTrigger("push");
         pushTimer = 1.0f;
     }
 
@@ -73,12 +105,40 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyResistance();
         ApplyPushForce();
         ApplyLeanForces();
+        ApplyBrakeForce();
+        CheckForWalls();
+        animator.Tick();
 
         //sm.collisionProcessor.FixedUpdate(sm);
         PassGroundSpeedToPointSystem();
         PassSpeedToMotionBlur();
 
         SaveDebugFrame();
+    }
+    
+    private float GetForwardSpeed() => Vector3.Dot(transform.forward, body.velocity);
+
+    private void CheckForWalls()
+    {
+        var fwdSpeed = GetForwardSpeed();
+        var ray = new Ray(transform.position, transform.forward);
+        if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance)) return;
+
+        var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
+        var torque = cross  * settings.wallSlideTorque * fwdSpeed;
+        body.AddTorque(torque);
+    }
+
+    private void ApplyBrakeForce()
+    {
+        if (!sm.Input.braking) return;
+
+        var fwdSpeed = GetForwardSpeed();
+        var friction = Mathf.Lerp(settings.staticBrake, settings.dynamicBrake, settings.lastEvaluatedBrakeThreshold = Mathf.Abs(fwdSpeed) / settings.brakeThreshold);
+        settings.lastEvaluatedBrakeThreshold = Mathf.Clamp01(settings.lastEvaluatedBrakeThreshold);
+
+        var force = transform.forward * -fwdSpeed * Mathf.Min(friction, 1.0f);
+        body.AddForce(force * body.mass / Time.deltaTime);
     }
 
     private void DoPrediction()
@@ -89,7 +149,7 @@ public class SkateboardMoveState : SkateboardBaseState
         var velocity = body.velocity;
         var force = Vector3.zero;
         var deltaTime = settings.predictionTimestep;
-        
+
         for (var t = 0.0f; t < settings.predictionMaxTime; t += deltaTime)
         {
             var nextPosition = position + velocity * deltaTime;
@@ -97,14 +157,15 @@ public class SkateboardMoveState : SkateboardBaseState
             if (Physics.Linecast(position, nextPosition, out var hit))
             {
                 if (!ValidateHit(hit)) return;
-                
+
                 Debug.DrawLine(position, hit.point, Color.magenta);
                 Debug.DrawRay(hit.point, hit.normal * 2.0f, Color.magenta);
                 upVector = hit.normal * settings.predictionWeight;
                 break;
             }
+
             Debug.DrawLine(position, nextPosition, Color.magenta);
-            
+
             position = nextPosition;
             velocity += force * deltaTime;
             force = Physics.gravity;
@@ -118,44 +179,33 @@ public class SkateboardMoveState : SkateboardBaseState
         return true;
     }
 
-    public override void Exit()
-    {
-        sm.Input.OnPushPerformed -= OnPush;
-        sm.Input.OnSwitchPerformed -= OnSwitch;
-        sm.Input.OnPausePerformed -= sm.Pause;
-        sm.Input.OnStartBraking -= StartBrake;
-        sm.Input.OnEndBraking -= EndBrake;
-        sm.ComboActions["ollie"] -= OnOllieTrickInput;
-        sm.ComboActions["kickflip"] -= OnOllieTrickInput;
-        sm.ComboActions["heelflip"] -= OnOllieTrickInput;
-        sm.ComboActions["popShuvit"] -= OnOllieTrickInput;
-
-        sm.HeadSensZone.RemoveCallback(sm.Die);
-
-        StopRollingSFX();
-    }
-
     private void ApplyLeanForces()
     {
         var up = upVector;
         var weight = upVector.magnitude;
-        var lean = transform.right * steer * settings.rotationalLean;
-        var target = (up + lean).normalized * weight;
+        leanVector = transform.right * steer * settings.rotationalLean;
+        var target = (up + leanVector).normalized * weight;
         var cross = Vector3.Cross(transform.up, target);
 
         var angularVelocity = body.angularVelocity;
         angularVelocity -= Vector3.Project(angularVelocity, target);
-        
+
         var torque = cross * settings.rotationalForce - angularVelocity * settings.rotationalDamping;
-        body.AddTorque(torque * body.mass);
-        
-        Debug.DrawRay(transform.position, target, Color.cyan);
+
+        if (!isOnGround && airborneTimer > settings.spinDelay)
+        {
+            var targetSpin = settings.spinMaxRps * Mathf.PI * 2.0f * steer / settings.maxSteer;
+            var current = Vector3.Dot(transform.up, body.angularVelocity);
+            torque += transform.up * (targetSpin - current) * settings.spinAcceleration;
+        }
+
+        body.AddTorque(torque, ForceMode.Acceleration);
     }
 
     private void ApplyPushForce()
     {
         if (pushTimer < 0.0f) return;
-        
+
         var forwardSpeed = Vector3.Dot(transform.forward, body.velocity);
         var force = transform.forward * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
         force *= wheelsOnGround / 4.0f;
@@ -176,10 +226,15 @@ public class SkateboardMoveState : SkateboardBaseState
             wheelsOnGround++;
             up += e.groundHit.normal;
         }
-        
+
 
         isOnGround = wheelsOnGround > 0;
-        if (isOnGround) upVector = up.normalized;
+        if (isOnGround)
+        {
+            upVector = up.normalized;
+            airborneTimer = 0.0f;
+        }
+        else airborneTimer += Time.deltaTime;
     }
 
     private void ApplyResistance()
@@ -245,7 +300,7 @@ public class SkateboardMoveState : SkateboardBaseState
         private void LookForGround()
         {
             GetGroundRay();
-            
+
             isOnGround = false;
             var results = Physics.RaycastAll(groundRay, groundRayLength);
             var best = float.MaxValue;
