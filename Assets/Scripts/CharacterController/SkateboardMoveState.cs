@@ -57,7 +57,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
         sm.HeadSensZone.AddCallback(sm.Die);
 
-        StartRollingSFX();
+        // StartRollingSFX();
     }
 
 
@@ -77,7 +77,6 @@ public class SkateboardMoveState : SkateboardBaseState
 
         SetWheelSpinParticleChance();
         SetSpeedyLines();
-        SetRollingVolume();
         StopRollingSFX();
         PassGroundSpeedToPointSystem();
         PassSpeedToMotionBlur();
@@ -127,6 +126,7 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyBrakeForce();
         CheckForWalls();
         UpdateCamera();
+        // SetRollingVolume();
         //animator.Tick();
         
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
