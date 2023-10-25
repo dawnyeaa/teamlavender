@@ -4,7 +4,7 @@ namespace CharacterController
 {
     public class SkateboardMoveAnimator
     {
-        private const float DeltaTime = 1.0f / 12.0f;
+        private const float DeltaTime = 1.0f / 50.0f;
 
         private SkateboardMoveState moveState;
 
@@ -14,11 +14,12 @@ namespace CharacterController
         public Rigidbody body => moveState.body;
         public float steer => moveState.steer;
 
-        public Vector3 currentPositionOffset;
+        public Vector3 currentPosition;
         public Quaternion currentRotationOffset;
         public float currentCrouchPercent;
 
         public Vector3 position;
+        public Vector3 velocity;
         public Quaternion rotation;
         public float crouch;
         public float timer;
@@ -26,6 +27,7 @@ namespace CharacterController
         public SkateboardMoveAnimator(SkateboardMoveState moveState)
         {
             this.moveState = moveState;
+            position = sm.HipHelper.position;
         }
 
         public void Tick()
@@ -68,24 +70,33 @@ namespace CharacterController
         private void Finalise()
         {
             Smooth();
+            Itterate();
 
-            var pBasis = sm.HipHelper.parent.TransformPoint(Vector3.Lerp(settings.hipPBasis, settings.crouchPBasis, currentCrouchPercent));
             var rBasis = Quaternion.Slerp(Quaternion.Euler(settings.hipRBasis), Quaternion.Euler(settings.crouchRBasis), currentCrouchPercent);
 
-            sm.HipHelper.position = pBasis + currentPositionOffset;
+            sm.HipHelper.position = currentPosition;
             sm.HipHelper.rotation = Quaternion.LookRotation(transform.forward, Vector3.up) * rBasis * currentRotationOffset;
+        }
+
+        private void Itterate()
+        {
+            var pBasis = sm.HipHelper.parent.TransformPoint(Vector3.Lerp(settings.hipPBasis, settings.crouchPBasis, currentCrouchPercent));
+
+            var force = (pBasis + position - currentPosition) * settings.hipsSpring + (sm.MainRB.velocity - velocity) * settings.hipsDamper;
+            currentPosition += velocity * Time.deltaTime;
+            velocity += force * Time.deltaTime;
         }
 
         private void Smooth()
         {
             while (timer > DeltaTime)
             {
-                currentPositionOffset = Vector3.Lerp(position, currentPositionOffset, settings.animationSmoothing);
                 currentRotationOffset = Quaternion.Slerp(rotation, currentRotationOffset, settings.animationSmoothing);
                 currentCrouchPercent = Mathf.Lerp(crouch, currentCrouchPercent, settings.animationSmoothing);
-                
+
                 timer -= DeltaTime;
             }
+
             timer += Time.deltaTime;
         }
     }

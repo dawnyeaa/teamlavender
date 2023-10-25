@@ -88,8 +88,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   localCenterOfMass: {x: 0, y: -0.1, z: 0}
   inertiaTensor: {x: 5, y: 5, z: 5}
-  rotationalForce: 60
-  rotationalDamping: 10
+  upGravity: 0.8
+  downGravity: 1.5
+  rotationalForce: 300
+  rotationalDamping: 20
   rotationalLean: 0
   spinAcceleration: 20
   spinMaxRps: 1
@@ -106,13 +108,17 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 0.06974064
+  lastEvaluatedBrakeThreshold: 2.2476909e-15
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3
   predictionTimestep: 0.02
   predictionWeight: 0.2
-  animationSmoothing: 0.124
+  cameraTargetSpring: 600
+  cameraTargetDamp: 60
+  animationSmoothing: 0.25
+  hipsSpring: 200
+  hipsDamper: 20
   visualLean: {x: 0.02, y: -3}
   hipPBasis: {x: 0, y: 1.1619, z: 0}
   hipRBasis: {x: 0, y: 0, z: 0}

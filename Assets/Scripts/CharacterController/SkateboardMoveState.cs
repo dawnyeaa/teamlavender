@@ -1,6 +1,4 @@
-using CharacterController;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class SkateboardMoveState : SkateboardBaseState
 {
@@ -13,6 +11,8 @@ public class SkateboardMoveState : SkateboardBaseState
     private Vector3 leanVector;
 
     private Transform cameraTargetTransform;
+    private Vector3 cameraTargetPosition;
+    private Vector3 cameraTargetVelocity;
     private Quaternion cameraTargetRotation;
 
     public bool jump;
@@ -20,14 +20,13 @@ public class SkateboardMoveState : SkateboardBaseState
     public float jumpTimer;
     public float pushTimer;
 
-    private SkateboardMoveAnimator animator;
     public Truck[] trucks = new Truck[4];
 
     public Transform transform => sm.transform;
     public SkateboardMoveSettings settings => sm.moveSettings;
     public Rigidbody body => sm.MainRB;
     public float steer { get; private set; }
-
+    public Vector3 Gravity => Physics.gravity * (body.velocity.y > 0.0f || isOnGround ? settings.upGravity : settings.downGravity);
     public bool isOnGround
     {
         get => sm.Grounded;
@@ -36,7 +35,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
-        animator = new SkateboardMoveAnimator(this);
+        //animator = new SkateboardMoveAnimator(this);
         cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
     }
 
@@ -124,7 +123,9 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyBrakeForce();
         CheckForWalls();
         UpdateCamera();
-        animator.Tick();
+        //animator.Tick();
+        
+        body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
 
         //sm.collisionProcessor.FixedUpdate(sm);
         PassGroundSpeedToPointSystem();
@@ -137,6 +138,12 @@ public class SkateboardMoveState : SkateboardBaseState
     {
         if (!cameraTargetTransform) return;
 
+        var force = (body.position + new Vector3(0.0f, 0.9590001f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
+        
+        cameraTargetPosition += cameraTargetVelocity * Time.deltaTime;
+        cameraTargetVelocity += force * Time.deltaTime;
+        cameraTargetTransform.position = cameraTargetPosition;
+        
         if (isOnGround)
         {
             cameraTargetRotation = sm.FacingParent.rotation;
@@ -267,6 +274,7 @@ public class SkateboardMoveState : SkateboardBaseState
             airborneTimer = 0.0f;
         }
         else airborneTimer += Time.deltaTime;
+        sm.CharacterAnimator.SetBool("falling", !isOnGround && Vector3.Dot(body.velocity, Vector3.up) < 0.0f);
     }
 
     private void ApplyResistance()

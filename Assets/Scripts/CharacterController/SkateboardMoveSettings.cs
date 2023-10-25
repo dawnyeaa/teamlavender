@@ -16,6 +16,8 @@ public class SkateboardMoveSettings : ScriptableObject
     public AnimationCurve pushCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
     public Vector3 localCenterOfMass = new (0.0f, -0.8f, 0.0f);
     public Vector3 inertiaTensor = new (0.3f, 0.4f, 0.04f);
+    public float upGravity = 1.5f;
+    public float downGravity = 2.0f;
     
     [FormerlySerializedAs("leanSpring")] public float rotationalForce = 150.0f;
     public float rotationalDamping = 10.0f;
@@ -51,18 +53,23 @@ public class SkateboardMoveSettings : ScriptableObject
     public float predictionWeight = 0.2f;
 
     [Header("Animation")]
-    [Range(0.0f, 1.0f)]public float animationSmoothing = 0.8f;
-    public Vector2 visualLean;
-    public Vector3 hipPBasis = new (0.0f, 1.1619f, 0.0f);
-    public Vector3 hipRBasis = new (0.0f, 0.0f, 0.0f);
-    public Vector3 crouchPBasis = new (0.0f, 1.1619f, 0.0f);
-    public Vector3 crouchRBasis = new (0.0f, 0.0f, 0.0f);
-    public Vector3 globalHorizontalOffset;
-    public Vector3 localHorizontalOffsetLeft;
-    public Vector3 localHorizontalOffsetRight;
-    public Vector3 rotationHorizontalOffsetLeft;
-    public Vector3 rotationHorizontalOffsetRight;
-    public bool swapBasis;
+    public float cameraTargetSpring = 100.0f;
+    public float cameraTargetDamp = 10.0f;
+    
+    [HideInInspector][Range(0.0f, 1.0f)]public float animationSmoothing = 0.8f;
+    [HideInInspector]public float hipsSpring;
+    [HideInInspector]public float hipsDamper;
+    [HideInInspector]public Vector2 visualLean;
+    [HideInInspector]public Vector3 hipPBasis = new (0.0f, 1.1619f, 0.0f);
+    [HideInInspector]public Vector3 hipRBasis = new (0.0f, 0.0f, 0.0f);
+    [HideInInspector]public Vector3 crouchPBasis = new (0.0f, 1.1619f, 0.0f);
+    [HideInInspector]public Vector3 crouchRBasis = new (0.0f, 0.0f, 0.0f);
+    [HideInInspector]public Vector3 globalHorizontalOffset;
+    [HideInInspector]public Vector3 localHorizontalOffsetLeft;
+    [HideInInspector]public Vector3 localHorizontalOffsetRight;
+    [HideInInspector]public Vector3 rotationHorizontalOffsetLeft;
+    [HideInInspector]public Vector3 rotationHorizontalOffsetRight;
+    [HideInInspector]public bool swapBasis;
 
     private void OnValidate()
     {

@@ -16823,7 +16823,7 @@ PrefabInstance:
     - target: {fileID: 7096163994362797159, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.00000043707828
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7096163994362797159, guid: 702bef6466822a64eac18f5c89d27a6b,
         type: 3}
@@ -17840,7 +17840,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.33214095
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3832982825729624558, guid: 702bef6466822a64eac18f5c89d27a6b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 702bef6466822a64eac18f5c89d27a6b, type: 3}
 --- !u!114 &3832982825729624541 stripped
 MonoBehaviour:
@@ -17854,12 +17855,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4247ece03b03b0742a602a4b655a3f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &3832982825729624542 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4174859136535835470, guid: 702bef6466822a64eac18f5c89d27a6b,
-    type: 3}
-  m_PrefabInstance: {fileID: 3832982825729624540}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3832982825729624543 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5012679596511906465, guid: 702bef6466822a64eac18f5c89d27a6b,
@@ -17872,25 +17867,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 628f30d561fab4e4ab462d41bac8f376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1818360608 &3832982825729624558
-PositionConstraint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3832982825729624542}
-  m_Enabled: 1
-  m_Weight: 1
-  m_TranslationAtRest: {x: 0, y: 0, z: 0}
-  m_TranslationOffset: {x: 0, y: -1.1619, z: 0}
-  m_AffectTranslationX: 1
-  m_AffectTranslationY: 1
-  m_AffectTranslationZ: 1
-  m_IsContraintActive: 1
-  m_IsLocked: 1
-  m_Sources:
-  - sourceTransform: {fileID: 1690221727}
-    weight: 1
 --- !u!1001 &5197384961899440101
 PrefabInstance:
   m_ObjectHideFlags: 0
