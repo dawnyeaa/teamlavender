@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSteer: 5
   steerInputSmoothing: 0
-  maxSpeed: 20
+  maxSpeed: 10
   acceleration: 2
   pushDuration: 1
   pushCurve:
@@ -106,14 +106,14 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 4.10609e-14
+  lastEvaluatedBrakeThreshold: 0.06974064
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3
   predictionTimestep: 0.02
   predictionWeight: 0.2
-  animationSmoothing: 0.25
-  visualLean: {x: 0.02, y: 3}
+  animationSmoothing: 0.124
+  visualLean: {x: 0.02, y: -3}
   hipPBasis: {x: 0, y: 1.1619, z: 0}
   hipRBasis: {x: 0, y: 0, z: 0}
   crouchPBasis: {x: 0, y: 1.1619, z: 0}
