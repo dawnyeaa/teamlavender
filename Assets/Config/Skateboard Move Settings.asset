@@ -92,7 +92,7 @@ MonoBehaviour:
   downGravity: 1.5
   rotationalForce: 300
   rotationalDamping: 20
-  rotationalLean: 0
+  rotationalLean: 0.01
   spinAcceleration: 20
   spinMaxRps: 1
   spinMaxRpsCrouching: 3
@@ -100,7 +100,7 @@ MonoBehaviour:
   rollingResistance: 0
   airResistance: 0
   tangentialFriction: 20
-  distanceToGround: 0.16
+  distanceToGround: 0.21
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
   truckDepenetrationSpring: 300
   truckDepenetrationDamper: 80
@@ -108,7 +108,7 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 2.2476909e-15
+  lastEvaluatedBrakeThreshold: 0.0058578006
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3

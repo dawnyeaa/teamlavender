@@ -36,6 +36,7 @@ namespace CharacterController
 
             TurnLean();
             HorizontalLean();
+            // BoardAndFeetTilt();
 
             Finalise();
         }
@@ -58,6 +59,11 @@ namespace CharacterController
 
             var rotationOffset = Quaternion.Euler(hDot > 0.0f ? settings.rotationHorizontalOffsetLeft : settings.rotationHorizontalOffsetRight);
             rotation = Quaternion.Slerp(rotationOffset, rotation, vDot);
+        }
+
+        private void BoardAndFeetTilt()
+        {
+            sm.CharacterAnimator.SetFloat("leanValue", 0.5f * steer / sm.MaxAnimatedTruckTurnDeg + 0.5f);
         }
 
         private void Setup()

@@ -109,6 +109,10 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var rawSteerInput = sm.Input.turn;
         steer += (rawSteerInput * settings.maxSteer - steer) * (1.0f - settings.steerInputSmoothing);
+        
+        float normalizedSteer = 0.5f * steer / sm.MaxAnimatedTruckTurnDeg + 0.5f;
+        sm.CharacterAnimator.SetFloat("leanValue", normalizedSteer);
+        sm.BoardIKTiltAnimator.SetFloat("leanValue", normalizedSteer);
 
         body.centerOfMass = settings.localCenterOfMass;
         body.inertiaTensor = settings.inertiaTensor;
@@ -274,7 +278,16 @@ public class SkateboardMoveState : SkateboardBaseState
             airborneTimer = 0.0f;
         }
         else airborneTimer += Time.deltaTime;
-        sm.CharacterAnimator.SetBool("falling", !isOnGround && Vector3.Dot(body.velocity, Vector3.up) < 0.0f);
+        if (!isOnGround && Vector3.Dot(body.velocity, Vector3.up) < 0.0f)
+        {
+            sm.CharacterAnimator.SetBool("falling", true);
+            sm.CharacterAnimator.SetInteger("Ollie", 0);
+            sm.CharacterAnimator.SetInteger("Nollie", 0);
+        }
+        else
+        {
+            sm.CharacterAnimator.SetBool("falling", false);
+        }
     }
 
     private void ApplyResistance()
