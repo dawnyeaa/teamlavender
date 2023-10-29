@@ -4,11 +4,19 @@ using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using UnityEditor.Animations;
+using System.Linq;
+using System;
 
 public class FootIKPosBakerWindow : EditorWindow {
   Animator animator;
   Transform leftFoot, rightFoot;
   Transform destParentL, destParentR;
+  string[] clipNameBlacklist = {
+    "BoardLock",
+    "BoardTilt",
+    "IK"
+  };
 
   private AnimationCurve[] leftFootCurrentCurve, rightFootCurrentCurve;
   private readonly int fps = 30;
@@ -32,24 +40,48 @@ public class FootIKPosBakerWindow : EditorWindow {
   private void BakeFootIKClips() {
     if (animator == null) return;
     
-    if (!animator.isInitialized)
+    if (!animator.isInitialized) {
+      Debug.Log("rebinding");
       animator.Rebind();
+    }
     
     var animatorController = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
 
     foreach (var animatorLayer in animatorController.layers) {
       if (animatorLayer.name != "Base Layer") continue;
 
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        foreach (var transition in childAnimatorState.state.transitions) {
-          transition.mute = true;
-        }
+      var allStates = new List<AnimatorState>();
+
+      Dictionary<string, AnimationClip> clips = new();
+
+      foreach (var clip in animatorController.animationClips) {
+        if (!clips.ContainsKey(clip.name) && !IsBlacklistedClip(clip.name))
+          clips.Add(clip.name, clip);
       }
 
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        AnimationClip clip = new();
+      foreach (var baseClip in clips) {
+        var clipPath = $"Assets/Animation/Clips/IKGenerated/IK{baseClip.Key}.anim";
+
+        var newClip = string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(clipPath));
+
+        AnimationClip clip;
+
+        if (newClip) {
+          clip = new();
+        }
+        else {
+          clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+        }
+
+        var newState = animatorLayer.stateMachine.AddState("new state");
+
+        newState.motion = baseClip.Value;
         
-        PlayClipAndRecord(childAnimatorState.state.nameHash);
+        PlayClipAndRecord(newState.nameHash);
+
+        animatorLayer.stateMachine.RemoveState(newState);
+
+        clip.ClearCurves();
 
         clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.x", leftFootCurrentCurve[0]);
         clip.SetCurve("LegIK/LeftRotator/LeftFoot", typeof(Transform), "localPosition.z", leftFootCurrentCurve[2]);
@@ -69,17 +101,52 @@ public class FootIKPosBakerWindow : EditorWindow {
 
         clip.frameRate = fps;
 
-        var newClipName = $"Assets/Animation/Clips/IKGenerated/IK{childAnimatorState.state.name}.anim";
-        AssetDatabase.DeleteAsset(newClipName);
-        AssetDatabase.CreateAsset(clip, newClipName);
-      }
-
-      foreach (var childAnimatorState in animatorLayer.stateMachine.states) {
-        foreach (var transition in childAnimatorState.state.transitions) {
-          transition.mute = false;
+        if (newClip) {
+          AssetDatabase.CreateAsset(clip, clipPath);
+        }
+        else {
+          AssetDatabase.SaveAssets();
         }
       }
     }
+  }
+
+  void ForAllValidClips(AnimatorStateMachine stateMachine, Action<AnimationClip> action) {
+    ForAllStates(stateMachine, (state) => {
+      if (state.motion != null) {
+
+        if (state.motion.GetType() == typeof(BlendTree)) {
+          var blendTree = (BlendTree)state.motion;
+          foreach (var child in blendTree.children) {
+            var clip = (AnimationClip)child.motion;
+            if (!IsBlacklistedClip(clip.name))
+              action.Invoke(clip);
+          }
+        }
+        else {
+          var clip = (AnimationClip)state.motion;
+          if (!IsBlacklistedClip(clip.name))
+            action.Invoke(clip);
+        }
+      }
+    });
+  }
+
+  void ForAllStates(AnimatorStateMachine stateMachine, Action<AnimatorState> action) {
+    foreach (var childAnimatorState in stateMachine.states) {
+      action.Invoke(childAnimatorState.state);
+    }
+    foreach (var childAnimatorStateMachine in stateMachine.stateMachines) {
+      ForAllStates(childAnimatorStateMachine.stateMachine, action);
+    }
+  }
+
+  bool IsBlacklistedClip(string name) {
+    foreach (var phrase in clipNameBlacklist) {
+      if (name.Contains(phrase))
+        return true;
+    }
+    return false;
   }
 
   void PlayClipAndRecord(int clipHash) {
@@ -92,11 +159,17 @@ public class FootIKPosBakerWindow : EditorWindow {
     }
 
     var layer = animator.GetLayerIndex("Base Layer");
+    
+    if (!animator.isInitialized) {
+      animator.Rebind();
+    }
 
     animator.Play(clipHash, layer);
     animator.Update(0);
-    var duration = animator.GetCurrentAnimatorStateInfo(0).length;
+    var currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
+    var duration = currentStateInfo.length;
     var numFrames = duration*fps;
+    Debug.Log($"duration: {duration}, frames: {numFrames}");
 
     for (int f = 0; f <= numFrames; ++f) {
       var currentTime = f/(float)fps;
