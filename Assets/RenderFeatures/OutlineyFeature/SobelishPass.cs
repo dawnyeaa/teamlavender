@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -32,7 +33,7 @@ public class SobelishPass : ScriptableRenderPass {
 
   public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData) {
     RenderTextureDescriptor osSobelTexDesc = renderingData.cameraData.cameraTargetDescriptor;
-    osSobelTexDesc.colorFormat = RenderTextureFormat.ARGB32;
+    osSobelTexDesc.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
 
     cmd.GetTemporaryRT(_renderTargetIdSobel, renderingData.cameraData.cameraTargetDescriptor);
     cmd.GetTemporaryRT(_renderTargetIdSobelOS, osSobelTexDesc);

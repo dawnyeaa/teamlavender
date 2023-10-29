@@ -96,6 +96,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "debug.pointsDisplay",
+                    "type": "Button",
+                    "id": "33b0abf2-d294-4fdb-994c-1f18745ccc48",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "debug.changeScene",
                     "type": "Button",
                     "id": "1b4cee34-57dc-4095-83ac-5b6911568313",
@@ -559,6 +568,17 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4526bb36-904f-4819-986c-fe1d6ab3d956",
+                    "path": "<Keyboard>/insert",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "debug.pointsDisplay",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
+using CharacterController;
 using Cinemachine;
 
 [RequireComponent(typeof(InputController))]
@@ -12,20 +13,26 @@ public class SkateboardStateMachine : StateMachine {
   // User Constants - Runtime only
   // [Header("Constants - Only read at runtime")]
 
-  // User Constants - Live update
+  public SkateboardMoveSettings moveSettings;
+  
+  // User Constants - Live update 
   [Header("Constants - Live update")]
   public float MaxSpeed = 20f;
   public float TurnLockSpeed = 30f;
+  public AnimationCurve TurnEaseBySpeed;
+  public float MaxTurnDeg = 8.34f;
+  public float MaxAnimatedTruckTurnDeg = 15f;
+  [Range(0, 1)] public float TurnSpeedConservation = 0.5f;
+  public float LeanDamping = 0.64f;
+  public float TruckSpacing = 0.205f;
   public float PushForce = 10f;
+  public float PushStartMultiplier = 3f;
+  public float PushStartEpsilon = 0.1f;
   public AnimationCurve PushForceCurve;
   // public float MaxPushDuration = 1f;
   public float WheelFriction = 0.01f;
   public float BrakingFriction = 0.4f;
   public float GrindingFriction = 0.1f;
-  public float MaxTruckTurnDeg = 8.34f;
-  public float MaxAnimatedTruckTurnDeg = 15f;
-  public float TruckSpacing = 0.205f;
-  public float TruckTurnDamping = 0.3f;
   public float SpringConstant = 40f;
   public float SpringMultiplierMin = 0.5f;
   public float SpringMultiplierMax = 1f;
@@ -40,7 +47,7 @@ public class SkateboardStateMachine : StateMachine {
   // public float EdgeSafeAngle = 60f;
   public float GoingDownThreshold = -0.1f;
   public float LandingAngleGive = 0.8f;
-  public float AirTurnForce = 1f;
+  public float AirTurnStrength = 1f;
   public AnimationCurve TurningEase;
   [Range(0, 1)] public float TruckGripFactor = 0.8f;
   public float BoardPositionDamping = 1f;
@@ -65,6 +72,9 @@ public class SkateboardStateMachine : StateMachine {
   public float MinWheelSpinParticleChance = 0.1f;
   public float MaxWheelSpinParticleChance = 0.75f;
   public float MinSpeedyLineSpeed = 2f;
+  public float LipAngleTolerance = 0.75f;
+  public float MaxMotionBlur = 35f;
+  public float AverageSecondsPerBreath = 8f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -81,19 +91,21 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float CurrentPushT = 0;
   [ReadOnly] public float MaxPushT = 0;
   [ReadOnly] public bool PushBuffered = false;
-  [ReadOnly] public float TruckTurnPercent;
-  [ReadOnly] public float ReallyDampedTruckTurnPercent;
+  [ReadOnly] public float TurnPercent;
+  [ReadOnly] public float LeanPercent;
   [ReadOnly] public float SpringMultiplier;
+  [ReadOnly] public Vector3 RawDown = Vector3.down;
   [ReadOnly] public Vector3 Down = Vector3.down;
-  [ReadOnly] public Vector3 DampedDown = Vector3.down;
   [ReadOnly] public float CurrentProjectLength;
   [ReadOnly] public float AirTimeCounter = 0;
   [ReadOnly] public Rail GrindingRail;
   [ReadOnly] public Vector3 GrindBoardLockPoint;
   [ReadOnly] public Vector3 LastGrindPos;
   [ReadOnly] public PIDController3 GrindOffsetPID;
-  [ReadOnly] public int CurrentOllieTrickIndex;
-  [ReadOnly] public IDictionary<string, Action> ComboActions = new Dictionary<string, Action>() {
+  [ReadOnly] public int[] CurrentAnimTrickIndexes;
+  [ReadOnly] public float CurrentHopTrickVerticalMult;
+  [ReadOnly] public float CurrentHopTrickHorizontalMult;
+  [ReadOnly] public Dictionary<string, Action<int, float, float>> ComboActions = new() {
     { "ollie", null },
     { "kickflip", null },
     { "heelflip", null },
@@ -107,7 +119,7 @@ public class SkateboardStateMachine : StateMachine {
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
   public Transform FacingParent;
-  public Torquer Facing;
+  public Spinner Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
@@ -139,6 +151,11 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip RollingHardClip;
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
+  public CharacterPointHandler PointHandler;
+  public Material MotionBlurMat;
+
+  [Space]
+  public SkateboardCollisionProcessor collisionProcessor;
 
   [HideInInspector] public Transform ball1, ball2, ball3;
 
@@ -149,17 +166,17 @@ public class SkateboardStateMachine : StateMachine {
     Input = GetComponent<InputController>();
     SpeedyLinesMat = SpeedyLines.material;
 
+    CurrentAnimTrickIndexes = new int[Enum.GetValues(typeof(TrickAnimationGroup)).Length];
+
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
+
+    PointHandler.SetMaxSpeed(MaxSpeed);
   }
 
   public void OnOllieForce() {
-    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
-  }
-
-  public void OnKickflipForce() {
-    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce, ForceMode.Acceleration);
+    MainRB.AddForce((Vector3.up - Down).normalized*OllieForce * CurrentHopTrickVerticalMult + Vector3.Project(MainRB.velocity, Facing.transform.forward) * CurrentHopTrickHorizontalMult, ForceMode.Acceleration);
   }
 
   public void StartPushForce(float duration) {
@@ -178,13 +195,14 @@ public class SkateboardStateMachine : StateMachine {
     Pushing = false;
   }
 
-  public void Die() {
-    EnterDead();
+  public void Die() => Die(null);
+  public void Die(Vector3? velocityOverride) {
+    EnterDead(velocityOverride);
     SlamRumble();
   }
 
-  public async void EnterDead() {
-    SwitchState(new SkateboardDeadState(this));
+  public async void EnterDead(Vector3? velocityOverride) {
+    SwitchState(new SkateboardDeadState(this, velocityOverride));
     await Task.Delay((int)(DeadTime*1000));
     SoundEffectsManager.instance.PlaySoundFXClip(FartClip, transform, 1);
     SwitchState(new SkateboardMoveState(this));
@@ -223,7 +241,7 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
   }
 
-  public void OnCombo(string name) {
-    ComboActions[name]?.Invoke();
+  public void OnCombo(string name, int trickAnimGroup, float verticalForceMult, float horizontalForceMult) {
+    ComboActions[name]?.Invoke(trickAnimGroup, verticalForceMult, horizontalForceMult);
   }
 }
