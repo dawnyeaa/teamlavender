@@ -146,7 +146,6 @@ public abstract class SkateboardBaseState : State {
     sm.Down = Vector3.Slerp(sm.Down, sm.RawDown, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
     sm.footRepresentation.localPosition = sm.Down * sm.CurrentProjectLength;
     sm.Board.localPosition = sm.Down * (sm.CurrentProjectLength + sm.ProjectRadius);
-    sm.HeadSensZone.SetT(Mathf.Lerp(1-Mathf.Clamp01(Vector3.Dot(sm.Down, Vector3.down)), sm.MainRB.velocity.magnitude/sm.MaxSpeed, sm.HeadZoneSpeedToHorizontalRatio));
     sm.BodyMesh.localPosition = sm.Down * (sm.CurrentProjectLength + sm.ProjectRadius);
   }
 
@@ -494,7 +493,6 @@ public abstract class SkateboardBaseState : State {
     sm.Down = Vector3.down;
     sm.Grounded = false;
     sm.TurnPercent = 0;
-    sm.HeadSensZone.SetT(0);
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
     sm.transform.rotation = rot;

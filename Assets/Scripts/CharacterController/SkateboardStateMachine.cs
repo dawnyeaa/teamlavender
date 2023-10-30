@@ -139,7 +139,6 @@ public class SkateboardStateMachine : StateMachine {
   public ParentConstraint LookatConstraint;
   public TransformHeirarchyMatch RagdollMatcher;
   public SpawnPointManager SpawnPointManager;
-  public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
   public PauseMenuManager PauseMenuManager;
   public RailManager RailManager;

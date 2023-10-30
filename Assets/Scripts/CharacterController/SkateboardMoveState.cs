@@ -62,8 +62,6 @@ public class SkateboardMoveState : SkateboardBaseState
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
 
-        sm.HeadSensZone.AddCallback(sm.Die);
-
         // StartRollingSFX();
     }
 
@@ -82,8 +80,6 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["nollie"] -= OnHopTrickInput;
         sm.ComboActions["nollieKickflip"] -= OnHopTrickInput;
         sm.ComboActions["nollieHeelflip"] -= OnHopTrickInput;
-
-        sm.HeadSensZone.RemoveCallback(sm.Die);
 
         StopRollingSFX();
         PassGroundSpeedToPointSystem();
@@ -183,7 +179,7 @@ public class SkateboardMoveState : SkateboardBaseState
     {
         var fwdSpeed = GetForwardSpeed();
         var ray = new Ray(transform.position, transform.forward);
-        if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance)) return;
+        if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance, LayerMask.NameToLayer("Ground"))) return;
 
         var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
         var torque = cross  * settings.wallSlideTorque * fwdSpeed;
