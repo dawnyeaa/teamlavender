@@ -3295,7 +3295,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
       propertyPath: m_Name
-      value: Character (1)
+      value: todds kiddy
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 769970106fb6b4e4e9b72c2ced7f0746,
         type: 3}
@@ -5879,6 +5879,7 @@ GameObject:
   m_Component:
   - component: {fileID: 526217021}
   - component: {fileID: 526217020}
+  - component: {fileID: 526217022}
   m_Layer: 0
   m_Name: MusicManager
   m_TagString: Untagged
@@ -5998,6 +5999,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &526217022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526217019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b93a864c9769f46a6ee391575a8193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Tracks:
+  - {fileID: 8300000, guid: e7d57362ecbff0d4bb20a4382e7a64ba, type: 3}
+  - {fileID: 8300000, guid: 32e90e2ee0887704c8a64a14fd645697, type: 3}
+  - {fileID: 8300000, guid: 817283889c1c6d74883c10ef881e95a0, type: 3}
+  - {fileID: 8300000, guid: a69182a0de7d9cf4e943d83d3c0b1d73, type: 3}
+  - {fileID: 8300000, guid: df170ba75c6e6cc48959e4d71affb68f, type: 3}
+  - {fileID: 8300000, guid: 684c87e7970bd4a4b9bd16514012dc46, type: 3}
+  - {fileID: 8300000, guid: 074ebd8be0f99624988ec0a8a311bb83, type: 3}
+  - {fileID: 8300000, guid: 303d5f08b6afbca428b1536e0049182c, type: 3}
+  - {fileID: 8300000, guid: 43beb9112c594994881d85c9b2924b23, type: 3}
+  - {fileID: 8300000, guid: 5a6dfc43bdd85e34da16c3258b8d352b, type: 3}
+  - {fileID: 8300000, guid: 6be9601e9c3760449b1b01d546468b10, type: 3}
+  - {fileID: 8300000, guid: ea4980daf6f01204f851a8f9039d3a81, type: 3}
+  - {fileID: 8300000, guid: b9424a8ae7de33f4aa0848f210e26433, type: 3}
+  - {fileID: 8300000, guid: c7a91f5346e6d65428762a97ea2eca5f, type: 3}
+  songQueue: 
+  volume: 0.7
+  mainAudioSource: {fileID: 526217020}
 --- !u!1 &539057028
 GameObject:
   m_ObjectHideFlags: 0
