@@ -704,7 +704,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7170211813701026305}
@@ -1960,7 +1960,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2850245046387275938}
@@ -2935,7 +2935,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: ollieTrickIndex
+  - m_Name: Ollie
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -2949,6 +2949,12 @@ AnimatorController:
     m_Controller: {fileID: 0}
   - m_Name: mirrored
     m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: Nollie
+    m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -2985,13 +2991,13 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 78876860560847548}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 6628596414659633773}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 1427358184514110096}
-      m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
+      m_Motion: {fileID: 7400000, guid: cbdcc97e109e8a846807dd47ec749697, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 0}
       m_Motion: {fileID: 7400000, guid: 1e5062b5fed20fa478fb42652b1a0af4, type: 2}
@@ -3126,13 +3132,13 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 78876860560847548}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 1427358184514110096}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 6628596414659633773}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 0}
       m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
@@ -3150,7 +3156,7 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 6063862976369003763}
-      m_Motion: {fileID: 7400000, guid: 6f6863d4617511c44aa1362a9f553965, type: 2}
+      m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -6276645771119371460}
       m_Motion: {fileID: 7400000, guid: 38c33e9e9bcef4242a96b46cfeaa2ead, type: 2}
@@ -4821,7 +4827,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 4
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1458165414125095339}
@@ -5145,7 +5151,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: ollieTrickIndex
+    m_ConditionEvent: Ollie
     m_EventTreshold: 3
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7730273522694910716}

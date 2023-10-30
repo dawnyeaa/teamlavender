@@ -6,7 +6,7 @@ using RootMotion.FinalIK;
 using System;
 
 public abstract class SkateboardBaseState : State {
-  protected readonly SkateboardStateMachine sm;
+  public readonly SkateboardStateMachine sm;
   protected float LeanSpeed = 0.0f;
   protected float VisFollowSpeed = 0.0f;
   protected Vector3 boardRailSnapVel = Vector3.zero;
@@ -21,7 +21,8 @@ public abstract class SkateboardBaseState : State {
 
     if (!sm.Grounded && vertVelocity <= 0) {
       sm.CharacterAnimator.SetBool("falling", true);
-      sm.CharacterAnimator.SetInteger("ollieTrickIndex", 0);
+      sm.CharacterAnimator.SetInteger("Ollie", 0);
+      sm.CharacterAnimator.SetInteger("Nollie", 0);
       float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
       if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
         sm.debugFrame.predictedLandingPosition = hit.point;
@@ -381,8 +382,10 @@ public abstract class SkateboardBaseState : State {
     sm.CharacterAnimator.SetBool("crouching", sm.Crouching);
   }
 
-  protected void OnOllieTrickInput() {
-    sm.CharacterAnimator.SetInteger("ollieTrickIndex", sm.CurrentOllieTrickIndex);
+  protected void OnHopTrickInput(int trickAnimGroup, float verticalForceMult, float horizontalForceMultiplier) {
+    sm.CharacterAnimator.SetInteger(Enum.GetName(typeof(TrickAnimationGroup), (TrickAnimationGroup)trickAnimGroup), sm.CurrentAnimTrickIndexes[trickAnimGroup]);
+    sm.CurrentHopTrickVerticalMult = verticalForceMult;
+    sm.CurrentHopTrickHorizontalMult = horizontalForceMultiplier;
   }
 
   protected void RollIdleAnimation() {
@@ -494,7 +497,7 @@ public abstract class SkateboardBaseState : State {
     sm.HeadSensZone.SetT(0);
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
-    sm.FacingParent.rotation = rot;
+    sm.transform.rotation = rot;
   }
 
   protected void CreateDebugFrame() {
