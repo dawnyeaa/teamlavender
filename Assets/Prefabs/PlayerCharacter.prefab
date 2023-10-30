@@ -893,6 +893,7 @@ MonoBehaviour:
   CurrentHopTrickVerticalMult: 0
   CurrentHopTrickHorizontalMult: 0
   RollingHardClipIndex: -1
+  TimeToLand: 0
   MainRB: {fileID: 3832982824073343641}
   frontAxis: {fileID: 3832982825911100688}
   backAxis: {fileID: 3832982824258907185}
@@ -985,6 +986,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5c839907016a3524b89b861377e797fa, type: 2}
   - {fileID: 11400000, guid: af3b62238b9b54148b858bab580f7ffd, type: 2}
   - {fileID: 11400000, guid: 61062815fb803694284aebf179f4d26a, type: 2}
+  comboNameDisplay: {fileID: 0}
+  comboNameDisplayTime: 5
+  comboDisplayTimer: 0
 --- !u!114 &2908417279074541027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3893,6 +3897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sm: {fileID: 3832982824073343646}
   coolTime: {fileID: 2908417279074541027}
+  coolTimeAirDurationThreshold: 0.8
   framesPerSecond: 30
 --- !u!114 &3832982825729624547
 MonoBehaviour:

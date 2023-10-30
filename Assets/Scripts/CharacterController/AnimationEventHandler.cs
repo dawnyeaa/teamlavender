@@ -5,13 +5,15 @@ using UnityEngine;
 public class AnimationEventHandler : MonoBehaviour {
   public SkateboardStateMachine sm;
   public CoolTimeController coolTime;
+  public float coolTimeAirDurationThreshold = 1.5f;
   public float framesPerSecond = 30;
   public void OnOllieForce() {
     sm.OnOllieForce();
   }
 
   public void CoolTime() {
-    coolTime.StartCoolTime();
+    if (sm.TimeToLand > coolTimeAirDurationThreshold)
+      coolTime.StartCoolTime();
   }
 
   public void PushForce(int pushFrames) {

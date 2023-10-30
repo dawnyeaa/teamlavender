@@ -222,6 +222,7 @@ public class SkateboardMoveState : SkateboardBaseState
                 Debug.DrawLine(position, hit.point, Color.magenta);
                 Debug.DrawRay(hit.point, hit.normal * 2.0f, Color.magenta);
                 upVector = hit.normal * settings.predictionWeight;
+                sm.TimeToLand = t;
                 break;
             }
 

@@ -116,6 +116,7 @@ public class SkateboardStateMachine : StateMachine {
   };
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
+  [ReadOnly] public float TimeToLand = 0;
 
   // Objects to link
   [Header("Link Slot Objects")]
