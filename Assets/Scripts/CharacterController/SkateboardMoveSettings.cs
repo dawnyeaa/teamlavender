@@ -22,6 +22,9 @@ public class SkateboardMoveSettings : ScriptableObject
     [FormerlySerializedAs("leanSpring")] public float rotationalForce = 150.0f;
     public float rotationalDamping = 10.0f;
     public float rotationalLean = 10.0f;
+    public float slopeCrouchDamping = 5f;
+    public float slopeCrouchFPS = 12f;
+    public AnimationCurve speedCrouchCurve;
     public float spinAcceleration = 10.0f;
     public float spinMaxRps = 1.0f;
     public float spinMaxRpsCrouching = 3.0f;

@@ -109,7 +109,10 @@ public class SkateboardStateMachine : StateMachine {
     { "ollie", null },
     { "kickflip", null },
     { "heelflip", null },
-    { "popShuvit", null }
+    { "popShuvit", null },
+    { "nollie", null },
+    { "nollieKickflip", null },
+    { "nollieHeelflip", null }
   };
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;

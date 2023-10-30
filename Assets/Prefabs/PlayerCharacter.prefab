@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Data:
     m_ConstrainedObject: {fileID: 7096163994362797159}
     m_SourceObjects:
@@ -681,6 +681,7 @@ MonoBehaviour:
   turn: 0
   braking: 0
   crouching: 0
+  nolliecrouching: 0
   mouseDelta: {x: 0, y: 0}
   rightStick: {x: 0, y: 0}
   rightStickDigital: {x: 0, y: 0}
@@ -973,12 +974,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c224c5143432e5c47aa199fd7a98be33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxTimeBetweenInputs: 0.25
+  timeSinceInput: 0
   queueVis: 
   comboList:
   - {fileID: 11400000, guid: 8bb87be32a04a1141a7be10a93422f72, type: 2}
   - {fileID: 11400000, guid: e57c8decd520b874da7a31dc7ce7d885, type: 2}
   - {fileID: 11400000, guid: 0e133966c1049154f888ddec6ff5af2c, type: 2}
   - {fileID: 11400000, guid: 134cc592927bf694e9e06e4f154f90fa, type: 2}
+  - {fileID: 11400000, guid: 5c839907016a3524b89b861377e797fa, type: 2}
+  - {fileID: 11400000, guid: af3b62238b9b54148b858bab580f7ffd, type: 2}
+  - {fileID: 11400000, guid: 61062815fb803694284aebf179f4d26a, type: 2}
 --- !u!114 &2908417279074541027
 MonoBehaviour:
   m_ObjectHideFlags: 0
