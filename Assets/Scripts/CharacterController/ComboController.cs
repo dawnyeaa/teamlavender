@@ -2,14 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class ComboController : MonoBehaviour {
+  public float maxTimeBetweenInputs = 0.1f;
   public Queue<Input> comboBuffer;
-  [SerializeField] List<Input> queueVis;
+  public float timeSinceInput = 0;
+  [ReadOnly] [SerializeField] List<Input> queueVis;
   public List<Combo> comboList;
   public const int capacity = 5;
   public ComboController() {
     comboBuffer = new Queue<Input>(capacity);
+  }
+
+  void FixedUpdate() {
+    timeSinceInput += Time.fixedDeltaTime;
+    if (timeSinceInput > maxTimeBetweenInputs) {
+      ClearBuffer();
+    }
   }
 
   public bool AddToBuffer(Input input) {
@@ -17,6 +27,7 @@ public class ComboController : MonoBehaviour {
     if (isFull) comboBuffer.Dequeue();
     comboBuffer.Enqueue(input);
     queueVis = comboBuffer.ToList();
+    timeSinceInput = 0;
     CheckCombos();
     return isFull;
   }

@@ -33,10 +33,14 @@ public class SkateboardMoveState : SkateboardBaseState
         set => sm.Grounded = value;
     }
 
+    public ContinuousDataStepper slopeCrouch;
+    private float slopeCrouchDampingSpeed = 0;
+
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
         //animator = new SkateboardMoveAnimator(this);
         cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
+        slopeCrouch = new ContinuousDataStepper(0, settings.slopeCrouchFPS);
     }
 
     public override void Enter()
@@ -50,6 +54,9 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["kickflip"] += OnHopTrickInput;
         sm.ComboActions["heelflip"] += OnHopTrickInput;
         sm.ComboActions["popShuvit"] += OnHopTrickInput;
+        sm.ComboActions["nollie"] += OnHopTrickInput;
+        sm.ComboActions["nollieKickflip"] += OnHopTrickInput;
+        sm.ComboActions["nollieHeelflip"] += OnHopTrickInput;
 
         InitTrucks();
         body.velocity = Vector3.zero;
@@ -72,11 +79,12 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["kickflip"] -= OnHopTrickInput;
         sm.ComboActions["heelflip"] -= OnHopTrickInput;
         sm.ComboActions["popShuvit"] -= OnHopTrickInput;
+        sm.ComboActions["nollie"] -= OnHopTrickInput;
+        sm.ComboActions["nollieKickflip"] -= OnHopTrickInput;
+        sm.ComboActions["nollieHeelflip"] -= OnHopTrickInput;
 
         sm.HeadSensZone.RemoveCallback(sm.Die);
 
-        SetWheelSpinParticleChance();
-        SetSpeedyLines();
         StopRollingSFX();
         PassGroundSpeedToPointSystem();
         PassSpeedToMotionBlur();
@@ -117,6 +125,7 @@ public class SkateboardMoveState : SkateboardBaseState
         body.inertiaTensor = settings.inertiaTensor;
         
         sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
+        sm.CharacterAnimator.SetBool("nollieCrouching", sm.Input.nolliecrouching);
 
         UpdateTrucks();
         DoPrediction();
@@ -126,6 +135,9 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyBrakeForce();
         CheckForWalls();
         UpdateCamera();
+        SetSlopeCrouching();
+        SetWheelSpinParticleChance();
+        SetSpeedyLines();
         // SetRollingVolume();
         //animator.Tick();
         
@@ -154,6 +166,15 @@ public class SkateboardMoveState : SkateboardBaseState
         }
 
         cameraTargetTransform.rotation = cameraTargetRotation;
+    }
+
+    private void SetSlopeCrouching()
+    {
+        var horizontalness = Mathf.Abs(Vector3.Dot(transform.forward, Vector3.up));
+        var speedFactor = GetForwardSpeed()/settings.maxSpeed;
+        var crouchTarget = horizontalness + settings.speedCrouchCurve.Evaluate(speedFactor);
+        slopeCrouch.Tick(Mathf.SmoothDamp(slopeCrouch.GetContinuous(), crouchTarget, ref slopeCrouchDampingSpeed, settings.slopeCrouchDamping), Time.deltaTime);
+        sm.CharacterAnimator.SetLayerWeight(5, slopeCrouch.GetStepped());
     }
 
     private float GetForwardSpeed() => Vector3.Dot(transform.forward, body.velocity);
@@ -270,6 +291,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var wasOnGround = isOnGround;
         isOnGround = wheelsOnGround > 0;
+        sm.CharacterAnimator.SetBool("grounded", isOnGround);
         if (isOnGround)
         {
             if (!wasOnGround) sm.CharacterAnimator.SetTrigger("startAirborne");

@@ -45,6 +45,7 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public float turn;
   public bool braking;
   public bool crouching;
+  public bool nolliecrouching;
   public Vector2 mouseDelta;
   public Vector2 rightStick;
   public Vector2 rightStickDigital;
@@ -149,6 +150,15 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     else if (context.canceled) {
       if (crouching == true) OnOlliePerformed?.Invoke();
       crouching = false;
+    }
+  }
+
+  public void OnNollieCrouch(InputAction.CallbackContext context) {
+    if (context.performed) {
+      nolliecrouching = true;
+    }
+    else if (context.canceled) {
+      nolliecrouching = false;
     }
   }
 
