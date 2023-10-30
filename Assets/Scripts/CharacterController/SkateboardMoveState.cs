@@ -170,7 +170,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void SetSlopeCrouching()
     {
-        var horizontalness = Mathf.Abs(Vector3.Dot(transform.forward, Vector3.up));
+        var horizontalness = Mathf.Clamp01(1-Vector3.Dot(transform.up, Vector3.up));
         var speedFactor = GetForwardSpeed()/settings.maxSpeed;
         var crouchTarget = horizontalness + settings.speedCrouchCurve.Evaluate(speedFactor);
         slopeCrouch.Tick(Mathf.SmoothDamp(slopeCrouch.GetContinuous(), crouchTarget, ref slopeCrouchDampingSpeed, settings.slopeCrouchDamping), Time.deltaTime);
@@ -222,6 +222,7 @@ public class SkateboardMoveState : SkateboardBaseState
                 Debug.DrawLine(position, hit.point, Color.magenta);
                 Debug.DrawRay(hit.point, hit.normal * 2.0f, Color.magenta);
                 upVector = hit.normal * settings.predictionWeight;
+                sm.TimeToLand = t;
                 break;
             }
 
