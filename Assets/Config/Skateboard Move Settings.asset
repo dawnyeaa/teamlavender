@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSteer: 5
   steerInputSmoothing: 0
-  maxSpeed: 10
-  acceleration: 2
+  maxSpeed: 20
+  acceleration: 0.6
   pushDuration: 1
   pushCurve:
     serializedVersion: 2
@@ -42,16 +42,16 @@ MonoBehaviour:
       time: 0.3700085
       value: 3
       inSlope: 126.319145
-      outSlope: -121.61696
+      outSlope: -7.0023785
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.17426571
       outWeight: 0.5636675
     - serializedVersion: 3
-      time: 0.38868243
-      value: 0.7289339
-      inSlope: -121.61696
-      outSlope: -0.4600243
+      time: 0.4783736
+      value: 2.2411866
+      inSlope: -7.0023785
+      outSlope: -17.420897
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.35777825
@@ -59,7 +59,7 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.5699675
       value: 0.64553833
-      inSlope: -0.4600243
+      inSlope: -17.420897
       outSlope: -5.1299696
       tangentMode: 69
       weightedMode: 0
@@ -93,22 +93,57 @@ MonoBehaviour:
   rotationalForce: 300
   rotationalDamping: 20
   rotationalLean: 0.01
+  slopeCrouchDamping: 0.3
+  slopeCrouchFPS: 12
+  speedCrouchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5855573
+      value: 0.084752604
+      inSlope: 0.36148736
+      outSlope: 0.36148736
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.15313682
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.021117495
+      outSlope: -0.021117495
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.36058444
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   spinAcceleration: 20
   spinMaxRps: 1
   spinMaxRpsCrouching: 3
   spinDelay: 0.1
-  rollingResistance: 0
+  rollingResistance: 0.005
   airResistance: 0
   tangentialFriction: 20
   distanceToGround: 0.21
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
-  truckDepenetrationSpring: 300
-  truckDepenetrationDamper: 80
+  truckDepenetrationSpring: 1000
+  truckDepenetrationDamper: 200
   wheelRadius: 0.12
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 0.0058578006
+  lastEvaluatedBrakeThreshold: 0.000000005275586
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3

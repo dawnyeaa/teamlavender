@@ -78,6 +78,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "nollieCrouch",
+                    "type": "Button",
+                    "id": "fbfaa8e4-bf8c-4b86-8377-7faa31a8a814",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "debug.reset",
                     "type": "Button",
                     "id": "7fe96717-757f-4620-a12e-71f4cc6f6422",
@@ -579,6 +588,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "debug.pointsDisplay",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c8fd8c3-94cf-420b-926a-95b68fce8c5c",
+                    "path": "<Gamepad>/rightStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "nollieCrouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
