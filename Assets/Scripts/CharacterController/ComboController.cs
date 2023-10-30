@@ -2,14 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class ComboController : MonoBehaviour {
+  public float maxTimeBetweenInputs = 0.1f;
   public Queue<Input> comboBuffer;
-  [SerializeField] List<Input> queueVis;
+  public float timeSinceInput = 0;
+  [ReadOnly] [SerializeField] List<Input> queueVis;
   public List<Combo> comboList;
   public const int capacity = 5;
+  public TMPro.TextMeshProUGUI comboNameDisplay;
+  public float comboNameDisplayTime = 5f;
+  [ReadOnly, SerializeField] private float comboDisplayTimer = 0;
   public ComboController() {
     comboBuffer = new Queue<Input>(capacity);
+  }
+
+  void FixedUpdate() {
+    timeSinceInput += Time.fixedDeltaTime;
+    if (timeSinceInput > maxTimeBetweenInputs) {
+      ClearBuffer();
+    }
+  }
+
+  void Update() {
+    if (comboDisplayTimer >= comboNameDisplayTime)
+      SetComboDisplay("");
+    else
+      comboDisplayTimer += Time.deltaTime;
   }
 
   public bool AddToBuffer(Input input) {
@@ -17,6 +37,7 @@ public class ComboController : MonoBehaviour {
     if (isFull) comboBuffer.Dequeue();
     comboBuffer.Enqueue(input);
     queueVis = comboBuffer.ToList();
+    timeSinceInput = 0;
     CheckCombos();
     return isFull;
   }
@@ -39,6 +60,7 @@ public class ComboController : MonoBehaviour {
         if ((int)reversedbuffer[bufferI] == (int)comboInput[comboI]) {
           comboI++;
           if (comboI >= comboInput.Count) {
+            SetComboDisplay(combo._ComboDisplayName);
             combo.ExecuteCombo();
             ClearBuffer();
             return;
@@ -49,6 +71,14 @@ public class ComboController : MonoBehaviour {
         }
         bufferI++;
       }
+    }
+  }
+
+  private void SetComboDisplay(string comboDisplayName) {
+    if (comboNameDisplay != null) {
+      comboNameDisplay.text = comboDisplayName;
+      if (comboDisplayName.Length > 0)
+        comboDisplayTimer = 0;
     }
   }
 }
