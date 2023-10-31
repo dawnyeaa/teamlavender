@@ -2,6 +2,8 @@ Shader "PostFX/SimpleOutlineSobel" {
   Properties {
     _MainTex ("Texture", 2D) = "white" {}
     _BaseColor ("Color", Color) = (0.2, 0.2, 0.2, 1)
+
+    _SobelThickness ("Sobel Thickness", Float) = 1
   }
 
   SubShader {
@@ -24,6 +26,7 @@ Shader "PostFX/SimpleOutlineSobel" {
       #pragma fragment frag
 
       float4 _BaseColor;
+      float _SobelThickness;
       
       TEXTURE2D(_MainTex);
       SAMPLER(sampler_MainTex);
@@ -126,8 +129,8 @@ Shader "PostFX/SimpleOutlineSobel" {
       }
 
       half4 frag(VertexOutput i) : SV_TARGET {
-        float depthSobel = step(actuallySobel(i.uv, _MainTex_TexelSize.x, _MainTex_TexelSize.y).r, 0.2);
-        float normalSobelRes = step(normalSobel(i.uv, _MainTex_TexelSize.x, _MainTex_TexelSize.y), 0.1);
+        float depthSobel = step(actuallySobel(i.uv, _MainTex_TexelSize.x*_SobelThickness, _MainTex_TexelSize.y*_SobelThickness).r, 0.2);
+        float normalSobelRes = step(normalSobel(i.uv, _MainTex_TexelSize.x*_SobelThickness, _MainTex_TexelSize.y*_SobelThickness), 0.1);
         half4 screen = SAMPLE_TEXTURE2D(_Screen, sampler_Screen, i.uv);
         half4 color = half4(0, 0, 0, 1);
         color.rgb = lerp(_BaseColor.rgb, screen.rgb, normalSobelRes*depthSobel);
