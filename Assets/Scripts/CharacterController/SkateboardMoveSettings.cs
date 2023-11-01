@@ -24,6 +24,7 @@ public class SkateboardMoveSettings : ScriptableObject
     public float rotationalLean = 10.0f;
     public float slopeCrouchDamping = 5f;
     public float slopeCrouchFPS = 12f;
+    public float autoSwitchThreshold = 0.1f;
     public AnimationCurve speedCrouchCurve;
     public float spinAcceleration = 10.0f;
     public float spinMaxRps = 1.0f;
