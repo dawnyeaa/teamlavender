@@ -36,8 +36,7 @@ Shader "PostFX/OutlineDepthNormals" {
 
       struct VertexOutput {
         float4 positionCS : SV_POSITION;
-        float zDepth      : TEXCOORD0;
-        float3 normalWS   : TEXCOORD1;
+        float3 normalWS   : TEXCOORD0;
       };
 
       VertexOutput vert(VertexInput i) {
@@ -48,7 +47,6 @@ Shader "PostFX/OutlineDepthNormals" {
         VertexNormalInputs normalInput = GetVertexNormalInputs(i.normalOS, i.tangentOS);
 
         o.positionCS = vertexInput.positionCS;
-        o.zDepth = o.positionCS.z / o.positionCS.w;
         o.normalWS = normalInput.normalWS;
 
         return o;
@@ -57,7 +55,6 @@ Shader "PostFX/OutlineDepthNormals" {
       float4 frag(VertexOutput i) : SV_TARGET {
         float4 color = float4(1, 1, 1, 1);
         color.xyz = i.normalWS;
-        color.a = i.zDepth;
         return color;
       }
 

@@ -8,8 +8,8 @@ public class SimpleOutlineSobelPass : ScriptableRenderPass {
   public Material _simpleOutlineMaterial;
   private int _depthNormalId;
   private RenderTargetIdentifier _depthNormalRT;
-  private static readonly int _tmpId1 = Shader.PropertyToID("tmpJFART1");
-  RenderTargetIdentifier _tmpRT1;
+  private static readonly int _tmpId = Shader.PropertyToID("tmpScreenRT");
+  RenderTargetIdentifier _tmpRT;
   public SimpleOutlineSobelPass(string profilerTag, int depthNormalId) {
     _profilingSampler = new ProfilingSampler(profilerTag);
     _depthNormalId = depthNormalId;
@@ -21,17 +21,17 @@ public class SimpleOutlineSobelPass : ScriptableRenderPass {
 
     RenderTextureDescriptor desc = renderingData.cameraData.cameraTargetDescriptor;
     // desc.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
-    cmd.GetTemporaryRT(_tmpId1, desc);
+    cmd.GetTemporaryRT(_tmpId, desc);
 
-    _tmpRT1 = new RenderTargetIdentifier(_tmpId1);
+    _tmpRT = new RenderTargetIdentifier(_tmpId);
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
     var cmd = CommandBufferPool.Get();
 
     using (new ProfilingScope(cmd, _profilingSampler)) {
-      cmd.Blit(renderingData.cameraData.renderer.cameraColorTarget, _tmpRT1);
-      cmd.SetGlobalTexture(Shader.PropertyToID("_Screen"), _tmpRT1);
+      cmd.Blit(renderingData.cameraData.renderer.cameraColorTarget, _tmpRT);
+      cmd.SetGlobalTexture(Shader.PropertyToID("_Screen"), _tmpRT);
       cmd.Blit(_depthNormalRT, renderingData.cameraData.renderer.cameraColorTarget, _simpleOutlineMaterial);
     }
 
@@ -43,5 +43,6 @@ public class SimpleOutlineSobelPass : ScriptableRenderPass {
 
   public override void OnCameraCleanup(CommandBuffer cmd) {
     cmd.ReleaseTemporaryRT(_depthNormalId);
+    cmd.ReleaseTemporaryRT(_tmpId);
   }
 }

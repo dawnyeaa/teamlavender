@@ -130,7 +130,7 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyLeanForces();
         ApplyBrakeForce();
         CheckForWalls();
-        UpdateCamera();
+        // UpdateCamera();
         SetSlopeCrouching();
         SetWheelSpinParticleChance();
         SetSpeedyLines();
@@ -150,7 +150,7 @@ public class SkateboardMoveState : SkateboardBaseState
     {
         if (!cameraTargetTransform) return;
 
-        var force = (body.position + new Vector3(0.0f, 0.9590001f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
+        var force = (body.position + new Vector3(0.0f, 0.83f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
         
         cameraTargetPosition += cameraTargetVelocity * Time.deltaTime;
         cameraTargetVelocity += force * Time.deltaTime;

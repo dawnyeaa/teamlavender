@@ -21,8 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: trail-mat
-  m_Shader: {fileID: -6465566751694194690, guid: 79ebee873b688954680bfe512663f2f5,
-    type: 3}
+  m_Shader: {fileID: 4800000, guid: c82410918ab23634e89a73caf4266706, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -66,9 +65,17 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: e6758d8c3b7b85c468a8205ff314eb47, type: 3}
+        m_Scale: {x: 0.1, y: 0.1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaperTex:
+        m_Texture: {fileID: 2800000, guid: 90df04fff433c1c4aa73bad5fa9d554c, type: 3}
+        m_Scale: {x: 0.5, y: 0.5}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
@@ -103,6 +110,8 @@ Material:
     - _AlphaClip: 0
     - _Blend: 0
     - _BlendOp: 0
+    - _BrushScale: 1.38
+    - _BrushStrength: 0.71
     - _BumpScale: 1
     - _CameraFadingEnabled: 0
     - _CameraFarFadeDistance: 2
@@ -119,6 +128,8 @@ Material:
     - _DistortionStrength: 1
     - _DistortionStrengthScaled: 0.1
     - _DstBlend: 0
+    - _EdgeStrength: 1
+    - _EndChunk: 0.72
     - _EnvironmentReflections: 1
     - _FlipbookBlending: 0
     - _FlipbookMode: 0
@@ -127,7 +138,9 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
+    - _NoiseStrength: 0.377
     - _OcclusionStrength: 1
+    - _PaperStrength: 0.537
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -141,6 +154,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
+    - _Threshold: 0.235
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _a: 0.4
@@ -148,10 +162,10 @@ Material:
     - _c: 0.49
     - _edge_strength: 0.3
     - _endchunk: 5.28
-    - _length: 0
+    - _length: 12.781995
     - _steppy: 0.218
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0, g: 0, b: 0, a: 1}
     - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

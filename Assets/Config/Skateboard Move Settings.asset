@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSteer: 5
   steerInputSmoothing: 0
-  maxSpeed: 20
+  maxSpeed: 30
   acceleration: 0.6
   pushDuration: 1
   pushCurve:
@@ -89,7 +89,7 @@ MonoBehaviour:
   localCenterOfMass: {x: 0, y: -0.1, z: 0}
   inertiaTensor: {x: 5, y: 5, z: 5}
   upGravity: 0.8
-  downGravity: 1.5
+  downGravity: 2
   rotationalForce: 300
   rotationalDamping: 20
   rotationalLean: 0.01
@@ -143,7 +143,7 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 0.000000005275586
+  lastEvaluatedBrakeThreshold: 1.2244128e-11
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3

@@ -4,6 +4,18 @@ Shader "PostFX/SimpleOutlineSobel" {
     _BaseColor ("Color", Color) = (0.2, 0.2, 0.2, 1)
 
     _SobelThickness ("Sobel Thickness", Float) = 1
+
+    _DepthSensitivity ("Depth Sensitivity", Float) = 1
+    _NormalSensitivity ("Normal Sensitivity", Float) = 1
+
+    _WarpingNoise ("Warping Noise", 2D) = "white" {}
+    _WarpingScale ("Warping Scale", Float) = 1
+    _WarpingStrength ("Warping Strength", Float) = 1
+    _ThicknessWarpingStrength ("Warping Thickness Strength", Float) = 1
+    _WarpingUpdateRate ("Warping FPS", Int) = 12
+    _WarpingUpdateOffset ("Warping Update Offset", Vector) = (487, 683, 0, 0)
+    
+    _CameraWarpingFactor ("Camera Warping Factor", Float) = 1
   }
 
   SubShader {
@@ -27,37 +39,31 @@ Shader "PostFX/SimpleOutlineSobel" {
 
       float4 _BaseColor;
       float _SobelThickness;
+
+      float _DepthSensitivity;
+      float _NormalSensitivity;
       
+      float _WarpingScale;
+      float _WarpingStrength;
+      float _ThicknessWarpingStrength;
+      float _WarpingUpdateRate;
+      float2 _WarpingUpdateOffset;
+
+      float _CameraWarpingFactor;
+
       TEXTURE2D(_MainTex);
       SAMPLER(sampler_MainTex);
       float4 _MainTex_TexelSize;
       
       TEXTURE2D(_Screen);
       SAMPLER(sampler_Screen);
-      float4 _Screen_TexelSize;
-
-      static float2 uvOffset[9] = {
-        float2(0, 0),
-        float2(-1, -1),
-        float2(0, -1),
-        float2(1, -1),
-        float2(-1, 0),
-        float2(1, 0),
-        float2(-1, 1),
-        float2(0, 1),
-        float2(1, 1)
-      };
       
-      static float3 offsetIDs[9] = {
-        float3(1, 1, 1),
-        float3(1, 0, 0),
-        float3(0, 1, 0),
-        float3(0, 0, 1),
-        float3(1, 1, 0),
-        float3(0, 1, 1),
-        float3(1, 0, 1),
-        float3(1, 0.5, 0),
-        float3(0, 1, 0.5),
+      TEXTURE2D(_WarpingNoise);
+      SAMPLER(sampler_WarpingNoise);
+
+      static float2 uvOffset[2] = {
+        float2(1, 1),
+        float2(1, -1)
       };
 
       struct VertexInput {
@@ -67,55 +73,35 @@ Shader "PostFX/SimpleOutlineSobel" {
 
       struct VertexOutput {
         float4 positionCS : SV_POSITION;
-        float2 uv         : TEXCOORD0;
+        float4 posScreen  : TEXCOORD0;
       };
 
-      float intensity(in float4 color) {
-        return sqrt((color.x*color.x) + (color.y*color.y) + (color.z*color.z));
+      float getMaskedDifference(float a, float b, float maskA, float maskB) {
+        return (a - b) * maskA * maskB;
       }
 
-      float sobelish(float2 uv, float stepx, float stepy) {
-        float current = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, 0)));
-        float right   = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, 0)));
-        float bottom  = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, stepy)));
-        float bright  = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, stepy)));
-
-        float x = current - bright;
-        float y = right - bottom;
-        float mag = sqrt((x*x) + (y*y));
-        return mag;
+      float3 getMaskedDifference(float3 a, float3 b, float maskA, float maskB) {
+        return (a - b) * maskA * maskB;
       }
 
-      float2 actuallySobel(float2 uv, float stepx, float stepy) {
-        float tleft  = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, -stepy)));
-        float top    = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, -stepy)));
-        float tright = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, -stepy)));
-        float left   = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, 0)));
-        float right  = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, 0)));
-        float bleft  = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, stepy)));
-        float bottom = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, stepy)));
-        float bright = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, stepy)));
+      float depthSobel(float4 pos0, float4 pos1, float4 pos2, float4 pos3, float2 uv, float2 pixelStep) {
+        float depth0 = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, uv + uvOffset[0] * pixelStep).r;
+        float depth1 = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, uv - uvOffset[0] * pixelStep).r;
+        float depth2 = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, uv + uvOffset[1] * pixelStep).r;
+        float depth3 = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, uv - uvOffset[1] * pixelStep).r;
 
-        float x = (1*tleft + 1*bleft + (2*left)) - (1*tright + 1*bright + (2*right));
-        float y = (1*tleft + 1*tright + (2*top)) - (1*bleft + 1*bright + (2*bottom));
-        float mag = sqrt((x*x) + (y*y));
-        return float2(mag, (atan2(y, x)/(2*PI))+0.5);
+        float depthDifference0 = getMaskedDifference(depth1, depth0, pos1.a, pos0.a);
+        float depthDifference1 = getMaskedDifference(depth3, depth2, pos3.a, pos2.a);
+        float edgeDepth = sqrt(pow(depthDifference0, 2) + pow(depthDifference1, 2)) * 100;
+        float depthThreshold = (1/_DepthSensitivity) * depth0;
+        return step(depthThreshold, edgeDepth);
       }
 
-      float normalSobel(float2 uv, float stepx, float stepy) {
-        float3 tleft  = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, -stepy)).rgb;
-        float3 top    = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, -stepy)).rgb;
-        float3 tright = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, -stepy)).rgb;
-        float3 left   = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, 0)).rgb;
-        float3 right  = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, 0)).rgb;
-        float3 bleft  = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, stepy)).rgb;
-        float3 bottom = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, stepy)).rgb;
-        float3 bright = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, stepy)).rgb;
-        
-        float3 center = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv).rgb;
-
-        return abs(tleft - center) + abs(top - center) + abs(tright - center) + abs(left - center) +
-               abs(right - center) + abs(bleft - center) + abs(bottom - center) + abs(bright - center);
+      float normalSobel(float4 pos0, float4 pos1, float4 pos2, float4 pos3) {
+        float3 normalDifference0 = getMaskedDifference(pos1.rgb, pos0.rgb, pos1.a, pos0.a);
+        float3 normalDifference1 = getMaskedDifference(pos3.rgb, pos2.rgb, pos3.a, pos2.a);
+        float edgeNormal = sqrt(dot(normalDifference0, normalDifference0) + dot(normalDifference1, normalDifference1));
+        return step(1/_NormalSensitivity, edgeNormal);
       }
 
       VertexOutput vert(VertexInput i) {
@@ -124,16 +110,30 @@ Shader "PostFX/SimpleOutlineSobel" {
         VertexPositionInputs vertexInput = GetVertexPositionInputs(i.positionOS.xyz);
 
         o.positionCS = vertexInput.positionCS;
-        o.uv = i.uv;
+        o.posScreen = ComputeScreenPos(vertexInput.positionCS);
         return o;
       }
 
       half4 frag(VertexOutput i) : SV_TARGET {
-        float depthSobel = step(actuallySobel(i.uv, _MainTex_TexelSize.x*_SobelThickness, _MainTex_TexelSize.y*_SobelThickness).r, 0.2);
-        float normalSobelRes = step(normalSobel(i.uv, _MainTex_TexelSize.x*_SobelThickness, _MainTex_TexelSize.y*_SobelThickness), 0.1);
-        half4 screen = SAMPLE_TEXTURE2D(_Screen, sampler_Screen, i.uv);
+        float warpUpdateSeconds = 1/_WarpingUpdateRate;
+        float timeOffset = floor(_Time.y / warpUpdateSeconds);
+        float2 warpNoise = SAMPLE_TEXTURE2D(_WarpingNoise, sampler_WarpingNoise, i.posScreen.xy*float2(_MainTex_TexelSize.y/_MainTex_TexelSize.x, 1)*_WarpingScale+timeOffset*_WarpingUpdateOffset).rg;
+        float2 warpedScreenPos = i.posScreen.xy + (warpNoise*2-1) * _WarpingStrength * _CameraWarpingFactor;
+        float thicky = abs(warpNoise.x - warpNoise.y) * _CameraWarpingFactor;
+
+        float2 pixelStep = _MainTex_TexelSize.xy * _SobelThickness + thicky * _ThicknessWarpingStrength;
+        float4 pos0 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, warpedScreenPos + uvOffset[0] * pixelStep);
+        float4 pos1 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, warpedScreenPos - uvOffset[0] * pixelStep);
+        float4 pos2 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, warpedScreenPos + uvOffset[1] * pixelStep);
+        float4 pos3 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, warpedScreenPos - uvOffset[1] * pixelStep);
+        float mask = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.posScreen.xy).a;
+
+        float depthSobelRes = depthSobel(pos0, pos1, pos2, pos3, warpedScreenPos, pixelStep);
+        float normalSobelRes = normalSobel(pos0, pos1, pos2, pos3);
+        half4 screen = SAMPLE_TEXTURE2D(_Screen, sampler_Screen, i.posScreen.xy);
         half4 color = half4(0, 0, 0, 1);
-        color.rgb = lerp(_BaseColor.rgb, screen.rgb, normalSobelRes*depthSobel);
+        float t = saturate(max(depthSobelRes, normalSobelRes));
+        color.rgb = lerp(screen.rgb, _BaseColor.rgb, mask * t * _BaseColor.a);
         // color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a;
         return color;
       }
