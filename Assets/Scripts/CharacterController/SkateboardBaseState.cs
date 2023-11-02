@@ -282,7 +282,7 @@ public abstract class SkateboardBaseState : State {
       // sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
   }
 
-  protected void SetCrouching() {
+  protected void SetCrouchingOld() {
     // if input is crouching, we're crouching (and the recover timer should be reset)
     // if input is not crouching
       // if we've just released it, start the crouch recover timer, and keep crouching
