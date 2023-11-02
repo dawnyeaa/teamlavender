@@ -13,6 +13,8 @@ public class MusicShuffler : MonoBehaviour
     private int randomNumber;
 
     public AudioSource mainAudioSource;
+
+    public SongDisplay songDisplay;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +27,7 @@ public class MusicShuffler : MonoBehaviour
     public void SelectNextSong()
     {
         mainAudioSource.PlayOneShot(Tracks[songQueue[0]], volume);
+        SetSongDisplay(Tracks[songQueue[0]]);
         songQueue.RemoveAt(0);
     }
     // Update is called once per frame
@@ -58,6 +61,11 @@ public class MusicShuffler : MonoBehaviour
         }
 
         // assign each rolled number a number in the list format
+    }
+
+    void SetSongDisplay(AudioClip track) {
+        var split = track.name.Split(" - ");
+        songDisplay.SetDisplay(split[1], split[0]);
     }
     
 }
