@@ -10,7 +10,8 @@ public class SkateboardMoveState : SkateboardBaseState
     private Vector3 upVector;
     private Vector3 leanVector;
 
-    private Transform cameraTargetTransform;
+    // private Transform cameraTargetTransform;
+    private CameraTargetController cameraTarget;
     private Vector3 cameraTargetPosition;
     private Vector3 cameraTargetVelocity;
     private Quaternion cameraTargetRotation;
@@ -26,6 +27,7 @@ public class SkateboardMoveState : SkateboardBaseState
     public SkateboardMoveSettings settings => sm.moveSettings;
     public Rigidbody body => sm.MainRB;
     public float steer { get; private set; }
+    public float modifiedSteer { get; private set; }
     public Vector3 Gravity => Physics.gravity * (body.velocity.y > 0.0f || isOnGround ? settings.upGravity : settings.downGravity);
     public bool isOnGround
     {
@@ -39,7 +41,8 @@ public class SkateboardMoveState : SkateboardBaseState
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
         //animator = new SkateboardMoveAnimator(this);
-        cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
+        // cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
+        cameraTarget = stateMachine.transform.Find("cameraTarget").GetComponent<CameraTargetController>();
         slopeCrouch = new ContinuousDataStepper(0, settings.slopeCrouchFPS);
     }
 
@@ -88,7 +91,9 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void OnSwitch2()
     {
-        transform.rotation *= Quaternion.Euler(Vector3.up * 180.0f);
+        sm.IsGoofy = !sm.IsGoofy;
+        sm.CharacterAnimator.SetFloat("mirrored", sm.IsGoofy ? 1 : 0);
+        sm.Facing.rotation *= Quaternion.Euler(Vector3.up * 180.0f);
     }
 
     private void InitTrucks()
@@ -112,8 +117,10 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var rawSteerInput = sm.Input.turn;
         steer += (rawSteerInput * settings.maxSteer - steer) * (1.0f - settings.steerInputSmoothing);
+
+        modifiedSteer = steer * (sm.IsGoofy ? -1 : 1);
         
-        float normalizedSteer = 0.5f * steer / sm.MaxAnimatedTruckTurnDeg + 0.5f;
+        float normalizedSteer = 0.5f * modifiedSteer / sm.MaxAnimatedTruckTurnDeg + 0.5f;
         sm.CharacterAnimator.SetFloat("leanValue", normalizedSteer);
         sm.BoardIKTiltAnimator.SetFloat("leanValue", normalizedSteer);
 
@@ -134,6 +141,7 @@ public class SkateboardMoveState : SkateboardBaseState
         SetSlopeCrouching();
         SetWheelSpinParticleChance();
         SetSpeedyLines();
+        CheckFacing();
         // SetRollingVolume();
         //animator.Tick();
         
@@ -148,20 +156,22 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void UpdateCamera()
     {
-        if (!cameraTargetTransform) return;
+        if (!cameraTarget) return;
 
-        var force = (body.position + new Vector3(0.0f, 0.9590001f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
+        // var force = (body.position + new Vector3(0.0f, 0.83f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
         
-        cameraTargetPosition += cameraTargetVelocity * Time.deltaTime;
-        cameraTargetVelocity += force * Time.deltaTime;
-        cameraTargetTransform.position = cameraTargetPosition;
+        // cameraTargetPosition += cameraTargetVelocity * Time.deltaTime;
+        // cameraTargetVelocity += force * Time.deltaTime;
+        // cameraTargetTransform.position = cameraTargetPosition;
         
-        if (isOnGround)
-        {
-            cameraTargetRotation = sm.FacingParent.rotation;
-        }
+        // if (isOnGround)
+        // {
+        //     // cameraTargetRotation = sm.Facing.rotation;
+        //     cameraTarget.update = true;
+        // }
+        cameraTarget.update = isOnGround;
 
-        cameraTargetTransform.rotation = cameraTargetRotation;
+        // cameraTargetTransform.rotation = cameraTargetRotation;
     }
 
     private void SetSlopeCrouching()
@@ -173,12 +183,19 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.CharacterAnimator.SetLayerWeight(5, slopeCrouch.GetStepped());
     }
 
-    private float GetForwardSpeed() => Vector3.Dot(transform.forward, body.velocity);
+    private void CheckFacing() 
+    {
+        if (GetForwardSpeed() < -settings.autoSwitchThreshold) OnSwitch2();
+    }
+
+    private Vector3 GetForward() => transform.forward * (sm.IsGoofy ? -1 : 1);
+
+    private float GetForwardSpeed() => Vector3.Dot(GetForward(), body.velocity);
 
     private void CheckForWalls()
     {
         var fwdSpeed = GetForwardSpeed();
-        var ray = new Ray(transform.position, transform.forward);
+        var ray = new Ray(transform.position, GetForward());
         if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance, LayerMask.NameToLayer("Ground"))) return;
 
         var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
@@ -194,7 +211,7 @@ public class SkateboardMoveState : SkateboardBaseState
         var friction = Mathf.Lerp(settings.staticBrake, settings.dynamicBrake, settings.lastEvaluatedBrakeThreshold = Mathf.Abs(fwdSpeed) / settings.brakeThreshold);
         settings.lastEvaluatedBrakeThreshold = Mathf.Clamp01(settings.lastEvaluatedBrakeThreshold);
 
-        var force = transform.forward * -fwdSpeed * Mathf.Min(friction, 1.0f);
+        var force = GetForward() * -fwdSpeed * Mathf.Min(friction, 1.0f);
         body.AddForce(force * body.mass / Time.deltaTime);
     }
 
@@ -241,7 +258,7 @@ public class SkateboardMoveState : SkateboardBaseState
     {
         var up = upVector;
         var weight = upVector.magnitude;
-        leanVector = transform.right * steer * settings.rotationalLean;
+        leanVector = transform.right * modifiedSteer * settings.rotationalLean;
         var target = (up + leanVector).normalized * weight;
         var cross = Vector3.Cross(transform.up, target);
 
@@ -265,8 +282,8 @@ public class SkateboardMoveState : SkateboardBaseState
     {
         if (pushTimer < 0.0f) return;
 
-        var forwardSpeed = Vector3.Dot(transform.forward, body.velocity);
-        var force = transform.forward * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
+        var forwardSpeed = Vector3.Dot(GetForward(), body.velocity);
+        var force = GetForward() * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
         force *= wheelsOnGround / 4.0f;
         body.AddForce(force * body.mass);
 
@@ -314,7 +331,7 @@ public class SkateboardMoveState : SkateboardBaseState
         var velocity = body.velocity;
 
         var force = -velocity.normalized * velocity.sqrMagnitude * settings.airResistance;
-        force -= Vector3.Project(velocity, transform.forward) * settings.rollingResistance;
+        force -= Vector3.Project(velocity, GetForward()) * settings.rollingResistance;
         body.AddForce(force * body.mass, ForceMode.Acceleration);
     }
 
@@ -339,7 +356,7 @@ public class SkateboardMoveState : SkateboardBaseState
         public float evaluatedTangentialFriction;
 
         public Vector3 Position => state.sm.transform.TransformPoint(Settings.truckOffset.x * xSign, Settings.truckOffset.y, Settings.truckOffset.z * zSign);
-        public Quaternion Rotation => state.sm.transform.rotation * Quaternion.Euler(0.0f, state.steer * zSign, 0.0f);
+        public Quaternion Rotation => state.sm.transform.rotation * Quaternion.Euler(0.0f, state.modifiedSteer * zSign, 0.0f);
         private SkateboardMoveSettings Settings => state.sm.moveSettings;
         public Rigidbody Body => state.sm.MainRB;
 
@@ -364,7 +381,7 @@ public class SkateboardMoveState : SkateboardBaseState
             if (isOnGround)
             {
                 var velocity = Body.GetPointVelocity(groundHit.point);
-                var speed = Vector3.Dot(velocity, state.transform.forward);
+                var speed = Vector3.Dot(velocity, state.GetForward());
                 rotation += speed / Settings.wheelRadius * Time.deltaTime * Mathf.Rad2Deg;
             }
         }

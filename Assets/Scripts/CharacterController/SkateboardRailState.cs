@@ -2,7 +2,6 @@ public class SkateboardRailState : SkateboardBaseState {
   public SkateboardRailState(SkateboardStateMachine stateMachine) : base(stateMachine) {}
 
   public override void Enter() {
-    DisableSpinBody();
     FaceAlongRail();
     InitRailPos();
     // ApplyRotationToModels();
@@ -23,7 +22,6 @@ public class SkateboardRailState : SkateboardBaseState {
   public override void Exit() {
     PushOffRail();
     EndRailAnim();
-    EnableSpinBody();
     StopGrindingParticles();
   }
 }
