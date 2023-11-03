@@ -50,6 +50,7 @@ public class PauseMenuManager : MonoBehaviour {
     gameplayUI.SetActive(false);
     PauseViewfinderAnimator.SetBool("enabled", true);
     extraInput.OnUnpausePerformed += ResumeGame;
+    ChangeMenu(0);
   }
 
   public void ResumeGame() {
