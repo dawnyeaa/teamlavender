@@ -64,7 +64,7 @@ public class IDPass : ScriptableRenderPass {
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
     // some settings we need for drawing the draw renderers
-    var drawingSettings = CreateDrawingSettings(_shaderTag, ref renderingData, SortingCriteria.CommonOpaque);
+    var drawingSettings = CreateDrawingSettings(_shaderTag, ref renderingData, SortingCriteria.RenderQueue);
     drawingSettings.fallbackMaterial = _fallbackIdMaterial;
     
     var cmd = CommandBufferPool.Get();
