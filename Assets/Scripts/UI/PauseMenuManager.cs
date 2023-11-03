@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PauseMenuManager : MonoBehaviour {
   [SerializeField] GameObject[] Menus;
   [SerializeField] int CurrentMenu;
-  [SerializeField] Button PauseMenuDefault, PauseReturnToMenuDefault;
+  [SerializeField] Button PauseMenuDefault, PauseReturnToMenuDefault, CommandMenuDefault;
   [SerializeField] Animator PauseViewfinderAnimator;
   [SerializeField] SkateboardStateMachine CharController;
 
@@ -31,6 +31,10 @@ public class PauseMenuManager : MonoBehaviour {
       
       case 1:
         PauseReturnToMenuDefault.Select();
+        break;
+
+      case 2:
+        CommandMenuDefault.Select();
         break;
     }
   }
