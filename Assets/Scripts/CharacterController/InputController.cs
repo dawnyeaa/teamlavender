@@ -281,8 +281,6 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
       rightStickLastTime = context.time;
     }
     var stickVelocity = stickDiff.magnitude/stickTimeDelta;
-    Debug.Log($"y: {stick.y}");
-    Debug.Log(stickVelocity);
     
     var stickNumpad = ParseStickNumpadNotation(stick, comboStickDead, comboStickMidRadius, comboStickMidVelocityThreshold, (float)stickVelocity);
     var stickIndex = stickNumpad - (stickNumpad > 5 ? 1 : 0);

@@ -107,6 +107,14 @@ public class SkateboardMoveState : SkateboardBaseState
     private void OnPush()
     {
         if (pushTimer > 0.0) return;
+
+        var up = upVector;
+        var slopeAngle = Vector3.Angle(up, Vector3.up);
+        if (slopeAngle > settings.pushingMaxSlope) 
+        {
+            pushTimer = 0;
+            return;
+        }
         sm.CharacterAnimator.SetTrigger("push");
         pushTimer = 1.0f;
     }
@@ -127,9 +135,7 @@ public class SkateboardMoveState : SkateboardBaseState
         body.centerOfMass = settings.localCenterOfMass;
         body.inertiaTensor = settings.inertiaTensor;
         
-        sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
-        sm.CharacterAnimator.SetBool("nollieCrouching", sm.Input.nolliecrouching);
-
+        SetCrouching();
         UpdateTrucks();
         DoPrediction();
         ApplyResistance();
@@ -157,21 +163,8 @@ public class SkateboardMoveState : SkateboardBaseState
     private void UpdateCamera()
     {
         if (!cameraTarget) return;
-
-        // var force = (body.position + new Vector3(0.0f, 0.83f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
         
-        // cameraTargetPosition += cameraTargetVelocity * Time.deltaTime;
-        // cameraTargetVelocity += force * Time.deltaTime;
-        // cameraTargetTransform.position = cameraTargetPosition;
-        
-        // if (isOnGround)
-        // {
-        //     // cameraTargetRotation = sm.Facing.rotation;
-        //     cameraTarget.update = true;
-        // }
         cameraTarget.update = isOnGround;
-
-        // cameraTargetTransform.rotation = cameraTargetRotation;
     }
 
     private void SetSlopeCrouching()
@@ -201,6 +194,21 @@ public class SkateboardMoveState : SkateboardBaseState
         var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
         var torque = cross  * settings.wallSlideTorque * fwdSpeed;
         body.AddTorque(torque);
+    }
+
+    private void SetCrouching() 
+    {
+        if ((sm.Input.crouching && !sm.CharacterAnimator.GetBool("crouching")) ||
+            (sm.Input.nolliecrouching && !sm.CharacterAnimator.GetBool("nollieCrouching"))) 
+        {
+            if (pushTimer > 0) 
+            {
+                sm.CharacterAnimator.Play("idle");
+                pushTimer = 0;
+            }
+        }
+        sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
+        sm.CharacterAnimator.SetBool("nollieCrouching", sm.Input.nolliecrouching);
     }
 
     private void ApplyBrakeForce()
@@ -279,8 +287,18 @@ public class SkateboardMoveState : SkateboardBaseState
     }
 
     private void ApplyPushForce()
-    {
-        if (pushTimer < 0.0f) return;
+    {   
+        if (!isOnGround) return;
+        if (pushTimer <= 0.0f) return;
+
+        var up = upVector;
+        var slopeAngle = Vector3.Angle(up, Vector3.up);
+        if (slopeAngle > settings.pushingMaxSlope)
+        {
+            sm.CharacterAnimator.Play("idle");
+            pushTimer = 0;
+            return;
+        }
 
         var forwardSpeed = Vector3.Dot(GetForward(), body.velocity);
         var force = GetForward() * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
@@ -308,7 +326,12 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.CharacterAnimator.SetBool("grounded", isOnGround);
         if (isOnGround)
         {
-            if (!wasOnGround) sm.CharacterAnimator.SetTrigger("startAirborne");
+            if (!wasOnGround) 
+            {
+                sm.CharacterAnimator.SetTrigger("startAirborne");
+                // uncommenting this line can look real jank
+                // sm.CharacterAnimator.SetFloat("landStrength", airborneTimer/1f);
+            }
             
             upVector = up.normalized;
             airborneTimer = 0.0f;
