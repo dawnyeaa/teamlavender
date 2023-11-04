@@ -14,13 +14,11 @@ public class WheelController : MonoBehaviour {
     wheel3DefRot = wheel3.localEulerAngles;
     wheel4DefRot = wheel4.localEulerAngles;
   }
-
-  // Update is called once per frame
-  void Update() {
+  void LateUpdate() {
     rotationDeg = rotationDeg % 360;
-    Vector3 rotatey = rotationDeg*Vector3.right;
-    wheel1.localEulerAngles = wheel1DefRot + rotatey;
-    wheel2.localEulerAngles = wheel2DefRot + rotatey;
+    Vector3 rotatey = rotationDeg*Vector3.forward;
+    wheel1.localEulerAngles = wheel1DefRot - rotatey;
+    wheel2.localEulerAngles = wheel2DefRot - rotatey;
     wheel3.localEulerAngles = wheel3DefRot + rotatey;
     wheel4.localEulerAngles = wheel4DefRot + rotatey;
   }
