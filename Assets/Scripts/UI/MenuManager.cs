@@ -24,7 +24,12 @@ public class MenuManager : MonoBehaviour
     [SerializeField] SaveManager saveManager;
     [SerializeField] Resolution[] resolutions;
     [SerializeField] TMP_Dropdown dropdown;
+    private EventSystem eventsys;
     List<string> resolutionsList = new List<string>();
+
+    void Awake() {
+        eventsys = FindObjectOfType<EventSystem>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -52,6 +57,7 @@ public class MenuManager : MonoBehaviour
     public void EnableMenu() 
     {
         menus[currentMenu].SetActive(true);
+        SelectButton(MainMenuDefault);
     }
 
     public void ChangeMenu(int menu)
@@ -63,22 +69,27 @@ public class MenuManager : MonoBehaviour
         switch (menu)
         {
             case 0:
-                MainMenuDefault.Select();
+                SelectButton(MainMenuDefault);
                 TitleLogo.SetActive(true);
             break;
             
             case 1:
-                CustoMenuDefault.Select();
+                SelectButton(CustoMenuDefault);
             break;
             
             case 2:
-                SettingMenuDefault.Select();
+                SelectButton(SettingMenuDefault);
             break;
 
             case 3:
-                ControlsMenuDefault.Select();
+                SelectButton(ControlsMenuDefault);
             break;
         }
+    }
+
+    public void SelectButton(Button button) {
+        eventsys.SetSelectedGameObject(button.gameObject);
+        button.Select();
     }
 
     public void ChangeScene(string sceneName)
