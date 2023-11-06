@@ -117,13 +117,13 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
   [ReadOnly] public float TimeToLand = 0;
+  [ReadOnly] public bool IsGoofy = false;
 
   // Objects to link
   [Header("Link Slot Objects")]
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
-  public Transform FacingParent;
-  public Spinner Facing;
+  public Transform Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
@@ -134,6 +134,7 @@ public class SkateboardStateMachine : StateMachine {
   public Animator CharacterAnimator;
   public Animator BoardIKTiltAnimator;
   public Animator CharacterLeanAnimator;
+  public WheelController WheelSpinAnimationController;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
   public ParentConstraint LookatConstraint;

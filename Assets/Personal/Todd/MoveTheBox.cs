@@ -8,6 +8,6 @@ public class MoveTheBox : MonoBehaviour {
   void Update() {
     float x = 3*Mathf.Cos(Time.time);
     float y = Mathf.Sin(2*Time.time);
-    transform.position = new Vector3(x, y, 0);
+    transform.position = new Vector3(x, 0, y);
   }
 }

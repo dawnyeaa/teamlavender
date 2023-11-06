@@ -15,40 +15,6 @@ public abstract class SkateboardBaseState : State {
     sm = stateMachine;
   }
 
-  protected void BodyUprightCorrect() {
-    float vertVelocity = Vector3.Dot(Vector3.up, sm.MainRB.velocity);
-    bool goingDown = vertVelocity < sm.GoingDownThreshold;
-
-    if (!sm.Grounded && vertVelocity <= 0) {
-      sm.CharacterAnimator.SetBool("falling", true);
-      sm.CharacterAnimator.SetInteger("Ollie", 0);
-      sm.CharacterAnimator.SetInteger("Nollie", 0);
-      float groundMatchDistance = (Time.fixedDeltaTime * 2f * -vertVelocity) + 1.5f;
-      if (Physics.Raycast(sm.BodyMesh.position, Vector3.down, out RaycastHit hit, groundMatchDistance, LayerMask.GetMask("Ground"))) {
-        sm.debugFrame.predictedLandingPosition = hit.point;
-        Debug.DrawRay(sm.BodyMesh.position, Vector3.down * groundMatchDistance, Color.red);
-        Vector3 normal = hit.normal;
-        sm.RawDown = Vector3.Slerp(sm.RawDown, -normal, sm.RightingStrength);
-        sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.RawDown;
-
-        // sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(sm.BodyMesh.forward, sm.RawDown), -sm.RawDown);
-        sm.FacingParent.rotation = Quaternion.identity;
-        
-        // sm.BodyMesh.rotation = sm.Facing.transform.rotation;
-        // sm.Board.rotation = sm.Facing.transform.rotation;
-        // sm.Board.localPosition = sm.RawDown * sm.BodyMesh.localPosition.magnitude;
-      }
-    }
-    else {
-      sm.CharacterAnimator.SetBool("falling", false);
-    }
-
-    if (goingDown) {
-      sm.RawDown = Vector3.Slerp(sm.RawDown, Vector3.down, sm.RightingStrength);
-      sm.footRepresentation.localPosition = sm.footRepresentation.localPosition.magnitude * sm.RawDown;
-    }
-  }
-
   protected void VertBodySpring() {
     // set sphere collision visualiser size
     sm.footRepresentation.localScale = new Vector3(sm.ProjectRadius, sm.ProjectRadius, sm.ProjectRadius) * 2f;
@@ -169,47 +135,6 @@ public abstract class SkateboardBaseState : State {
     sm.HipHelper.localPosition = new(sm.HipHelper.localPosition.x, height, sm.HipHelper.localPosition.z);
     sm.SmoothHipHelper.localPosition = new(sm.SmoothHipHelper.localPosition.x, smoothHeight, sm.SmoothHipHelper.localPosition.z);
     // sm.BodyMesh.position = sm.HipHelper.position;
-  }
-
-  protected void CalculateTurn() {
-    if (sm.Grounded) {
-      sm.FacingParent.rotation = Quaternion.LookRotation(Vector3.Cross(sm.Down, Vector3.Cross(sm.MainRB.transform.forward, sm.Down)), -sm.Down);
-
-      float turnTarget = sm.Input.turn;
-      if (!sm.CharacterAnimator.GetCurrentAnimatorStateInfo(0).IsName("idle")) turnTarget *= 1-sm.PushTurnReduction;
-      // sm.TruckTurnPercent = Mathf.SmoothDamp(sm.TruckTurnPercent, turnTarget, ref TurnSpeed, sm.TruckTurnDamping);
-      sm.TurnPercent = turnTarget;
-      var turnDeg = sm.TurnEaseBySpeed.Evaluate(sm.MainRB.velocity.magnitude/sm.TurnLockSpeed) * sm.TurnPercent * sm.MaxTurnDeg;
-      // sm.Facing.transform.localEulerAngles += Vector3.up * turnDeg;
-      sm.Facing.AddVelocity(turnDeg);
-
-      var velocity = Vector3.ProjectOnPlane(sm.MainRB.velocity, sm.Down);
-      
-      var velProjectedForwards = Vector3.Dot(velocity, sm.Facing.transform.forward);
-      var desiredVel = Mathf.Lerp(Mathf.Abs(velProjectedForwards), velocity.magnitude, sm.TurnSpeedConservation) * (sm.Facing.transform.forward * Mathf.Sign(velProjectedForwards));
-      var desiredVelChange = desiredVel - velocity;
-      var requiredAccel = desiredVelChange / Time.fixedDeltaTime;
-
-      sm.MainRB.AddForce(requiredAccel, ForceMode.Acceleration);
-
-      sm.LeanPercent = Mathf.SmoothDamp(sm.LeanPercent, turnTarget, ref LeanSpeed, sm.LeanDamping);
-      var leanValue = (sm.MainRB.velocity.magnitude/sm.TurnLockSpeed*sm.LeanPercent*0.5f)+0.5f;
-
-      // sm.ReallyDampedTruckTurnPercent = Mathf.SmoothDamp(sm.ReallyDampedTruckTurnPercent, turnTarget, ref ReallyDampedTurnSpeed, sm.TruckTurnDamping*8);
-      // var leanValue = (sm.TurnPercent*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
-      // var reallyDampedLeanValue = (sm.ReallyDampedTruckTurnPercent * (sm.MainRB.velocity.magnitude/(sm.TurnLockSpeed/3))*(sm.MaxTruckTurnDeg/sm.MaxAnimatedTruckTurnDeg)*0.5f) + 0.5f;
-      sm.CharacterAnimator.SetFloat("leanValue", 0.5f*turnDeg/sm.MaxAnimatedTruckTurnDeg + 0.5f);
-      sm.BoardIKTiltAnimator.SetFloat("leanValue", 0.5f*turnDeg/sm.MaxAnimatedTruckTurnDeg + 0.5f);
-      sm.CharacterLeanAnimator.SetFloat("leanValue", leanValue);
-    }
-  }
-
-  protected void CalculateAirTurn() {
-    if (!sm.Grounded) {
-      // between you and me, i never added this
-      // sm.Facing.AddTorque(sm.Input.turn*sm.AirTurnForce);
-      sm.Facing.AddVelocity(sm.Input.turn*sm.AirTurnStrength);
-    }
   }
 
   protected void StartPush() {
@@ -357,7 +282,7 @@ public abstract class SkateboardBaseState : State {
       // sm.Facing.orientation = (sm.Facing.orientation + 0.5f) % 1;
   }
 
-  protected void SetCrouching() {
+  protected void SetCrouchingOld() {
     // if input is crouching, we're crouching (and the recover timer should be reset)
     // if input is not crouching
       // if we've just released it, start the crouch recover timer, and keep crouching
@@ -405,15 +330,6 @@ public abstract class SkateboardBaseState : State {
 
   protected void FaceAlongRail() {
     sm.Facing.transform.rotation = Quaternion.LookRotation((Vector3.Dot(sm.GrindingRail.RailVector.normalized, sm.MainRB.velocity.normalized)*sm.GrindingRail.RailVector).normalized, Vector3.up);
-  }
-
-  protected void DisableSpinBody() {
-    sm.Facing.update = false;
-    sm.Facing.transform.localRotation = Quaternion.identity;
-  }
-
-  protected void EnableSpinBody() {
-    sm.Facing.update = true;
   }
 
   protected void StartGrindingParticles() {
@@ -485,9 +401,6 @@ public abstract class SkateboardBaseState : State {
     // reset any necessary properties
     sm.MainRB.velocity = Vector3.zero;
     sm.MainRB.angularVelocity = Vector3.zero;
-
-    sm.FacingParent.localRotation = Quaternion.identity;
-    // sm.Facing.Reset();
 
     sm.RawDown = Vector3.down;
     sm.Down = Vector3.down;

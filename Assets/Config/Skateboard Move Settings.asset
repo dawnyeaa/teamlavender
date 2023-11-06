@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSteer: 5
   steerInputSmoothing: 0
-  maxSpeed: 20
+  maxSpeed: 40
   acceleration: 0.6
   pushDuration: 1
   pushCurve:
@@ -86,15 +86,17 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  pushingMaxSlope: 30
   localCenterOfMass: {x: 0, y: -0.1, z: 0}
   inertiaTensor: {x: 5, y: 5, z: 5}
   upGravity: 0.8
-  downGravity: 1.5
+  downGravity: 2
   rotationalForce: 300
   rotationalDamping: 20
   rotationalLean: 0.01
-  slopeCrouchDamping: 0.3
+  slopeCrouchDamping: 0.2
   slopeCrouchFPS: 12
+  autoSwitchThreshold: 0.1
   speedCrouchCurve:
     serializedVersion: 2
     m_Curve:
@@ -130,20 +132,20 @@ MonoBehaviour:
     m_RotationOrder: 4
   spinAcceleration: 20
   spinMaxRps: 1
-  spinMaxRpsCrouching: 3
-  spinDelay: 0.1
+  spinMaxRpsCrouching: 1
+  spinDelay: 0.25
   rollingResistance: 0.005
   airResistance: 0
   tangentialFriction: 20
   distanceToGround: 0.21
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
-  truckDepenetrationSpring: 1000
+  truckDepenetrationSpring: 300
   truckDepenetrationDamper: 200
   wheelRadius: 0.12
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 0.000000005275586
+  lastEvaluatedBrakeThreshold: 0.033099204
   wallSlideDistance: 2
   wallSlideTorque: 200
   predictionMaxTime: 3

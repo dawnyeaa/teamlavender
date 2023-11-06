@@ -14,6 +14,7 @@ public class SkateboardMoveSettings : ScriptableObject
     public float acceleration = 1.0f;
     public float pushDuration = 1.0f;
     public AnimationCurve pushCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
+    public float pushingMaxSlope = 30f;
     public Vector3 localCenterOfMass = new (0.0f, -0.8f, 0.0f);
     public Vector3 inertiaTensor = new (0.3f, 0.4f, 0.04f);
     public float upGravity = 1.5f;
@@ -24,6 +25,7 @@ public class SkateboardMoveSettings : ScriptableObject
     public float rotationalLean = 10.0f;
     public float slopeCrouchDamping = 5f;
     public float slopeCrouchFPS = 12f;
+    public float autoSwitchThreshold = 0.1f;
     public AnimationCurve speedCrouchCurve;
     public float spinAcceleration = 10.0f;
     public float spinMaxRps = 1.0f;

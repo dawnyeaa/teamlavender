@@ -20,9 +20,9 @@ public class ComboController : MonoBehaviour {
 
   void FixedUpdate() {
     timeSinceInput += Time.fixedDeltaTime;
-    if (timeSinceInput > maxTimeBetweenInputs) {
-      ClearBuffer();
-    }
+    // if (timeSinceInput > maxTimeBetweenInputs) {
+    //   ClearBuffer();
+    // }
   }
 
   void Update() {
