@@ -126,7 +126,7 @@ public class SkateboardMoveState : SkateboardBaseState
         var rawSteerInput = sm.Input.turn;
         steer += (rawSteerInput * settings.maxSteer - steer) * (1.0f - settings.steerInputSmoothing);
 
-        modifiedSteer = steer * (sm.IsGoofy ? -1 : 1);
+        modifiedSteer = steer * GoofyMultiplier();
         
         float normalizedSteer = 0.5f * modifiedSteer / sm.MaxAnimatedTruckTurnDeg + 0.5f;
         sm.CharacterAnimator.SetFloat("leanValue", normalizedSteer);
@@ -148,6 +148,7 @@ public class SkateboardMoveState : SkateboardBaseState
         SetWheelSpinParticleChance();
         SetSpeedyLines();
         CheckFacing();
+        SpinWheels();
         // SetRollingVolume();
         //animator.Tick();
         
@@ -181,7 +182,9 @@ public class SkateboardMoveState : SkateboardBaseState
         if (GetForwardSpeed() < -settings.autoSwitchThreshold) OnSwitch2();
     }
 
-    private Vector3 GetForward() => transform.forward * (sm.IsGoofy ? -1 : 1);
+    private int GoofyMultiplier() => sm.IsGoofy ? -1 : 1;
+
+    private Vector3 GetForward() => transform.forward * GoofyMultiplier();
 
     private float GetForwardSpeed() => Vector3.Dot(GetForward(), body.velocity);
 
@@ -356,6 +359,13 @@ public class SkateboardMoveState : SkateboardBaseState
         var force = -velocity.normalized * velocity.sqrMagnitude * settings.airResistance;
         force -= Vector3.Project(velocity, GetForward()) * settings.rollingResistance;
         body.AddForce(force * body.mass, ForceMode.Acceleration);
+    }
+
+    private void SpinWheels() 
+    {
+        float circum = ThisIsJustTau.TAU * settings.wheelRadius;
+        float rotation = Time.fixedDeltaTime*GetForwardSpeed()*GoofyMultiplier()/circum;
+        sm.WheelSpinAnimationController.AddRotation(rotation*360f);
     }
 
     public override void DrawGizmos(bool selected)

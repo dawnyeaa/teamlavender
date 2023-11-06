@@ -134,6 +134,7 @@ public class SkateboardStateMachine : StateMachine {
   public Animator CharacterAnimator;
   public Animator BoardIKTiltAnimator;
   public Animator CharacterLeanAnimator;
+  public WheelController WheelSpinAnimationController;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
   public ParentConstraint LookatConstraint;

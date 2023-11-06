@@ -73,7 +73,7 @@ Shader "VFX/FlipbookInFront"
 
             Stencil {
               Ref 55
-              Comp Always
+              Comp NotEqual
               Pass Replace
             }
 
