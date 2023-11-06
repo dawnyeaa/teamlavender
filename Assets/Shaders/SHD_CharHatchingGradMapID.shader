@@ -24,6 +24,12 @@ Shader "Character/HatchingTexGradMapID" {
            "Queue" = "Geometry"
            "UniversalMaterialType" = "Lit" }
 
+    Stencil {
+      Ref 55
+      Comp Always
+      Pass Replace
+    }
+
     Cull Off
 
     HLSLINCLUDE

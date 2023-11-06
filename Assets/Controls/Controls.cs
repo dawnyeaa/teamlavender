@@ -91,15 +91,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ollieCrouch"",
-                    ""type"": ""Button"",
-                    ""id"": ""83528823-48cd-4d9d-99ec-528c5c805bfb"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""debug.reset"",
                     ""type"": ""Button"",
                     ""id"": ""7fe96717-757f-4620-a12e-71f4cc6f6422"",
@@ -112,6 +103,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""name"": ""debug.die"",
                     ""type"": ""Button"",
                     ""id"": ""de8f906f-b125-4de3-9875-bf93861ae5e2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""debug.pointsDisplay"",
+                    ""type"": ""Button"",
+                    ""id"": ""33b0abf2-d294-4fdb-994c-1f18745ccc48"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -542,17 +542,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0c6998c7-2065-45c8-b8ad-793f52cc1d60"",
-                    ""path"": ""<Gamepad>/rightStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""ollieCrouch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""2c3ba339-daeb-42ad-9783-c57ac7f13633"",
                     ""path"": ""<Keyboard>/backspace"",
                     ""interactions"": """",
@@ -581,6 +570,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4526bb36-904f-4819-986c-fe1d6ab3d956"",
+                    ""path"": ""<Keyboard>/insert"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""debug.pointsDisplay"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1091,9 +1091,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_pause = m_player.FindAction("pause", throwIfNotFound: true);
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
-        m_player_ollieCrouch = m_player.FindAction("ollieCrouch", throwIfNotFound: true);
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
         m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
+        m_player_debugpointsDisplay = m_player.FindAction("debug.pointsDisplay", throwIfNotFound: true);
         m_player_debugchangeScene = m_player.FindAction("debug.changeScene", throwIfNotFound: true);
         m_player_debugflyMode = m_player.FindAction("debug.flyMode", throwIfNotFound: true);
         m_player_comboInputButton = m_player.FindAction("comboInputButton", throwIfNotFound: true);
@@ -1180,9 +1180,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_pause;
     private readonly InputAction m_player_switch;
     private readonly InputAction m_player_rightStick;
-    private readonly InputAction m_player_ollieCrouch;
     private readonly InputAction m_player_debugreset;
     private readonly InputAction m_player_debugdie;
+    private readonly InputAction m_player_debugpointsDisplay;
     private readonly InputAction m_player_debugchangeScene;
     private readonly InputAction m_player_debugflyMode;
     private readonly InputAction m_player_comboInputButton;
@@ -1198,9 +1198,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @pause => m_Wrapper.m_player_pause;
         public InputAction @switch => m_Wrapper.m_player_switch;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
-        public InputAction @ollieCrouch => m_Wrapper.m_player_ollieCrouch;
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputAction @debugdie => m_Wrapper.m_player_debugdie;
+        public InputAction @debugpointsDisplay => m_Wrapper.m_player_debugpointsDisplay;
         public InputAction @debugchangeScene => m_Wrapper.m_player_debugchangeScene;
         public InputAction @debugflyMode => m_Wrapper.m_player_debugflyMode;
         public InputAction @comboInputButton => m_Wrapper.m_player_comboInputButton;
@@ -1235,15 +1235,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @rightStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
-                @ollieCrouch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
-                @ollieCrouch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
-                @ollieCrouch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnOllieCrouch;
                 @debugreset.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugreset.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugreset;
                 @debugdie.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
                 @debugdie.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
                 @debugdie.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugdie;
+                @debugpointsDisplay.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugpointsDisplay;
+                @debugpointsDisplay.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugpointsDisplay;
+                @debugpointsDisplay.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugpointsDisplay;
                 @debugchangeScene.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
                 @debugchangeScene.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
                 @debugchangeScene.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebugchangeScene;
@@ -1281,15 +1281,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @rightStick.started += instance.OnRightStick;
                 @rightStick.performed += instance.OnRightStick;
                 @rightStick.canceled += instance.OnRightStick;
-                @ollieCrouch.started += instance.OnOllieCrouch;
-                @ollieCrouch.performed += instance.OnOllieCrouch;
-                @ollieCrouch.canceled += instance.OnOllieCrouch;
                 @debugreset.started += instance.OnDebugreset;
                 @debugreset.performed += instance.OnDebugreset;
                 @debugreset.canceled += instance.OnDebugreset;
                 @debugdie.started += instance.OnDebugdie;
                 @debugdie.performed += instance.OnDebugdie;
                 @debugdie.canceled += instance.OnDebugdie;
+                @debugpointsDisplay.started += instance.OnDebugpointsDisplay;
+                @debugpointsDisplay.performed += instance.OnDebugpointsDisplay;
+                @debugpointsDisplay.canceled += instance.OnDebugpointsDisplay;
                 @debugchangeScene.started += instance.OnDebugchangeScene;
                 @debugchangeScene.performed += instance.OnDebugchangeScene;
                 @debugchangeScene.canceled += instance.OnDebugchangeScene;
@@ -1479,9 +1479,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
-        void OnOllieCrouch(InputAction.CallbackContext context);
         void OnDebugreset(InputAction.CallbackContext context);
         void OnDebugdie(InputAction.CallbackContext context);
+        void OnDebugpointsDisplay(InputAction.CallbackContext context);
         void OnDebugchangeScene(InputAction.CallbackContext context);
         void OnDebugflyMode(InputAction.CallbackContext context);
         void OnComboInputButton(InputAction.CallbackContext context);

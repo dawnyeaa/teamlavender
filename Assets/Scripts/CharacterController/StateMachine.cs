@@ -21,4 +21,14 @@ public abstract class StateMachine : MonoBehaviour {
       currentState?.Tick();
     }
   }
+  
+  private void OnDrawGizmos()
+  {
+    currentState?.DrawGizmos(false);
+  }
+  
+  private void OnDrawGizmosSelected()
+  {
+    currentState?.DrawGizmos(true);
+  }
 }
