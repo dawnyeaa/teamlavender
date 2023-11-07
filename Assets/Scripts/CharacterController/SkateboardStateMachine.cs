@@ -137,7 +137,9 @@ public class SkateboardStateMachine : StateMachine {
   public WheelController WheelSpinAnimationController;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
-  public ParentConstraint LookatConstraint;
+  public PositionConstraint FollowTargetConstraint;
+  public PositionConstraint LookAtTargetConstraint;
+  public CinemachineFreeLook cinemachineLook;
   public TransformHeirarchyMatch RagdollMatcher;
   public SpawnPointManager SpawnPointManager;
   public PointManager PointManager;

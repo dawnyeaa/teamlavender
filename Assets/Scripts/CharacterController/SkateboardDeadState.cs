@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations;
 public class SkateboardDeadState : SkateboardBaseState
@@ -13,12 +14,9 @@ public class SkateboardDeadState : SkateboardBaseState
   public override void Enter() {
     SoundEffectsManager.instance.PlaySoundFXClip(sm.DeathClip, sm.transform, 1);
     // change to ragdoll here
-    CharacterSource = sm.LookatConstraint.GetSource(0);
-    CharacterSource.weight = 0;
-    RagdollSource = sm.LookatConstraint.GetSource(1);
-    RagdollSource.weight = 1;
-    sm.LookatConstraint.SetSource(0, CharacterSource);
-    sm.LookatConstraint.SetSource(1, RagdollSource);
+    sm.FollowTargetConstraint.weight = 1;
+    sm.LookAtTargetConstraint.weight = 1;
+    sm.cinemachineLook.GetRig(1).GetCinemachineComponent<CinemachineComposer>().m_ScreenY = 0.5f;
     sm.RegularModel.gameObject.SetActive(false);
     sm.RagdollModel.gameObject.SetActive(true);
     sm.RagdollMatcher.Match();
@@ -37,10 +35,9 @@ public class SkateboardDeadState : SkateboardBaseState
 
   public override void Exit() {
     // change back from ragdoll here
-    CharacterSource.weight = 1;
-    sm.LookatConstraint.SetSource(0, CharacterSource);
-    RagdollSource.weight = 0;
-    sm.LookatConstraint.SetSource(1, RagdollSource);
+    sm.FollowTargetConstraint.weight = 0;
+    sm.LookAtTargetConstraint.weight = 0;
+    sm.cinemachineLook.GetRig(1).GetCinemachineComponent<CinemachineComposer>().m_ScreenY = 0.83f;
     sm.RagdollModel.gameObject.SetActive(false);
     sm.RegularModel.gameObject.SetActive(true);
     Spawn();

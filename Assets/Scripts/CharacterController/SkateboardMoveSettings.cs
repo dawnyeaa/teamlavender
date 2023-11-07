@@ -51,6 +51,8 @@ public class SkateboardMoveSettings : ScriptableObject
     [Space]
     public float wallSlideDistance;
     public float wallSlideTorque;
+    [Space]
+    public float maxWheelFriction;
     
     [Space]
     public float predictionMaxTime = 3.0f;

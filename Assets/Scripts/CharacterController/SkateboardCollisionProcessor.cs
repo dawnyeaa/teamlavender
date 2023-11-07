@@ -30,7 +30,7 @@ namespace CharacterController
 
             if (deltaSpeedKmpH > speedThresholdKmpH)
             {
-                target.Die(lastVelocity);
+                target.Die();
             }
 
             peak = Mathf.Max(peak, deltaSpeedKmpH);
