@@ -65,6 +65,8 @@ public class SkateboardMoveState : SkateboardBaseState
         body.velocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
 
+        sm.PointHandler.SetMaxSpeed(settings.maxSpeed);
+
         // StartRollingSFX();
     }
 
@@ -154,7 +156,7 @@ public class SkateboardMoveState : SkateboardBaseState
         
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
 
-        //sm.collisionProcessor.FixedUpdate(sm);
+        sm.collisionProcessor.FixedUpdate(sm);
         PassGroundSpeedToPointSystem();
         PassSpeedToMotionBlur();
 

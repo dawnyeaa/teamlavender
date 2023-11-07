@@ -175,8 +175,6 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
-
-    PointHandler.SetMaxSpeed(MaxSpeed);
   }
 
   public void OnOllieForce() {
