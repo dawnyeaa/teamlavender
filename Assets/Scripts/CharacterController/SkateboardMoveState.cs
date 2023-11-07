@@ -21,6 +21,8 @@ public class SkateboardMoveState : SkateboardBaseState
     public float jumpTimer;
     public float pushTimer;
 
+    public float currentPushForceFactor = 1;
+
     public Truck[] trucks = new Truck[4];
 
     public Transform transform => sm.transform;
@@ -119,6 +121,7 @@ public class SkateboardMoveState : SkateboardBaseState
         }
         sm.CharacterAnimator.SetTrigger("push");
         pushTimer = 1.0f;
+        currentPushForceFactor = settings.pushStrengthPerSpeed.Evaluate(GetForwardSpeed()/settings.maxSpeed);
     }
 
     public override void Tick()
@@ -307,6 +310,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var forwardSpeed = Vector3.Dot(GetForward(), body.velocity);
         var force = GetForward() * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
+        force *= currentPushForceFactor;
         force *= wheelsOnGround / 4.0f;
         body.AddForce(force * body.mass);
 
@@ -390,9 +394,9 @@ public class SkateboardMoveState : SkateboardBaseState
         public float rotation;
         public float evaluatedTangentialFriction;
 
-        public Vector3 Position => state.sm.transform.TransformPoint(Settings.truckOffset.x * xSign, Settings.truckOffset.y, Settings.truckOffset.z * zSign);
+        public Vector3 Position => state.sm.transform.TransformPoint(settings.truckOffset.x * xSign, settings.truckOffset.y, settings.truckOffset.z * zSign);
         public Quaternion Rotation => state.sm.transform.rotation * Quaternion.Euler(0.0f, state.modifiedSteer * zSign, 0.0f);
-        private SkateboardMoveSettings Settings => state.sm.moveSettings;
+        private SkateboardMoveSettings settings => state.sm.moveSettings;
         public Rigidbody Body => state.sm.MainRB;
 
         public Truck(SkateboardMoveState state, int xSign, int zSign)
@@ -417,7 +421,7 @@ public class SkateboardMoveState : SkateboardBaseState
             {
                 var velocity = Body.GetPointVelocity(groundHit.point);
                 var speed = Vector3.Dot(velocity, state.GetForward());
-                rotation += speed / Settings.wheelRadius * Time.deltaTime * Mathf.Rad2Deg;
+                rotation += speed / settings.wheelRadius * Time.deltaTime * Mathf.Rad2Deg;
             }
         }
 
@@ -426,7 +430,7 @@ public class SkateboardMoveState : SkateboardBaseState
             GetGroundRay();
 
             isOnGround = false;
-            var results = Physics.RaycastAll(groundRay, groundRayLength);
+            var results = Physics.RaycastAll(groundRay, groundRayLength, LayerMask.GetMask("Ground"));
             var best = float.MaxValue;
 
             foreach (var e in results)
@@ -442,7 +446,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
         private void GetGroundRay()
         {
-            groundRayLength = Settings.distanceToGround;
+            groundRayLength = settings.distanceToGround;
             groundRay = new Ray(Position, -state.transform.up);
         }
 
@@ -454,11 +458,11 @@ public class SkateboardMoveState : SkateboardBaseState
             {
                 var point = groundHit.point;
                 var normal = groundHit.normal;
-                force += Vector3.Project(groundHit.normal * (groundRayLength - groundHit.distance), normal) * Settings.truckDepenetrationSpring;
+                force += Vector3.Project(groundHit.normal * (groundRayLength - groundHit.distance), normal) * settings.truckDepenetrationSpring;
 
                 var velocity = Body.GetPointVelocity(point);
                 var dot = Vector3.Dot(velocity, normal);
-                force += normal * Mathf.Max(0.0f, -dot) * Settings.truckDepenetrationDamper;
+                force += normal * Mathf.Max(0.0f, -dot) * settings.truckDepenetrationDamper;
                 Body.AddForceAtPosition(force / 8 * Body.mass, point);
 
                 Debug.DrawLine(groundHit.point, point, Color.red);
@@ -472,7 +476,13 @@ public class SkateboardMoveState : SkateboardBaseState
             var right = Rotation * Vector3.right;
             var velocity = Body.GetPointVelocity(groundHit.point);
             var dot = Vector3.Dot(right, -velocity);
-            evaluatedTangentialFriction = dot * Settings.tangentialFriction;
+            evaluatedTangentialFriction = dot * settings.tangentialFriction;
+
+            if (evaluatedTangentialFriction > settings.maxWheelFriction)
+            {
+                state.sm.Die();
+            }
+
             var force = right * evaluatedTangentialFriction;
 
             Body.AddForceAtPosition(force * Body.mass, groundHit.point);

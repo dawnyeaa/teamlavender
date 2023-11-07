@@ -12,6 +12,8 @@ public class MotionBlurBlurringPass : ScriptableRenderPass {
   private static readonly int _tmpId1 = Shader.PropertyToID("tmpJFART1");
   RenderTargetIdentifier _tmpRT1;
 
+  RendererFeatureDynamicProperties _RFprops;
+
   public MotionBlurBlurringPass(string profilerTag, int motionBlurDataId) {
     // set up the profiler so it has a slot in there
     _profilingSampler = new ProfilingSampler(profilerTag);
@@ -40,6 +42,10 @@ public class MotionBlurBlurringPass : ScriptableRenderPass {
       // do the rendering!!!
       cmd.Blit(renderingData.cameraData.renderer.cameraColorTarget, _tmpRT1);
       cmd.SetGlobalTexture(Shader.PropertyToID("_Screen"), _tmpRT1);
+
+      _RFprops = renderingData.cameraData.camera.GetComponent<RendererFeatureDynamicProperties>();
+      if (_RFprops)
+        cmd.SetGlobalFloat(Shader.PropertyToID("_MaxBlurSize"), _RFprops.MotionBlurSize);
       cmd.Blit(_motionBlurDataRT, renderingData.cameraData.renderer.cameraColorTarget, _blurringMaterial);
     }
 

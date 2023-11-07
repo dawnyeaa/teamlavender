@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
 
@@ -12,7 +13,8 @@ public class CharacterPointHandler : MonoBehaviour {
   // 4. ???
   PointManager pointSystem;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
-  [SerializeField] Material speedometerDisplay;
+  [SerializeField] Image speedometerDisplay;
+  Material speedometerDisplayMat;
   float groundSpeed = 0;
   public float groundSpeedSlowSpeed = 0.1f;
   public float groundSpeedSlowDuration = 1f;
@@ -21,10 +23,11 @@ public class CharacterPointHandler : MonoBehaviour {
 
   public void Start() {
     pointSystem = PointManager.instance;
+    speedometerDisplayMat = new(speedometerDisplay.material);
+    speedometerDisplay.material = speedometerDisplayMat;
     if (slowSpeedDisplay != null)
       slowSpeedDisplay.text = groundSpeedSlowSpeed.ToString("F");
-    if (speedometerDisplay != null)
-      speedometerDisplay.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
+    speedometerDisplayMat.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
   }
 
   public void CompleteTrick(string trickName) {
@@ -49,16 +52,14 @@ public class CharacterPointHandler : MonoBehaviour {
   public void SetMaxSpeed(float maxSpeed) {
     if (maxSpeedDisplay != null)
       maxSpeedDisplay.text = maxSpeed.ToString("F");
-    if (speedometerDisplay != null)
-      speedometerDisplay.SetFloat("_maxSpeed", maxSpeed);
+    speedometerDisplayMat.SetFloat("_maxSpeed", maxSpeed);
   }
 
   public void SetSpeed(float speed) {
     groundSpeed = speed;
     if (groundSpeedDisplay != null)
       groundSpeedDisplay.text = groundSpeed.ToString("F");
-    if (speedometerDisplay != null)
-      speedometerDisplay.SetFloat("_currentSpeed", speed);
+    speedometerDisplayMat.SetFloat("_currentSpeed", speed);
     if (groundSpeed < groundSpeedSlowSpeed) {
       if (slowDurationTimer < groundSpeedSlowDuration) {
         slowDurationTimer += Time.deltaTime;
