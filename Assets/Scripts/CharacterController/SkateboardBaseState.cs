@@ -216,7 +216,7 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void PassSpeedToMotionBlur() {
-    sm.MotionBlurMat.SetFloat("_MaxBlurSize", sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed);
+    sm.RFprops.MotionBlurSize = sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed;
   }
 
   protected void SetMovingFriction() {

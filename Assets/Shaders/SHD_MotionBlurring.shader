@@ -1,7 +1,6 @@
 Shader "PostFX/MotionBlurring" {
   Properties {
     _MainTex ("Texture", 2D) = "white" {}
-    _MaxBlurSize ("Max Blur Size", Float) = 20
     _BlurResolution ("Blur Resolution", Int) = 20
   }
 

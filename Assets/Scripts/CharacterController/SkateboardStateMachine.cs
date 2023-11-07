@@ -158,7 +158,7 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
   public CharacterPointHandler PointHandler;
-  public Material MotionBlurMat;
+  public RendererFeatureDynamicProperties RFprops;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;

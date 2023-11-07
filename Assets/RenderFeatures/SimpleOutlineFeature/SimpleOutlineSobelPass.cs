@@ -10,6 +10,8 @@ public class SimpleOutlineSobelPass : ScriptableRenderPass {
   private RenderTargetIdentifier _depthNormalRT;
   private static readonly int _tmpId = Shader.PropertyToID("tmpScreenRT");
   RenderTargetIdentifier _tmpRT;
+
+  RendererFeatureDynamicProperties _RFprops;
   public SimpleOutlineSobelPass(string profilerTag, int depthNormalId) {
     _profilingSampler = new ProfilingSampler(profilerTag);
     _depthNormalId = depthNormalId;
@@ -32,6 +34,11 @@ public class SimpleOutlineSobelPass : ScriptableRenderPass {
     using (new ProfilingScope(cmd, _profilingSampler)) {
       cmd.Blit(renderingData.cameraData.renderer.cameraColorTarget, _tmpRT);
       cmd.SetGlobalTexture(Shader.PropertyToID("_Screen"), _tmpRT);
+
+      _RFprops = renderingData.cameraData.camera.GetComponent<RendererFeatureDynamicProperties>();
+      if (_RFprops) {
+        cmd.SetGlobalFloat(Shader.PropertyToID("_CameraWarpingFactor"), _RFprops.LineWobbleCameraFactor);
+      }
       cmd.Blit(_depthNormalRT, renderingData.cameraData.renderer.cameraColorTarget, _simpleOutlineMaterial);
     }
 
