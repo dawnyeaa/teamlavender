@@ -87,6 +87,30 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   pushingMaxSlope: 30
+  pushStrengthPerSpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   localCenterOfMass: {x: 0, y: -0.1, z: 0}
   inertiaTensor: {x: 5, y: 5, z: 5}
   upGravity: 0.8
@@ -145,10 +169,10 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 0.033099204
+  lastEvaluatedBrakeThreshold: 1
   wallSlideDistance: 2
   wallSlideTorque: 200
-  maxWheelFriction: 100
+  maxWheelFriction: 250
   predictionMaxTime: 3
   predictionTimestep: 0.02
   predictionWeight: 0.2

@@ -21,6 +21,8 @@ public class SkateboardMoveState : SkateboardBaseState
     public float jumpTimer;
     public float pushTimer;
 
+    public float currentPushForceFactor = 1;
+
     public Truck[] trucks = new Truck[4];
 
     public Transform transform => sm.transform;
@@ -119,6 +121,7 @@ public class SkateboardMoveState : SkateboardBaseState
         }
         sm.CharacterAnimator.SetTrigger("push");
         pushTimer = 1.0f;
+        currentPushForceFactor = settings.pushStrengthPerSpeed.Evaluate(GetForwardSpeed()/settings.maxSpeed);
     }
 
     public override void Tick()
@@ -307,6 +310,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var forwardSpeed = Vector3.Dot(GetForward(), body.velocity);
         var force = GetForward() * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
+        force *= currentPushForceFactor;
         force *= wheelsOnGround / 4.0f;
         body.AddForce(force * body.mass);
 
@@ -426,7 +430,7 @@ public class SkateboardMoveState : SkateboardBaseState
             GetGroundRay();
 
             isOnGround = false;
-            var results = Physics.RaycastAll(groundRay, groundRayLength);
+            var results = Physics.RaycastAll(groundRay, groundRayLength, LayerMask.GetMask("Ground"));
             var best = float.MaxValue;
 
             foreach (var e in results)
