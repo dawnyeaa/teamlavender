@@ -30,8 +30,10 @@ public class StickDisplay : MonoBehaviour {
   public float movementScale = 100f;
   public Vector2 newNumpadPos = Vector2.zero, newRawPos = Vector2.zero;
 
-  public Transform numpadCursor, rawCursor;
-  public TrailRenderer numpadTrail;
+  public Transform numpadCursor, numpadShadowCursor, rawCursor;
+  public TrailRenderer numpadTrail, numpadShadowTrail;
+  public float shadowDepth = -0.15f;
+  public float shadowOffset = 0.01f;
   private int lastIndex;
   void Update() {
     if (input.rsNumpad == 0) {
@@ -47,11 +49,13 @@ public class StickDisplay : MonoBehaviour {
           for (int i = 1; i < 6; ++i) {
             var slerped = Vector3.Slerp(lastNumpadPos, newNumpadPos, (float)i/6);
             numpadTrail.AddPosition(transform.TransformPoint(slerped)+new Vector3(0, 0, numpadCursor.position.z));
+            numpadShadowTrail.AddPosition(transform.TransformPoint(slerped)+new Vector3(shadowOffset, -shadowOffset, shadowDepth));
           }
         }
       }
       newNumpadPos = STICK_DIRECTIONS[input.rsNumpad-1]*movementScale;
       numpadCursor.localPosition = new(newNumpadPos.x, newNumpadPos.y, numpadCursor.localPosition.z);
+      numpadShadowCursor.localPosition = new(newNumpadPos.x+shadowOffset, newNumpadPos.y-shadowOffset, shadowDepth);
       lastIndex = input.rsNumpad-1;
     }
     newRawPos = input.rsRaw*movementScale;

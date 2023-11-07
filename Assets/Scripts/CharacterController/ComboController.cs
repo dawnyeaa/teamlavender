@@ -12,6 +12,7 @@ public class ComboController : MonoBehaviour {
   public List<Combo> comboList;
   public const int capacity = 5;
   public TMPro.TextMeshProUGUI comboNameDisplay;
+  public Combo currentlyPlayingCombo { get; private set; }
   public float comboNameDisplayTime = 5f;
   [ReadOnly, SerializeField] private float comboDisplayTimer = 0;
   public ComboController() {
@@ -27,7 +28,7 @@ public class ComboController : MonoBehaviour {
 
   void Update() {
     if (comboDisplayTimer >= comboNameDisplayTime)
-      SetComboDisplay("");
+      ResetComboDisplay();
     else
       comboDisplayTimer += Time.deltaTime;
   }
@@ -60,8 +61,8 @@ public class ComboController : MonoBehaviour {
         if ((int)reversedbuffer[bufferI] == (int)comboInput[comboI]) {
           comboI++;
           if (comboI >= comboInput.Count) {
-            SetComboDisplay(combo._ComboDisplayName);
             combo.ExecuteCombo();
+            currentlyPlayingCombo = combo;
             ClearBuffer();
             return;
           }
@@ -74,11 +75,18 @@ public class ComboController : MonoBehaviour {
     }
   }
 
-  private void SetComboDisplay(string comboDisplayName) {
-    if (comboNameDisplay != null) {
-      comboNameDisplay.text = comboDisplayName;
-      if (comboDisplayName.Length > 0)
+  public void SetComboDisplay() {
+    if (comboNameDisplay != null && currentlyPlayingCombo != null) {
+      var displayName = currentlyPlayingCombo._ComboDisplayName;
+      comboNameDisplay.text = displayName;
+      if (displayName.Length > 0)
         comboDisplayTimer = 0;
+    }
+  }
+
+  public void ResetComboDisplay() {
+    if (comboNameDisplay != null) {
+      comboNameDisplay.text = "";
     }
   }
 }

@@ -5,14 +5,19 @@ using UnityEngine;
 public class AnimationEventHandler : MonoBehaviour {
   public SkateboardStateMachine sm;
   public CoolTimeController coolTime;
+  public ComboController comboController;
   public float coolTimeAirDurationThreshold = 1.5f;
   public float framesPerSecond = 30;
+  public List<string> nonCoolTimeTricks = new() {
+    "ollie",
+    "nollie"
+  };
   public void OnOllieForce() {
     sm.OnOllieForce();
   }
 
   public void CoolTime() {
-    if (sm.TimeToLand > coolTimeAirDurationThreshold)
+    if (sm.TimeToLand > coolTimeAirDurationThreshold && !nonCoolTimeTricks.Contains(comboController.currentlyPlayingCombo._ComboName))
       coolTime.StartCoolTime();
   }
 
@@ -26,5 +31,14 @@ public class AnimationEventHandler : MonoBehaviour {
 
   public void BrakeForce() {
     sm.BrakeForce();
+  }
+
+  public void DisplayCombo() {
+    comboController.SetComboDisplay();
+  }
+
+  public void ComboStarted() {
+    CoolTime();
+    DisplayCombo();
   }
 }
