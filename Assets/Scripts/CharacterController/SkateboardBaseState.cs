@@ -216,7 +216,7 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void PassSpeedToMotionBlur() {
-    sm.MotionBlurMat.SetFloat("_MaxBlurSize", sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed);
+    sm.RFprops.MotionBlurSize = sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed;
   }
 
   protected void SetMovingFriction() {
@@ -395,6 +395,13 @@ public abstract class SkateboardBaseState : State {
     sm.MainRB.AddForce(sm.GrindingRail.RailOutside.normalized*sm.ExitRailForce, ForceMode.Acceleration);
   }
 
+  protected void ResetFacing()
+  {
+      sm.IsGoofy = false;
+      sm.CharacterAnimator.SetFloat("mirrored", 0);
+      sm.Facing.localRotation = Quaternion.identity;
+  }
+
   public void Spawn() {
     // find the nearest spawn point
     (Vector3 pos, Quaternion rot) = sm.SpawnPointManager.GetNearestSpawnPoint(sm.transform.position);
@@ -406,6 +413,7 @@ public abstract class SkateboardBaseState : State {
     sm.Down = Vector3.down;
     sm.Grounded = false;
     sm.TurnPercent = 0;
+    ResetFacing();
     // move to that nearest spawn point;
     sm.MainRB.MovePosition(pos);
     sm.transform.rotation = rot;
