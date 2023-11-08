@@ -60,6 +60,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "manny",
+                    "type": "Value",
+                    "id": "07a177a8-5d4b-4657-81b0-6fd64e162bdf",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "rightStick",
                     "type": "PassThrough",
                     "id": "2b5fdc0f-4303-4b92-a6a6-29bba3fd010f",
@@ -559,6 +568,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "debug.pointsDisplay",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2090bd8e-a408-4206-89cf-a1e8b6fabdea",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "manny",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

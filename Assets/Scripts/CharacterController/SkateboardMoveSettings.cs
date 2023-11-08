@@ -37,6 +37,8 @@ public class SkateboardMoveSettings : ScriptableObject
     [Range(0.0f, 50.0f)] public float tangentialFriction = 20.0f;
 
     [Space]
+    public Vector2 mannyWindow = new(0.1f, 0.9f);
+    [Space]
     public float distanceToGround = 0.13f;
     public Vector3 truckOffset;
     public float truckDepenetrationSpring = 100.0f;
