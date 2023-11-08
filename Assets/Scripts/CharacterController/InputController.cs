@@ -50,6 +50,8 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Vector2 rightStick;
   public Vector2 rightStickDigital;
 
+  public float mannyValue = 0;
+
   public float rightStickDead = 0.2f;
   public float comboStickDead = 0.2f;
   public float comboStickMidRadius = 0.1f;
@@ -154,6 +156,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public void OnRightStick(InputAction.CallbackContext context) {
     rightStick = context.ReadValue<Vector2>();
     // rightStickDigital = ParseStickDigitalDir(rightStick, rightStickDead);
+  }
+
+  public void OnManny(InputAction.CallbackContext context) {
+    mannyValue = context.ReadValue<float>();
   }
 
   public void OnOllie(InputAction.CallbackContext context) {
