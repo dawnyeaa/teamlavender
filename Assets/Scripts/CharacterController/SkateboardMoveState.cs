@@ -140,6 +140,7 @@ public class SkateboardMoveState : SkateboardBaseState
         body.centerOfMass = settings.localCenterOfMass;
         body.inertiaTensor = settings.inertiaTensor;
         
+        SetManny();
         SetCrouching();
         UpdateTrucks();
         DoPrediction();
@@ -217,6 +218,12 @@ public class SkateboardMoveState : SkateboardBaseState
         }
         sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
         sm.CharacterAnimator.SetBool("nollieCrouching", sm.Input.nolliecrouching);
+    }
+
+    private void SetManny() 
+    {
+        bool inManny = sm.Input.mannyValue > settings.mannyWindow.x && sm.Input.mannyValue < settings.mannyWindow.y;
+        sm.CharacterAnimator.SetBool("manny", inManny);
     }
 
     private void ApplyBrakeForce()

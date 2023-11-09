@@ -82,6 +82,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""manny"",
+                    ""type"": ""Value"",
+                    ""id"": ""07a177a8-5d4b-4657-81b0-6fd64e162bdf"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""rightStick"",
                     ""type"": ""PassThrough"",
                     ""id"": ""2b5fdc0f-4303-4b92-a6a6-29bba3fd010f"",
@@ -581,6 +590,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""debug.pointsDisplay"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2090bd8e-a408-4206-89cf-a1e8b6fabdea"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""manny"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1090,6 +1110,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_brake = m_player.FindAction("brake", throwIfNotFound: true);
         m_player_pause = m_player.FindAction("pause", throwIfNotFound: true);
         m_player_switch = m_player.FindAction("switch", throwIfNotFound: true);
+        m_player_manny = m_player.FindAction("manny", throwIfNotFound: true);
         m_player_rightStick = m_player.FindAction("rightStick", throwIfNotFound: true);
         m_player_debugreset = m_player.FindAction("debug.reset", throwIfNotFound: true);
         m_player_debugdie = m_player.FindAction("debug.die", throwIfNotFound: true);
@@ -1179,6 +1200,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_brake;
     private readonly InputAction m_player_pause;
     private readonly InputAction m_player_switch;
+    private readonly InputAction m_player_manny;
     private readonly InputAction m_player_rightStick;
     private readonly InputAction m_player_debugreset;
     private readonly InputAction m_player_debugdie;
@@ -1197,6 +1219,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @brake => m_Wrapper.m_player_brake;
         public InputAction @pause => m_Wrapper.m_player_pause;
         public InputAction @switch => m_Wrapper.m_player_switch;
+        public InputAction @manny => m_Wrapper.m_player_manny;
         public InputAction @rightStick => m_Wrapper.m_player_rightStick;
         public InputAction @debugreset => m_Wrapper.m_player_debugreset;
         public InputAction @debugdie => m_Wrapper.m_player_debugdie;
@@ -1232,6 +1255,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @switch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
                 @switch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
                 @switch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwitch;
+                @manny.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnManny;
+                @manny.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnManny;
+                @manny.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnManny;
                 @rightStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
                 @rightStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRightStick;
@@ -1278,6 +1304,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @switch.started += instance.OnSwitch;
                 @switch.performed += instance.OnSwitch;
                 @switch.canceled += instance.OnSwitch;
+                @manny.started += instance.OnManny;
+                @manny.performed += instance.OnManny;
+                @manny.canceled += instance.OnManny;
                 @rightStick.started += instance.OnRightStick;
                 @rightStick.performed += instance.OnRightStick;
                 @rightStick.canceled += instance.OnRightStick;
@@ -1478,6 +1507,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnBrake(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnSwitch(InputAction.CallbackContext context);
+        void OnManny(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
         void OnDebugreset(InputAction.CallbackContext context);
         void OnDebugdie(InputAction.CallbackContext context);
