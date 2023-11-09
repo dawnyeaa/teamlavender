@@ -52,8 +52,11 @@ public class SkateboardMoveSettings : ScriptableObject
     [Range(0.0f, 1.0f)] public float lastEvaluatedBrakeThreshold;
 
     [Space]
+    public float hipsHeight;
     public float wallSlideDistance;
-    public float wallSlideTorque;
+    public float wallSlideTorqueP = 0.5f;
+    public float wallSlideTorqueD = 1f;
+    public float wallSlideSnapThreshold = 0.1f;
     [Space]
     public float maxWheelFriction;
     
