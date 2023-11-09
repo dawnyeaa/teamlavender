@@ -161,6 +161,7 @@ MonoBehaviour:
   rollingResistance: 0.005
   airResistance: 0
   tangentialFriction: 20
+  mannyWindow: {x: 0.1, y: 0.9}
   distanceToGround: 0.21
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
   truckDepenetrationSpring: 300
@@ -169,9 +170,13 @@ MonoBehaviour:
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 1
-  wallSlideDistance: 2
-  wallSlideTorque: 200
+  lastEvaluatedBrakeThreshold: 1.28979214e-11
+  hipsHeight: 2
+  wallSlideConservation: 1
+  wallSlideDistance: 1
+  wallSlideTorqueP: 7
+  wallSlideTorqueD: 0.1
+  wallSlideSnapThreshold: 0.05
   maxWheelFriction: 250
   predictionMaxTime: 3
   predictionTimestep: 0.02

@@ -113,7 +113,7 @@ public class SkateboardMoveState : SkateboardBaseState
         if (pushTimer > 0.0) return;
 
         var up = upVector;
-        var slopeAngle = Vector3.Angle(up, Vector3.up);
+        var slopeAngle = Mathf.Abs(Vector3.Angle(GetForward(), Vector3.ProjectOnPlane(GetForward(), Vector3.up)));
         if (slopeAngle > settings.pushingMaxSlope) 
         {
             pushTimer = 0;
@@ -194,15 +194,73 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private float GetForwardSpeed() => Vector3.Dot(GetForward(), body.velocity);
 
+    Vector3 CircleWallCheck(float radius, Vector3 forward, Vector3 up, Vector3 pos, int rayCount)
+    {
+        var closestDistance = float.PositiveInfinity;
+        RaycastHit closestHit = new();
+        bool hit = false;
+        for (int i = 0; i < rayCount; ++i)
+        {
+            var direction = Quaternion.AngleAxis(i*(360/rayCount), up)*forward;
+
+            Debug.DrawRay(pos, direction*radius);
+
+            if (!Physics.Raycast(pos, direction, out RaycastHit hitInfo, radius, LayerMask.GetMask("Ground"))) continue;
+
+            if (hitInfo.distance < closestDistance) 
+            {
+                closestDistance = hitInfo.distance;
+                closestHit = hitInfo;
+                hit = true;
+            }
+        }
+
+        if (hit) 
+        {
+            Debug.DrawRay(closestHit.point, closestHit.normal);
+            return closestHit.normal;
+        }
+        return Vector3.zero;
+    }
+
     private void CheckForWalls()
     {
         var fwdSpeed = GetForwardSpeed();
         var ray = new Ray(transform.position, GetForward());
-        if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance, LayerMask.NameToLayer("Ground"))) return;
+        var boardForwardExtent = body.GetComponent<BoxCollider>().size.z/2;
 
-        var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
-        var torque = cross  * settings.wallSlideTorque * fwdSpeed;
-        body.AddTorque(torque);
+        var pos = transform.position+(settings.hipsHeight*transform.up);
+
+        var wallNorm = CircleWallCheck(settings.wallSlideDistance, GetForward(), Vector3.up, pos, 10);
+
+        // if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance, LayerMask.GetMask("Ground"))) return;
+
+        if (wallNorm.magnitude > 0.1f)
+        {
+            if (Vector3.Dot(wallNorm, GetForward()) < -Mathf.Epsilon)
+            {
+                var desiredDir = Vector3.ProjectOnPlane(GetForward(), wallNorm).normalized;
+
+                if (Vector3.Dot(desiredDir, GetForward()) > (1-Mathf.Clamp01(settings.wallSlideSnapThreshold)))
+                {
+                    body.MoveRotation(Quaternion.LookRotation(desiredDir * GoofyMultiplier(), transform.up));
+                    body.angularVelocity = Vector3.zero;
+                    body.velocity = desiredDir * GetForwardSpeed();
+                }
+
+                var cross = Vector3.Cross(GetForward(), desiredDir);
+
+                var angle = Mathf.Deg2Rad * Vector3.Angle(desiredDir, GetForward()) / Time.fixedDeltaTime;
+                var angularVelocity = Vector3.Dot(body.angularVelocity, cross);
+
+                var torque = cross * (settings.wallSlideTorqueP * angle - settings.wallSlideTorqueD * angularVelocity);
+                body.AddTorque(torque);
+            }
+        }
+
+        // var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
+        // var torque = cross  * settings.wallSlideTorque * fwdSpeed;
+        // body.AddTorque(torque);
     }
 
     private void SetCrouching() 
@@ -306,8 +364,7 @@ public class SkateboardMoveState : SkateboardBaseState
         if (!isOnGround) return;
         if (pushTimer <= 0.0f) return;
 
-        var up = upVector;
-        var slopeAngle = Vector3.Angle(up, Vector3.up);
+        var slopeAngle = Mathf.Abs(Vector3.Angle(GetForward(), Vector3.ProjectOnPlane(GetForward(), Vector3.up)));
         if (slopeAngle > settings.pushingMaxSlope)
         {
             sm.CharacterAnimator.Play("idle");
