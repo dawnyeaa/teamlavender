@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
+using Unity.Mathematics;
 
 public class CharacterPointHandler : MonoBehaviour {
   // different ways to get points
@@ -16,15 +17,18 @@ public class CharacterPointHandler : MonoBehaviour {
   PointManager pointSystem;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
   [SerializeField] Image speedometerDisplay;
-  Material speedometerDisplayMat;
-  bool onGround;
+  private Material speedometerDisplayMat;
+  public int pointsPerHalfTurn = 10;
+  bool onGround = true;
   float groundSpeed = 0;
-  float turnAmount = 0;
+  float orientation = 0;
+  float cwturnAmount = 0;
+  float ccwturnAmount = 0;
   public float groundSpeedSlowSpeed = 0.1f;
   public float groundSpeedSlowDuration = 1f;
   float slowDurationTimer = 0;
 
-  public void Start() {
+  void Start() {
     pointSystem = PointManager.instance;
     speedometerDisplayMat = new(speedometerDisplay.material);
     speedometerDisplay.material = speedometerDisplayMat;
@@ -32,6 +36,10 @@ public class CharacterPointHandler : MonoBehaviour {
       slowSpeedDisplay.text = groundSpeedSlowSpeed.ToString("F");
     if (speedometerDisplayMat)
       speedometerDisplayMat.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
+  }
+
+  void Update() {
+
   }
 
   public void CompleteTrick(Combo trick) {
@@ -50,6 +58,23 @@ public class CharacterPointHandler : MonoBehaviour {
 
   public void Die() {
     pointSystem.EndLine();
+  }
+
+  private void ResolveRotation() {
+    if (cwturnAmount < 0.5f && ccwturnAmount < 0.5f) return;
+    if (cwturnAmount > ccwturnAmount) {
+
+    }
+    else {
+
+    }
+    var halfturns = Mathf.FloorToInt(Mathf.Max(cwturnAmount, ccwturnAmount)*2f);
+    pointSystem.AddPoints(halfturns * pointsPerHalfTurn);
+  }
+
+  private void Landed() {
+    ResolveRotation();
+    ValidateTricks();
   }
 
   public void SetMaxSpeed(float maxSpeed) {
@@ -77,5 +102,14 @@ public class CharacterPointHandler : MonoBehaviour {
     else {
       slowDurationTimer = 0;
     }
+  }
+
+  public void SetGrounded(bool isOnGround) {
+    if (!onGround && isOnGround) Landed();
+    onGround = isOnGround;
+  }
+
+  public void SetOrientation(Vector3 up, Vector3 forward) {
+    
   }
 }

@@ -194,7 +194,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void CheckFacing() 
     {
-        if (GetForwardSpeed() < -settings.autoSwitchThreshold) OnSwitch2();
+        if (GetForwardSpeed() < -settings.autoSwitchThreshold && isOnGround) OnSwitch2();
     }
 
     private int GoofyMultiplier() => sm.IsGoofy ? -1 : 1;
