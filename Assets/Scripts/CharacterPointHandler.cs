@@ -10,16 +10,19 @@ public class CharacterPointHandler : MonoBehaviour {
   // 1. airtime
   // 2. tricks
   // 3. grind time
-  // 4. ???
+  // 4. manny time
+  // 5. air turns
+  // 6. ???
   PointManager pointSystem;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
   [SerializeField] Image speedometerDisplay;
   Material speedometerDisplayMat;
+  bool onGround;
   float groundSpeed = 0;
+  float turnAmount = 0;
   public float groundSpeedSlowSpeed = 0.1f;
   public float groundSpeedSlowDuration = 1f;
   float slowDurationTimer = 0;
-  public Dictionary<string, int> trickPoints;
 
   public void Start() {
     pointSystem = PointManager.instance;
@@ -31,18 +34,17 @@ public class CharacterPointHandler : MonoBehaviour {
       speedometerDisplayMat.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
   }
 
-  public void CompleteTrick(string trickName) {
+  public void CompleteTrick(Combo trick) {
     // depending on the trick, add points corresponding to that trick
-    if (trickPoints == null || !trickPoints.ContainsKey(trickName)) return;
-    pointSystem.AddPoints(trickPoints[trickName]);
+    pointSystem.AddPoints(trick._ComboTrickValue);
   }
 
   public void ValidateTricks() {
     pointSystem.Validate();
   }
 
-  public void CompleteAndValidateTrick(string trickName) {
-    CompleteTrick(trickName);
+  public void CompleteAndValidateTrick(Combo trick) {
+    CompleteTrick(trick);
     ValidateTricks();
   }
 
