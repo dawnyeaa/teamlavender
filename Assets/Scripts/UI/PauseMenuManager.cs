@@ -48,8 +48,8 @@ public class PauseMenuManager : MonoBehaviour {
     paused = true;
     camInput.enabled = false;
     gameplayUI.SetActive(false);
-    PauseMenuDefault.ManualSelect();
     PauseViewfinderAnimator.SetBool("enabled", true);
+    PauseMenuDefault.ManualSelect();
     extraInput.OnUnpausePerformed += ResumeGame;
     ChangeMenu(0);
   }
