@@ -27,7 +27,8 @@ public class CharacterPointHandler : MonoBehaviour {
     speedometerDisplay.material = speedometerDisplayMat;
     if (slowSpeedDisplay != null)
       slowSpeedDisplay.text = groundSpeedSlowSpeed.ToString("F");
-    speedometerDisplayMat.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
+    if (speedometerDisplayMat)
+      speedometerDisplayMat.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
   }
 
   public void CompleteTrick(string trickName) {
@@ -52,14 +53,16 @@ public class CharacterPointHandler : MonoBehaviour {
   public void SetMaxSpeed(float maxSpeed) {
     if (maxSpeedDisplay != null)
       maxSpeedDisplay.text = maxSpeed.ToString("F");
-    speedometerDisplayMat.SetFloat("_maxSpeed", maxSpeed);
+    if (speedometerDisplayMat)
+      speedometerDisplayMat.SetFloat("_maxSpeed", maxSpeed);
   }
 
   public void SetSpeed(float speed) {
     groundSpeed = speed;
     if (groundSpeedDisplay != null)
       groundSpeedDisplay.text = groundSpeed.ToString("F");
-    speedometerDisplayMat.SetFloat("_currentSpeed", speed);
+    if (speedometerDisplayMat)
+      speedometerDisplayMat.SetFloat("_currentSpeed", speed);
     if (groundSpeed < groundSpeedSlowSpeed) {
       if (slowDurationTimer < groundSpeedSlowDuration) {
         slowDurationTimer += Time.deltaTime;

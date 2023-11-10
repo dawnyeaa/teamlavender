@@ -110,13 +110,22 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void OnPush()
     {
-        if (pushTimer > 0.0) return;
+        if (pushTimer > 0.0)
+        {
+            if (!sm.PushBuffered)
+            {
+                sm.CharacterAnimator.SetTrigger("push");
+                sm.PushBuffered = true;
+            }
+            return;
+        }
 
-        var up = upVector;
         var slopeAngle = Mathf.Abs(Vector3.Angle(GetForward(), Vector3.ProjectOnPlane(GetForward(), Vector3.up)));
         if (slopeAngle > settings.pushingMaxSlope) 
         {
             pushTimer = 0;
+            sm.CharacterAnimator.ResetTrigger("push");
+            sm.PushBuffered = false;
             return;
         }
         sm.CharacterAnimator.SetTrigger("push");
@@ -271,6 +280,8 @@ public class SkateboardMoveState : SkateboardBaseState
             if (pushTimer > 0) 
             {
                 sm.CharacterAnimator.Play("idle");
+                sm.PushBuffered = false;
+                sm.CharacterAnimator.ResetTrigger("push");
                 pushTimer = 0;
             }
         }
@@ -362,12 +373,22 @@ public class SkateboardMoveState : SkateboardBaseState
     private void ApplyPushForce()
     {   
         if (!isOnGround) return;
-        if (pushTimer <= 0.0f) return;
+        if (pushTimer <= 0.0f)
+        {
+            if (sm.PushBuffered)
+            {
+                sm.PushBuffered = false;
+                pushTimer = 1;
+                currentPushForceFactor = settings.pushStrengthPerSpeed.Evaluate(GetForwardSpeed()/settings.maxSpeed);
+            }
+            return;
+        }
 
         var slopeAngle = Mathf.Abs(Vector3.Angle(GetForward(), Vector3.ProjectOnPlane(GetForward(), Vector3.up)));
         if (slopeAngle > settings.pushingMaxSlope)
         {
             sm.CharacterAnimator.Play("idle");
+            sm.CharacterAnimator.ResetTrigger("push");
             pushTimer = 0;
             return;
         }
