@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ButtonSelectionHandler : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
+  public Behaviour selectionDisplay;
+  public ScrollRectHandler scrollBox;
   private bool setup = false;
   GameObject selectionArrow;
   Selectable selectable;
@@ -16,30 +18,39 @@ public class ButtonSelectionHandler : MonoBehaviour, ISelectHandler, IDeselectHa
 
   private void Setup() {
     if (!setup) {
-      selectionArrow = transform.GetChild(0).gameObject;
+      if (!selectionDisplay)
+        selectionArrow = transform.GetChild(0).gameObject;
       selectable = GetComponent<Selectable>();
       setup = true;
     }
   }
 
+  private void SetDisplay(bool active) {
+    if (selectionDisplay)
+      selectionDisplay.enabled = active;
+    else
+      selectionArrow.SetActive(active);
+  }
+
   public void ManualSelect() {
     Setup();
     selectable.Select();
-    selectionArrow.SetActive(true);
+    SetDisplay(true);
   }
 
   public void Deselect() {
     Setup();
-    selectionArrow.SetActive(false);
+    SetDisplay(false);
   }
 
   public void OnSelect(BaseEventData eventData) {
     Setup();
-    selectionArrow.SetActive(true);
+    SetDisplay(true);
+    if (scrollBox)
+      scrollBox.ScrollToElement(transform as RectTransform);
   }
 
   public void OnDeselect(BaseEventData eventData) {
-    Setup();
-    selectionArrow.SetActive(false);
+    Deselect();
   }
 }
