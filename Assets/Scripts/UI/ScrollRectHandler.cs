@@ -7,12 +7,10 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(RectTransform))]
 public class ScrollRectHandler : MonoBehaviour {
   public RectTransform content;
-  private RectTransform rect;
   private float spacing = 0;
 
   void Start() {
     spacing = content.GetComponent<VerticalLayoutGroup>().spacing;
-    rect = transform as RectTransform;
   }
 
   public void ScrollToElement(RectTransform element) {
@@ -29,7 +27,7 @@ public class ScrollRectHandler : MonoBehaviour {
   }
 
   float GetRelativeToFrame(RectTransform element) {
-    var viewportBottom = -content.anchoredPosition.y - rect.sizeDelta.y;
+    var viewportBottom = -content.anchoredPosition.y - (transform as RectTransform).sizeDelta.y;
     var viewportTop = -content.anchoredPosition.y;
 
     var elementBottom = GetBottomOfElement(element);

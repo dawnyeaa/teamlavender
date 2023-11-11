@@ -47,7 +47,7 @@ public class ButtonSelectionHandler : MonoBehaviour, ISelectHandler, IDeselectHa
     Setup();
     SetDisplay(true);
     if (scrollBox)
-      scrollBox.ScrollToElement(transform as RectTransform);
+      scrollBox.ScrollToElement(selectionDisplay.transform as RectTransform);
   }
 
   public void OnDeselect(BaseEventData eventData) {
