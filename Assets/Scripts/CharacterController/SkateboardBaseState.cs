@@ -256,11 +256,6 @@ public abstract class SkateboardBaseState : State {
     }
   }
 
-  protected void SetRollingVolume() {
-    if (sm.RollingHardClipIndex != -1)
-      SoundEffectsManager.instance.SetLoopingFXVolume(sm.RollingHardClipIndex, sm.MainRB.velocity.magnitude/sm.MaxSpeed);
-  }
-
   protected void StopRollingSFX() {
     if (sm.RollingHardClipIndex != -1) {
       SoundEffectsManager.instance.StopLoopingSoundFXClip(sm.RollingHardClipIndex);

@@ -166,7 +166,7 @@ public class SkateboardMoveState : SkateboardBaseState
         SetSpeedyLines();
         CheckFacing();
         SpinWheels();
-        // SetRollingVolume();
+        SetRollingVolume();
         //animator.Tick();
         
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
@@ -285,6 +285,11 @@ public class SkateboardMoveState : SkateboardBaseState
         // var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
         // var torque = cross  * settings.wallSlideTorque * fwdSpeed;
         // body.AddTorque(torque);
+    }
+
+    private void SetRollingVolume()
+    {
+        sm.SFX.SetRollingSpeed(GetForwardSpeed());
     }
 
     private void SetCrouching() 
@@ -441,7 +446,8 @@ public class SkateboardMoveState : SkateboardBaseState
         {
             if (!wasOnGround) 
             {
-                sm.CharacterAnimator.SetTrigger("startAirborne");
+                // we just landed
+                sm.SFX.LandingSound();
                 // uncommenting this line can look real jank
                 // sm.CharacterAnimator.SetFloat("landStrength", airborneTimer/1f);
             }
@@ -449,7 +455,16 @@ public class SkateboardMoveState : SkateboardBaseState
             upVector = up.normalized;
             airborneTimer = 0.0f;
         }
-        else airborneTimer += Time.deltaTime;
+        else
+        {
+            airborneTimer += Time.deltaTime;
+            if (wasOnGround)
+            {
+                // do stuff here for leaving the ground
+                sm.SFX.Airborne();
+            }
+        }
+
         if (!isOnGround && Vector3.Dot(body.velocity, Vector3.up) < 0.0f)
         {
             sm.CharacterAnimator.SetBool("falling", true);
