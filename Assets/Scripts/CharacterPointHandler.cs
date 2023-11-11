@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
-using Unity.Mathematics;
 
 public class CharacterPointHandler : MonoBehaviour {
   // different ways to get points
@@ -17,13 +13,19 @@ public class CharacterPointHandler : MonoBehaviour {
   PointManager pointSystem;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
   [SerializeField] Image speedometerDisplay;
+  public ComboDisplayManager comboDisplayManager;
   private Material speedometerDisplayMat;
   public int pointsPerHalfTurn = 10;
+  public float turnTolerance = 0.1f;
+  int lastHalfturns = 0;
   bool onGround = true;
   float groundSpeed = 0;
-  float orientation = 0;
   float cwturnAmount = 0;
   float ccwturnAmount = 0;
+  bool isGoofy = false;
+  bool airborneGoofy = false;
+  Vector3 lastUp = Vector3.up;
+  Vector3 lastForward;
   public float groundSpeedSlowSpeed = 0.1f;
   public float groundSpeedSlowDuration = 1f;
   float slowDurationTimer = 0;
@@ -36,6 +38,7 @@ public class CharacterPointHandler : MonoBehaviour {
       slowSpeedDisplay.text = groundSpeedSlowSpeed.ToString("F");
     if (speedometerDisplayMat)
       speedometerDisplayMat.SetFloat("_slowSpeedThreshold", groundSpeedSlowSpeed);
+    lastForward = transform.forward;
   }
 
   void Update() {
@@ -60,21 +63,43 @@ public class CharacterPointHandler : MonoBehaviour {
     pointSystem.EndLine();
   }
 
+  private void UpdateRotation() {
+    var maxTurn = Mathf.Max(cwturnAmount, ccwturnAmount);
+    if (maxTurn < (0.5f-turnTolerance)) return;
+
+    var halfturns = Mathf.FloorToInt((maxTurn+turnTolerance)*2f);
+    if (halfturns <= lastHalfturns) return;
+
+    var fs = cwturnAmount > ccwturnAmount ^ airborneGoofy;
+
+    // here we update the trick display to show the turn
+    comboDisplayManager.SetTurnModifiers(halfturns, fs);
+    comboDisplayManager.SetComboDisplay();
+
+    lastHalfturns = halfturns;
+  }
+
   private void ResolveRotation() {
-    if (cwturnAmount < 0.5f && ccwturnAmount < 0.5f) return;
-    if (cwturnAmount > ccwturnAmount) {
-
+    if (cwturnAmount < (0.5f-turnTolerance) && ccwturnAmount < (0.5f-turnTolerance)) {
+      cwturnAmount = ccwturnAmount = 0;
+      lastHalfturns = 0;
+      return;
     }
-    else {
+    var fs = cwturnAmount > ccwturnAmount ^ airborneGoofy;
+    var halfturns = Mathf.FloorToInt((Mathf.Max(cwturnAmount, ccwturnAmount)*2f)+turnTolerance);
 
-    }
-    var halfturns = Mathf.FloorToInt(Mathf.Max(cwturnAmount, ccwturnAmount)*2f);
-    pointSystem.AddPoints(halfturns * pointsPerHalfTurn);
+    // pointSystem.AddPoints(halfturns * pointsPerHalfTurn);
+    cwturnAmount = ccwturnAmount = 0;
+    lastHalfturns = 0;
   }
 
   private void Landed() {
     ResolveRotation();
-    ValidateTricks();
+    // ValidateTricks();
+  }
+
+  private void Launched() {
+    airborneGoofy = isGoofy;
   }
 
   public void SetMaxSpeed(float maxSpeed) {
@@ -106,10 +131,28 @@ public class CharacterPointHandler : MonoBehaviour {
 
   public void SetGrounded(bool isOnGround) {
     if (!onGround && isOnGround) Landed();
+    if (onGround && !isOnGround) Launched();
     onGround = isOnGround;
   }
 
   public void SetOrientation(Vector3 up, Vector3 forward) {
-    
+    var forwardOldSpace = Quaternion.FromToRotation(up, lastUp) * forward;
+    var angle = Vector3.SignedAngle(lastForward, forwardOldSpace, lastUp);
+    if (angle > 0) {
+      cwturnAmount += angle/360f;
+    }
+    else if (angle < 0) {
+      ccwturnAmount -= angle/360f;
+    }
+    else {
+      return;
+    }
+    lastForward = forward;
+    lastUp = up;
+    UpdateRotation();
+  }
+
+  public void SetGoofy(bool goofy) {
+    isGoofy = goofy;
   }
 }

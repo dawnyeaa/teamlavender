@@ -37,6 +37,8 @@ public class SkateboardMoveState : SkateboardBaseState
         set => sm.Grounded = value;
     }
 
+    public bool inManny = false;
+
     public ContinuousDataStepper slopeCrouch;
     private float slopeCrouchDampingSpeed = 0;
 
@@ -89,7 +91,7 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["nollieHeelflip"] -= OnHopTrickInput;
 
         StopRollingSFX();
-        PassGroundSpeedToPointSystem();
+        PassDataToPointSystem();
         PassSpeedToMotionBlur();
     }
 
@@ -140,7 +142,7 @@ public class SkateboardMoveState : SkateboardBaseState
         var rawSteerInput = sm.Input.turn;
         steer += (rawSteerInput * settings.maxSteer - steer) * (1.0f - settings.steerInputSmoothing);
 
-        modifiedSteer = steer * GoofyMultiplier();
+        modifiedSteer = steer * GoofyMultiplier() * (inManny ? 1-settings.mannyTurnReduction : 1);
         
         float normalizedSteer = 0.5f * modifiedSteer / sm.MaxAnimatedTruckTurnDeg + 0.5f;
         sm.CharacterAnimator.SetFloat("leanValue", normalizedSteer);
@@ -170,7 +172,7 @@ public class SkateboardMoveState : SkateboardBaseState
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
 
         sm.collisionProcessor.FixedUpdate(sm);
-        PassGroundSpeedToPointSystem();
+        PassDataToPointSystem();
         PassSpeedToMotionBlur();
 
         SaveDebugFrame();
@@ -190,6 +192,19 @@ public class SkateboardMoveState : SkateboardBaseState
         var crouchTarget = horizontalness + settings.speedCrouchCurve.Evaluate(speedFactor);
         slopeCrouch.Tick(Mathf.SmoothDamp(slopeCrouch.GetContinuous(), crouchTarget, ref slopeCrouchDampingSpeed, settings.slopeCrouchDamping), Time.deltaTime);
         sm.CharacterAnimator.SetLayerWeight(5, slopeCrouch.GetStepped());
+    }
+
+    private void PassDataToPointSystem()
+    {
+        if (!isOnGround)
+            sm.PointHandler.SetOrientation(sm.transform.up, sm.transform.forward);
+
+        var flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.RawDown);
+        sm.PointHandler.SetSpeed(flatMovement.magnitude);
+
+        sm.PointHandler.SetGrounded(isOnGround);
+
+        sm.PointHandler.SetGoofy(sm.IsGoofy);
     }
 
     private void CheckFacing() 
@@ -291,19 +306,23 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void SetManny() 
     {
-        bool inManny = sm.Input.mannyValue > settings.mannyWindow.x && sm.Input.mannyValue < settings.mannyWindow.y;
+        inManny = sm.Input.mannyValue > settings.mannyWindow.x && sm.Input.mannyValue < settings.mannyWindow.y;
         sm.CharacterAnimator.SetBool("manny", inManny);
     }
 
     private void ApplyBrakeForce()
     {
-        if (!sm.Input.braking) return;
+        if (!sm.Input.braking && !inManny) return;
 
         var fwdSpeed = GetForwardSpeed();
-        var friction = Mathf.Lerp(settings.staticBrake, settings.dynamicBrake, settings.lastEvaluatedBrakeThreshold = Mathf.Abs(fwdSpeed) / settings.brakeThreshold);
-        settings.lastEvaluatedBrakeThreshold = Mathf.Clamp01(settings.lastEvaluatedBrakeThreshold);
+        var friction = 0f;
+        if (sm.Input.braking)
+        {
+            friction = Mathf.Lerp(settings.staticBrake, settings.dynamicBrake, settings.lastEvaluatedBrakeThreshold = Mathf.Abs(fwdSpeed) / settings.brakeThreshold);
+            settings.lastEvaluatedBrakeThreshold = Mathf.Clamp01(settings.lastEvaluatedBrakeThreshold);
+        }
 
-        var force = GetForward() * -fwdSpeed * Mathf.Min(friction, 1.0f);
+        var force = GetForward() * -fwdSpeed * Mathf.Min(friction + (inManny ? settings.mannyFriction : 0), 1.0f);
         body.AddForce(force * body.mass / Time.deltaTime);
     }
 

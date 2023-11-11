@@ -162,6 +162,8 @@ MonoBehaviour:
   airResistance: 0
   tangentialFriction: 20
   mannyWindow: {x: 0.1, y: 0.9}
+  mannyFriction: 0.002
+  mannyTurnReduction: 0.5
   distanceToGround: 0.21
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
   truckDepenetrationSpring: 300
@@ -172,7 +174,6 @@ MonoBehaviour:
   brakeThreshold: 0.3
   lastEvaluatedBrakeThreshold: 1.28979214e-11
   hipsHeight: 2
-  wallSlideConservation: 1
   wallSlideDistance: 1
   wallSlideTorqueP: 7
   wallSlideTorqueD: 0.1

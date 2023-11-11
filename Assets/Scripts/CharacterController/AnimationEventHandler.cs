@@ -6,6 +6,7 @@ public class AnimationEventHandler : MonoBehaviour {
   public SkateboardStateMachine sm;
   public CoolTimeController coolTime;
   public ComboController comboController;
+  public ComboDisplayManager comboDisplayManager;
   public float coolTimeAirDurationThreshold = 1.5f;
   public float framesPerSecond = 30;
   public List<string> nonCoolTimeTricks = new() {
@@ -34,7 +35,7 @@ public class AnimationEventHandler : MonoBehaviour {
   }
 
   public void DisplayCombo() {
-    comboController.SetComboDisplay();
+    comboDisplayManager.SetComboDisplay();
   }
 
   public void ComboStarted() {

@@ -38,6 +38,8 @@ public class SkateboardMoveSettings : ScriptableObject
 
     [Space]
     public Vector2 mannyWindow = new(0.1f, 0.9f);
+    public float mannyFriction = 0.05f;
+    [Range(0f, 1f)] public float mannyTurnReduction = 0.1f;
     [Space]
     public float distanceToGround = 0.13f;
     public Vector3 truckOffset;
