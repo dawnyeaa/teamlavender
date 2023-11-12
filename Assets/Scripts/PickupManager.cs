@@ -23,4 +23,8 @@ public class PickupManager : MonoBehaviour {
     currentlyEnabled = newSelected;
     SetEnabled();
   }
+
+  public void SetFrankMode(bool enabled) {
+    
+  }
 }
