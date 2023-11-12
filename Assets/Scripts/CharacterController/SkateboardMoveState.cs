@@ -66,8 +66,8 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["nollieHeelflip"] += OnHopTrickInput;
 
         InitTrucks();
-        body.velocity = Vector3.zero;
-        body.angularVelocity = Vector3.zero;
+        // body.velocity = Vector3.zero;
+        // body.angularVelocity = Vector3.zero;
 
         sm.PointHandler.SetMaxSpeed(settings.maxSpeed);
 
