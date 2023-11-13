@@ -448,6 +448,7 @@ public class SkateboardMoveState : SkateboardBaseState
             {
                 // we just landed
                 sm.SFX.LandingSound();
+                sm.OnLanding?.Invoke();
                 // uncommenting this line can look real jank
                 // sm.CharacterAnimator.SetFloat("landStrength", airborneTimer/1f);
             }
