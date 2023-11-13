@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using CharacterController;
 using Cinemachine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -160,6 +161,8 @@ public class SkateboardStateMachine : StateMachine {
   public CharacterPointHandler PointHandler;
   public RendererFeatureDynamicProperties RFprops;
   public SkateSoundController SFX;
+  public UnityEvent OnLanding;
+  public UnityEvent OnPop;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
