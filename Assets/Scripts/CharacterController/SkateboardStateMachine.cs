@@ -137,7 +137,9 @@ public class SkateboardStateMachine : StateMachine {
   public WheelController WheelSpinAnimationController;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
-  public ParentConstraint LookatConstraint;
+  public PositionConstraint FollowTargetConstraint;
+  public PositionConstraint LookAtTargetConstraint;
+  public CinemachineFreeLook cinemachineLook;
   public TransformHeirarchyMatch RagdollMatcher;
   public SpawnPointManager SpawnPointManager;
   public PointManager PointManager;
@@ -156,7 +158,8 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
   public CharacterPointHandler PointHandler;
-  public Material MotionBlurMat;
+  public RendererFeatureDynamicProperties RFprops;
+  public SkateSoundController SFX;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
@@ -178,11 +181,13 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void OnOllieForce() {
+    SFX.PopSound();
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce * CurrentHopTrickVerticalMult + Vector3.Project(MainRB.velocity, Facing.transform.forward) * CurrentHopTrickHorizontalMult, ForceMode.Acceleration);
   }
 
   public void StartPushForce(float duration) {
-    SoundEffectsManager.instance.PlaySoundFXClip(PushClip, transform, 1);
+    // SoundEffectsManager.instance.PlaySoundFXClip(PushClip, transform, 1);
+    SFX.PushSound();
     Pushing = true;
     MaxPushT = duration;
     CurrentPushT = duration;

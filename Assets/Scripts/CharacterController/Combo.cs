@@ -14,6 +14,7 @@ public class Combo : ScriptableObject {
   public List<Input> _ComboInputs;
   public float _HopVerticalForceMultiplier = 1;
   public float _HopHorizontalForceMultiplier = 1;
+  public int _ComboTrickValue = 50;
   public TrickAnimationGroup _TrickAnimGroup;
   public int _TrickAnimIndex;
   public UnityEvent _ExtraComboEvents;

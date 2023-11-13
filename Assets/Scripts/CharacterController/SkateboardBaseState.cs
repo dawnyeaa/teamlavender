@@ -209,14 +209,9 @@ public abstract class SkateboardBaseState : State {
       }
     }
   }
-  
-  protected void PassGroundSpeedToPointSystem() {
-    Vector3 flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.RawDown);
-    sm.PointHandler.SetSpeed(flatMovement.magnitude);
-  }
 
   protected void PassSpeedToMotionBlur() {
-    sm.MotionBlurMat.SetFloat("_MaxBlurSize", sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed);
+    sm.RFprops.MotionBlurSize = sm.MaxMotionBlur * sm.MainRB.velocity.magnitude / sm.MaxSpeed;
   }
 
   protected void SetMovingFriction() {
@@ -259,11 +254,6 @@ public abstract class SkateboardBaseState : State {
     if (sm.RollingHardClipIndex == -1) {
       sm.RollingHardClipIndex = SoundEffectsManager.instance.PlayLoopingSoundFXClip(sm.RollingHardClip, sm.Board, 1);
     }
-  }
-
-  protected void SetRollingVolume() {
-    if (sm.RollingHardClipIndex != -1)
-      SoundEffectsManager.instance.SetLoopingFXVolume(sm.RollingHardClipIndex, sm.MainRB.velocity.magnitude/sm.MaxSpeed);
   }
 
   protected void StopRollingSFX() {

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: tagDecals-01 Material
-  m_Shader: {fileID: -6465566751694194690, guid: aa8953bcd9bbb6b4f8e5f84887b0fdd2,
+  m_Name: crackGrass-01
+  m_Shader: {fileID: -6465566751694194690, guid: 7089fcadafe293f48b06c9934274a7f1,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -42,7 +42,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DiffuseAlpha:
-        m_Texture: {fileID: 2800000, guid: 556ef977dc852b04e8648ec69093ec92, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6f8f46da22916ba4a8d079634dd31af7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -84,7 +84,6 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _Ambient: 1
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -100,17 +99,17 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _MaxAngleFadeRadians: 0.01
+    - _MaxAngleFadeRadians: 1.570796
     - _Metallic: 0
-    - _MinAngleFadeRadians: 0.05
+    - _MinAngleFadeRadians: 1.396263
     - _OcclusionStrength: 1
-    - _OffsetViewZ: 0.01
-    - _Opacity: 0
+    - _OffsetViewZ: 1.08
+    - _Opacity: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -125,7 +124,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &3691289373577361852
+--- !u!114 &5186816405991253207
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

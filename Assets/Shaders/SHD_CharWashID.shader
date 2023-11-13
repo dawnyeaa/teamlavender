@@ -17,6 +17,12 @@ Shader "Character/WashTexID" {
     _WashContrast2 ("Wash Contrast 2", Float) = 1
     _WashBalance2 ("Wash Balance 2", Float) = 0
 
+    _UpAmbient ("Top Ambient Color", Color) = (0.8, 0.8, 0.8, 1)
+    _DownAmbient ("Bottom Ambient Color", Color) = (0.2, 0.2, 0.2, 1)
+
+    _A ("A", Float) = 1
+    _B ("B", Float) = 0
+
     _WashTex ("Wash Texture", 2D) = "black" {}
 
     _IDTex ("ID Texture", 2D) = "white" {}
@@ -42,6 +48,20 @@ Shader "Character/WashTexID" {
 
       HLSLPROGRAM
       #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+      #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+      #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
+
+      #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+      #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+      
+      #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+      #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+      #pragma multi_compile_fragment _ _SHADOWS_SOFT
+      #pragma multi_compile _ LIGHTMAP_ON
+      #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+      #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+      #pragma multi_compile _ SHADOWS_SHADOWMASK
+      #pragma multi_compile _ _SCREEN_SPACE_OCCLUSION
 
       #pragma prefer_hlslcc gles
       #pragma exclude_renderers d3d11_9x
@@ -70,9 +90,12 @@ Shader "Character/WashTexID" {
       float _WashBalance2;
 
       float _WashPatternStrength;
-      
-      TEXTURE2D(_BaseMap);
-      SAMPLER(sampler_BaseMap);
+
+      half3 _UpAmbient;
+      half3 _DownAmbient;
+
+      float _A;
+      float _B;
 
       TEXTURE2D(_WashTex);
       float4 _WashTex_ST;
@@ -91,6 +114,7 @@ Shader "Character/WashTexID" {
         float2 uv         : TEXCOORD0;
         float3 normalWS   : TEXCOORD1;
         float3 positionOS : TEXCOORD2;
+        float3 positionWS : TEXCOORD3;
       };
       
       float3 _LightDirection;
@@ -113,6 +137,7 @@ Shader "Character/WashTexID" {
         o.positionCS = vertexInput.positionCS;
         o.positionOS = i.positionOS.xyz;
         o.normalWS = normalInput.normalWS;
+        o.positionWS = vertexInput.positionWS;
         o.uv = i.uv;
 
         return o;
@@ -126,13 +151,19 @@ Shader "Character/WashTexID" {
         float lightDot = (dot(_LightDirection, i.normalWS)*0.5)+0.5;
         float shadowSoftnessOffset = (1-_ShadowHardness)/2;
         float lightMask = smoothstep(_ShadowSize-shadowSoftnessOffset, _ShadowSize+shadowSoftnessOffset, lightDot);
+        float4 shadowAttenuation = GetMainLight(TransformWorldToShadowCoord(i.positionWS)).shadowAttenuation;
+        lightMask *= shadowAttenuation.r;
 
         float wash = SAMPLE_TEXTURE2D(_WashTex, sampler_WashTex, TRANSFORM_TEX(i.uv, _WashTex)).r;
 
         float wa = 1-overlay(lightMask, saturate(contrastBalance(wash, _WashContrast, _WashBalance)));
+        
+        float ambientT = (((dot(i.normalWS, half3(0, 1, 0))*_A)+_B)*0.5)+0.5;
+        half3 ambientColor = lerp(_DownAmbient, _UpAmbient, saturate(ambientT));
 
-        float3 mainColor = lerp(mainTex, _ShadowColor, saturate(smoothstep(_ShadowTexturedOffset-(1-_ShadowTexturedHardness), _ShadowTexturedOffset+(1-_ShadowTexturedHardness), wa)-contrastBalance(wash, _WashContrast2, _WashBalance2))*_ShadowColor.a);
+        float3 mainColor = lerp(mainTex, mainTex*(_ShadowColor + ambientColor), saturate(smoothstep(_ShadowTexturedOffset-(1-_ShadowTexturedHardness), _ShadowTexturedOffset+(1-_ShadowTexturedHardness), wa)-contrastBalance(wash, _WashContrast2, _WashBalance2))*_ShadowColor.a);
 
+        // return half4(mainColor, 1);
         return half4(mainColor, 1);
       }
 

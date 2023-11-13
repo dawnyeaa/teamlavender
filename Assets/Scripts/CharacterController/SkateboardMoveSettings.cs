@@ -15,6 +15,7 @@ public class SkateboardMoveSettings : ScriptableObject
     public float pushDuration = 1.0f;
     public AnimationCurve pushCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
     public float pushingMaxSlope = 30f;
+    public AnimationCurve pushStrengthPerSpeed;
     public Vector3 localCenterOfMass = new (0.0f, -0.8f, 0.0f);
     public Vector3 inertiaTensor = new (0.3f, 0.4f, 0.04f);
     public float upGravity = 1.5f;
@@ -36,6 +37,10 @@ public class SkateboardMoveSettings : ScriptableObject
     [Range(0.0f, 50.0f)] public float tangentialFriction = 20.0f;
 
     [Space]
+    public Vector2 mannyWindow = new(0.1f, 0.9f);
+    public float mannyFriction = 0.05f;
+    [Range(0f, 1f)] public float mannyTurnReduction = 0.1f;
+    [Space]
     public float distanceToGround = 0.13f;
     public Vector3 truckOffset;
     public float truckDepenetrationSpring = 100.0f;
@@ -49,8 +54,13 @@ public class SkateboardMoveSettings : ScriptableObject
     [Range(0.0f, 1.0f)] public float lastEvaluatedBrakeThreshold;
 
     [Space]
+    public float hipsHeight;
     public float wallSlideDistance;
-    public float wallSlideTorque;
+    public float wallSlideTorqueP = 0.5f;
+    public float wallSlideTorqueD = 1f;
+    public float wallSlideSnapThreshold = 0.1f;
+    [Space]
+    public float maxWheelFriction;
     
     [Space]
     public float predictionMaxTime = 3.0f;

@@ -14,8 +14,6 @@ Shader "PostFX/SimpleOutlineSobel" {
     _ThicknessWarpingStrength ("Warping Thickness Strength", Float) = 1
     _WarpingUpdateRate ("Warping FPS", Int) = 12
     _WarpingUpdateOffset ("Warping Update Offset", Vector) = (487, 683, 0, 0)
-    
-    _CameraWarpingFactor ("Camera Warping Factor", Float) = 1
   }
 
   SubShader {

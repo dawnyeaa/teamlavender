@@ -118,7 +118,9 @@ Shader "Character/WashTexGradMapID" {
 
         float wash = SAMPLE_TEXTURE2D(_WashTex, sampler_WashTex, TRANSFORM_TEX(i.uv, _WashTex)).r;
 
-        float3 mainColor = lerp(_GradientMapColor0, _GradientMapColor1, overlay(lightMask, wash));
+        // overlay(lightMask, wash)
+
+        float3 mainColor = lerp(_GradientMapColor0, _GradientMapColor1, lightMask);
 
         return half4(mainColor, 1);
       }
