@@ -970,7 +970,19 @@ MonoBehaviour:
   SFX: {fileID: 0}
   OnLanding:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4772161803130026560}
+        m_TargetAssemblyTypeName: VFXBurstController, Assembly-CSharp
+        m_MethodName: Burst
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnPop:
     m_PersistentCalls:
       m_Calls: []
@@ -4280,6 +4292,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96ea198df456c2c40a6b72cbcbb7569b, type: 3}
+--- !u!114 &4772161803130026560 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1445138984, guid: 96ea198df456c2c40a6b72cbcbb7569b,
+    type: 3}
+  m_PrefabInstance: {fileID: 4772161803836958824}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e2d562ea61fe341b8d27e946bd1660, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &9055186008629889782 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4580271127122371230, guid: 96ea198df456c2c40a6b72cbcbb7569b,
