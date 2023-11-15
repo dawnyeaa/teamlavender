@@ -14,6 +14,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] GameObject[] menus; //mainMenu, settingsMenu, controlsMenu, characterMenu;
     [SerializeField] ButtonSelectionHandler[] menuDefaults;
     [SerializeField] int currentMenu;
+    [SerializeField] Animator menuAnimator;
     private EventSystem eventsys;
 
     void Awake() {
@@ -36,6 +37,7 @@ public class MenuManager : MonoBehaviour
         currentMenu = menu;
         menus[menu].SetActive(true);
         menuDefaults[menu].ManualSelect();
+        menuAnimator.SetInteger("menu", menu);
     }
 
     public void SelectButton(Button button) {
