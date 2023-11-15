@@ -27,8 +27,7 @@ public class MenuManager : MonoBehaviour
 
     public void EnableMenu() 
     {
-        menus[currentMenu].SetActive(true);
-        SelectButton(MainMenuDefault);
+        ChangeMenu(0);
     }
 
     public void ChangeMenu(int menu)
