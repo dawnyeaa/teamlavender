@@ -11,21 +11,10 @@ using UnityEngine.InputSystem.LowLevel;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField]
-    GameObject[] menus; //mainMenu, settingsMenu, controlsMenu, characterMenu;
+    [SerializeField] GameObject[] menus; //mainMenu, settingsMenu, controlsMenu, characterMenu;
+    [SerializeField] ButtonSelectionHandler[] menuDefaults;
     [SerializeField] int currentMenu;
-    int currentResolutionShowing;
-    public int volume;
-    [SerializeField] Button SettingMenuDefault, MainMenuDefault, ControlsMenuDefault, CustoMenuDefault;
-    [SerializeField] GameObject TitleLogo;
-    [SerializeField] AudioMixer audioMixer;
-    [SerializeField] AudioListener audioListener;
-    [SerializeField] Slider volumeSlider;
-    [SerializeField] SaveManager saveManager;
-    [SerializeField] Resolution[] resolutions;
-    [SerializeField] TMP_Dropdown dropdown;
     private EventSystem eventsys;
-    List<string> resolutionsList = new List<string>();
 
     void Awake() {
         eventsys = FindObjectOfType<EventSystem>();
@@ -34,24 +23,6 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        resolutions = Screen.resolutions;
-
-        if (dropdown != null) {
-            dropdown.ClearOptions();
-            currentResolutionShowing = 0;
-            for (int i = 0; i < resolutions.Length; i++)
-            {
-                string ResolutionValue = resolutions[i].width + "x" + resolutions[i].height;
-                resolutionsList.Add(ResolutionValue);
-                if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
-                {
-                    currentResolutionShowing = i;
-                }
-            }
-            dropdown.AddOptions(resolutionsList);
-            dropdown.value = currentResolutionShowing;
-            dropdown.RefreshShownValue();
-        }
     }
 
     public void EnableMenu() 
@@ -63,28 +34,9 @@ public class MenuManager : MonoBehaviour
     public void ChangeMenu(int menu)
     {
         menus[currentMenu].SetActive(false);
-        if (currentMenu == 0) TitleLogo.SetActive(false);
         currentMenu = menu;
         menus[menu].SetActive(true);
-        switch (menu)
-        {
-            case 0:
-                SelectButton(MainMenuDefault);
-                TitleLogo.SetActive(true);
-            break;
-            
-            case 1:
-                SelectButton(CustoMenuDefault);
-            break;
-            
-            case 2:
-                SelectButton(SettingMenuDefault);
-            break;
-
-            case 3:
-                SelectButton(ControlsMenuDefault);
-            break;
-        }
+        menuDefaults[menu].ManualSelect();
     }
 
     public void SelectButton(Button button) {
@@ -95,24 +47,6 @@ public class MenuManager : MonoBehaviour
     public void ChangeScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
-    }
-
-    public void VolumeMixer()
-    {
-        AudioListener.volume = volumeSlider.value;
-        volume = (int)volumeSlider.value;
-        saveManager.save();
-    }
-    public void SetVolume()
-    {
-        if (volumeSlider != null)
-            volumeSlider.value = volume;
-    }
-
-    public void ChangeResolution(int Index)
-    {
-       Resolution resolution = resolutions[Index];
-        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 
     public void QuitGame() {
