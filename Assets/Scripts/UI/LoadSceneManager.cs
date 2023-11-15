@@ -9,7 +9,6 @@ public class LoadSceneManager : MonoBehaviour {
   public AudioSource MenuMusic;
 
   public void LoadScene(int scene) {
-    MenuMusic.Stop();
 
     LoadingScreen.SetActive(true);
     
