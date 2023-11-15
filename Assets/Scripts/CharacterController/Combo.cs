@@ -24,6 +24,7 @@ public class Combo : ScriptableObject {
 
   public void ExecuteCombo() {
     sm = FindObjectOfType<SkateboardStateMachine>();
+    sm.IsNollie = _TrickAnimGroup == TrickAnimationGroup.Nollie;
     sm.CurrentAnimTrickIndexes[(int)_TrickAnimGroup] = _TrickAnimIndex;
     sm.OnCombo(_ComboName, (int)_TrickAnimGroup, _HopVerticalForceMultiplier, _HopHorizontalForceMultiplier);
     _ExtraComboEvents?.Invoke();
