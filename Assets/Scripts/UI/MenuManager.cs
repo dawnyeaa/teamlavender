@@ -33,9 +33,9 @@ public class MenuManager : MonoBehaviour
 
     public void ChangeMenu(int menu)
     {
-        menus[currentMenu].SetActive(false);
+        // menus[currentMenu].SetActive(false);
         currentMenu = menu;
-        menus[menu].SetActive(true);
+        // menus[menu].SetActive(true);
         menuDefaults[menu].ManualSelect();
         menuAnimator.SetInteger("menu", menu);
     }
