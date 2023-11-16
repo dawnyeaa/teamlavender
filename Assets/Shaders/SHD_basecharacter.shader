@@ -170,6 +170,7 @@ Shader "Character/BaseCharacter" {
         half4 color;
 
         half4 mainTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, TRANSFORM_TEX(i.uv, _BaseMap));
+        half3 mainColor = pow(mainTex.rgb, 2.2);
         float gradientMask = mainTex.a;
         float gradientT = mainTex.r;
 
@@ -197,7 +198,7 @@ Shader "Character/BaseCharacter" {
         float3 gradientDeepShadow = lerp(gradientDarkestColor, gradientDarkestColor*_BackupShadowColor.rgb, saturate((gradientT-gradientMapShading)+1));
 
         float3 gradientShadedColor = lerp(gradientDeepShadow, SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, saturate(gradientT-gradientMapShading)), _GradientTex)), step(0, gradientT-gradientMapShading));
-        float3 mainShadedColor = lerp(mainTex.rgb, mainTex.rgb*(_BackupShadowColor.rgb + ambientColor), shading);
+        float3 mainShadedColor = lerp(mainColor, mainColor*(_BackupShadowColor.rgb + ambientColor), shading);
         float3 maskedColor = lerp(mainShadedColor, gradientShadedColor+ambientColor, gradientMask);
 
         return half4(maskedColor, 1);

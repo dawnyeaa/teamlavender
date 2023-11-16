@@ -109,11 +109,12 @@ Shader "Character/BaseCharacterTEST" {
         half4 color;
 
         half4 mainTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, TRANSFORM_TEX(i.uv, _BaseMap));
+        half3 mainColor = pow(mainTex.rgb, 2.2);
         float gradientMask = mainTex.a;
         float gradientT = mainTex.r;
 
         float3 gradientColor = SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, gradientT), _GradientTex));
-        float3 maskedColor = lerp(mainTex.rgb, gradientColor, gradientMask);
+        float3 maskedColor = lerp(mainColor, gradientColor, gradientMask);
 
         return half4(maskedColor, 1);
       }
