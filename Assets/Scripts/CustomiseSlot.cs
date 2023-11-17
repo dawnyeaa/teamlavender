@@ -2,12 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MaskChannel {
+  None,
+  R,
+  G,
+  B
+}
+
 public class CustomiseSlot : MonoBehaviour {
   public string slotName;
 
   [SerializeField]
   private List<GameObject> optionMeshes;
+  [SerializeField]
+  private List<float> cutoutThresholds;
+  [SerializeField]
+  private MaskChannel cutoutChannel;
   private List<GameObject> options;
+  private CustomiseCharacter character;
   [ReadOnly] private int selected;
   public int defaultOption;
   private float t;
@@ -27,6 +39,7 @@ public class CustomiseSlot : MonoBehaviour {
   }
 
   private void InstantiateOptions() {
+    character = GetComponent<CustomiseCharacter>();
     for (int i = 0; i < optionMeshes.Count; ++i) {
       options.Insert(i, optionMeshes[i]);
       if (!optionMeshes[i]) continue;
@@ -49,6 +62,9 @@ public class CustomiseSlot : MonoBehaviour {
   private void SetActiveStates() {
     for (int i = 0; i < options.Count; ++i) {
       if (options[i] != null) options[i].SetActive(i == selected);
+    }
+    if (selected < cutoutThresholds.Count && cutoutChannel != MaskChannel.None) {
+      character.SetCutoutChannel(cutoutChannel, cutoutThresholds[selected]);
     }
   }
 

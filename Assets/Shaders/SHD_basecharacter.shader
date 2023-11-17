@@ -183,7 +183,7 @@ Shader "Character/BaseCharacter" {
 
         float3 mask = 1-SAMPLE_TEXTURE2D(_BodyCutoutTex, sampler_BodyCutoutTex, TRANSFORM_TEX(i.uv, _BodyCutoutTex));
         half3 thresholds = float3(_CutoutR, _CutoutG, _CutoutB);
-        // clip(mask - thresholds);
+        clip(mask - thresholds);
 
         half4 mainTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, TRANSFORM_TEX(i.uv, _BaseMap));
         half3 mainColor = pow(mainTex.rgb, 2.2);
