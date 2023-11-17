@@ -20,11 +20,11 @@ Shader "Character/BaseCharacter" {
     _WashContrast2 ("Wash Contrast 2", Float) = 1
     _WashBalance2 ("Wash Balance 2", Float) = 0
 
-    _UpAmbient ("Top Ambient Color", Color) = (0.8, 0.8, 0.8, 1)
-    _DownAmbient ("Bottom Ambient Color", Color) = (0.2, 0.2, 0.2, 1)
+    _UpAmbientValue ("Top Ambient Value", Range(0, 1)) = 1
+    _DownAmbientValue ("Bottom Ambient Value", Range(0, 1)) = 0
 
-    _A ("A", Float) = 1
-    _B ("B", Float) = 0
+    _AmbientValueContrast ("Ambient Value Contrast", Float) = 1
+    _AmbientValueBalance ("Ambient Value Balance", Float) = 0
 
     _GradientMapShadowOffset ("Gradient Mapped Shadow Offset", Float) = 0
     _GradientMapShadowMultiplier ("Gradient Mapped Shadow Multiplier", Float) = 1
@@ -33,9 +33,15 @@ Shader "Character/BaseCharacter" {
 
     _GradientX ("Gradient Tex X", Range(0, 1)) = 0
 
+    _CutoutR ("Cutout Threshold R", Range(0, 1)) = 0
+    _CutoutG ("Cutout Threshold G", Range(0, 1)) = 0
+    _CutoutB ("Cutout Threshold B", Range(0, 1)) = 0
+
     [Toggle(ID_USE_TEXTURE)] _IDUseTexture ("Get ID from texture?", Float) = 0
     _IDTex ("ID Texture", 2D) = "white" {}
     _IDColor ("ID Color", Color) = (0, 0, 0, 1)
+
+    [Toggle(SHOW_CUTOUT_MASK)] _ShowCutoutMask ("Show the cutout mask?", Float) = 0
   }
 
   SubShader {
@@ -60,6 +66,8 @@ Shader "Character/BaseCharacter" {
       #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
       #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
       #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
+
+      #pragma shader_feature SHOW_CUTOUT_MASK
 
       #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
       #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
@@ -101,16 +109,20 @@ Shader "Character/BaseCharacter" {
 
       float _WashPatternStrength;
 
-      half3 _UpAmbient;
-      half3 _DownAmbient;
+      float _UpAmbientValue;
+      float _DownAmbientValue;
 
-      float _A;
-      float _B;
+      float _AmbientValueContrast;
+      float _AmbientValueBalance;
 
       float _GradientMapShadowOffset;
       float _GradientMapShadowMultiplier;
 
       float _GradientX;
+      
+      float _CutoutR;
+      float _CutoutG;
+      float _CutoutB;
 
       TEXTURE2D(_WashTex);
       float4 _WashTex_ST;
@@ -169,6 +181,10 @@ Shader "Character/BaseCharacter" {
       half4 frag(VertexOutput i) : SV_TARGET {
         half4 color;
 
+        float3 mask = 1-SAMPLE_TEXTURE2D(_BodyCutoutTex, sampler_BodyCutoutTex, TRANSFORM_TEX(i.uv, _BodyCutoutTex));
+        half3 thresholds = float3(_CutoutR, _CutoutG, _CutoutB);
+        // clip(mask - thresholds);
+
         half4 mainTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, TRANSFORM_TEX(i.uv, _BaseMap));
         half3 mainColor = pow(mainTex.rgb, 2.2);
         float gradientMask = mainTex.a;
@@ -184,24 +200,30 @@ Shader "Character/BaseCharacter" {
 
         float wa = 1-overlay(lightMask, saturate(contrastBalance(wash, _WashContrast, _WashBalance)));
         
-        float ambientT = (((dot(i.normalWS, half3(0, 1, 0))*_A)+_B)*0.5)+0.5;
-        half3 ambientColor = lerp(_DownAmbient, _UpAmbient, saturate(ambientT));
+        float ambientT = (((dot(i.normalWS, half3(0, 1, 0))*_AmbientValueContrast)+_AmbientValueBalance)*0.5)+0.5;
+        float ambientValue = lerp(_DownAmbientValue, _UpAmbientValue, saturate(ambientT));
 
         float shading = saturate(smoothstep(_ShadowTexturedOffset-(1-_ShadowTexturedHardness), _ShadowTexturedOffset+(1-_ShadowTexturedHardness), wa)-contrastBalance(wash, _WashContrast2, _WashBalance2)) * _ShadowValue;
 
         float3 gradientColor = SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, gradientT), _GradientTex));
 
-        float gradientMapShading = ((shading-0.5)*_GradientMapShadowMultiplier)+0.5+_GradientMapShadowOffset;
+        float gradientMapShading = (((shading-((ambientValue*2)-1))-0.5)*_GradientMapShadowMultiplier)+0.5+_GradientMapShadowOffset;
 
         float3 gradientDarkestColor = SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, 0), _GradientTex));
 
-        float3 gradientDeepShadow = lerp(gradientDarkestColor, gradientDarkestColor*_BackupShadowColor.rgb, saturate((gradientT-gradientMapShading)+1));
+        float gradientShadingValue = gradientT-gradientMapShading;
 
-        float3 gradientShadedColor = lerp(gradientDeepShadow, SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, saturate(gradientT-gradientMapShading)), _GradientTex)), step(0, gradientT-gradientMapShading));
-        float3 mainShadedColor = lerp(mainColor, mainColor*(_BackupShadowColor.rgb + ambientColor), shading);
-        float3 maskedColor = lerp(mainShadedColor, gradientShadedColor+ambientColor, gradientMask);
+        float3 gradientDeepShadow = lerp(gradientDarkestColor*_BackupShadowColor.rgb, gradientDarkestColor, saturate(gradientShadingValue+1));
 
-        return half4(maskedColor, 1);
+        float3 gradientShadedColor = lerp(gradientDeepShadow, SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, saturate(gradientShadingValue)), _GradientTex)), step(0, gradientShadingValue));
+        float3 mainShadedColor = lerp(mainColor, mainColor*(_BackupShadowColor.rgb + ambientValue), shading);
+        float3 maskedColor = lerp(mainShadedColor, gradientShadedColor, gradientMask);
+
+        #ifdef SHOW_CUTOUT_MASK
+          return half4(1-mask, 1);
+        #else
+          return half4(maskedColor, 1);
+        #endif
       }
 
       ENDHLSL
@@ -220,6 +242,14 @@ Shader "Character/BaseCharacter" {
       float4 _BaseColor;
       half4 _IDColor;
       float _Cutoff;
+
+      float _CutoutR;
+      float _CutoutG;
+      float _CutoutB;
+      
+      TEXTURE2D(_BodyCutoutTex);
+      float4 _BodyCutoutTex_ST;
+      SAMPLER(sampler_BodyCutoutTex);
       CBUFFER_END
 
       #pragma vertex vert
@@ -227,7 +257,7 @@ Shader "Character/BaseCharacter" {
 
       #pragma shader_feature ID_USE_TEXTURE
 
-      CBUFFER_START(UnityPerMaterial)
+      CBUFFER_START(UnityPerMaterial)      
       TEXTURE2D(_IDTex);
       SAMPLER(sampler_IDTex);
       CBUFFER_END
@@ -257,6 +287,10 @@ Shader "Character/BaseCharacter" {
 
       void frag(VertexOutput i, out half4 ID : SV_TARGET0, out float3 OSPos : SV_TARGET1) {
         half4 color;
+
+        float3 mask = 1-SAMPLE_TEXTURE2D(_BodyCutoutTex, sampler_BodyCutoutTex, TRANSFORM_TEX(i.uv, _BodyCutoutTex));
+        half3 thresholds = float3(_CutoutR, _CutoutG, _CutoutB);
+        clip(mask - thresholds);
 
         #ifdef ID_USE_TEXTURE
           float4 idTex = SAMPLE_TEXTURE2D(_IDTex, sampler_IDTex, i.uv);

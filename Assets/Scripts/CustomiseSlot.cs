@@ -8,14 +8,16 @@ public class CustomiseSlot : MonoBehaviour {
   [SerializeField]
   private List<GameObject> optionMeshes;
   private List<GameObject> options;
-  private int selected;
+  [ReadOnly] private int selected;
   public int defaultOption;
+  private float t;
   
   private List<Material> optionMaterials;
 
   void Awake() {
     options = new List<GameObject>(optionMeshes.Count);
-    // optionMaterials = new List<Material>();
+    optionMaterials = new List<Material>(optionMeshes.Count);
+
     selected = defaultOption;
   }
 
@@ -27,7 +29,20 @@ public class CustomiseSlot : MonoBehaviour {
   private void InstantiateOptions() {
     for (int i = 0; i < optionMeshes.Count; ++i) {
       options.Insert(i, optionMeshes[i]);
-      // optionMaterials.Insert(i, options[i].GetComponent<MeshRenderer>().material);
+      if (!optionMeshes[i]) continue;
+      var skinnedRenderer = optionMeshes[i].GetComponent<SkinnedMeshRenderer>();
+      var renderer = optionMeshes[i].GetComponent<MeshRenderer>();
+      Material mat;
+      if (skinnedRenderer) {
+        mat = skinnedRenderer.material;
+      }
+      else if (renderer) {
+        mat = renderer.material;
+      }
+      else {
+        continue;
+      }
+      optionMaterials.Insert(i, mat);
     }
   }
 
@@ -55,9 +70,13 @@ public class CustomiseSlot : MonoBehaviour {
     selected = option;
   }
 
-  public void CustomiseColor(Vector2 uv) {
-    // foreach (Material optionMaterial in optionMaterials) {
-    //   optionMaterial.SetVector("_PickSkin", new Vector4(uv.x, uv.y, 0, 0));
-    // }
+  public void CustomiseColor(float newT) {
+    t = newT;
+    if (optionMaterials == null) return;
+    foreach (var optionMaterial in optionMaterials) {
+      optionMaterial.SetFloat("_GradientX", newT);
+    }
   }
+
+  public float GetT() => t;
 }
