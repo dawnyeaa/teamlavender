@@ -16,7 +16,6 @@ Shader "Character/BaseCharacter" {
     _WashContrast ("Wash Contrast", Float) = 1
     _WashBalance ("Wash Balance", Float) = 0
 
-    _WashPatternStrength ("Wash Pattern Visibility", Float) = 1
     _WashContrast2 ("Wash Contrast 2", Float) = 1
     _WashBalance2 ("Wash Balance 2", Float) = 0
 
@@ -107,8 +106,6 @@ Shader "Character/BaseCharacter" {
       float _WashContrast2;
       float _WashBalance2;
 
-      float _WashPatternStrength;
-
       float _UpAmbientValue;
       float _DownAmbientValue;
 
@@ -159,7 +156,7 @@ Shader "Character/BaseCharacter" {
       }
 
       float contrastBalance(float v, float constrast, float balance) {
-        return ((v-(0.5-(1/constrast)*0.5))*constrast)+balance;
+        return ((v-0.5)*(1/constrast))+0.5+balance;
       }
 
       VertexOutput vert(VertexInput i) {

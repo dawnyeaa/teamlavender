@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CustomiseCharacter : MonoBehaviour {
+  public bool isPlayerCharacter = false;
   private Dictionary<string, CustomiseSlot> slots;
   public GameObject characterMesh;
   private float colorT;
@@ -19,8 +20,10 @@ public class CustomiseCharacter : MonoBehaviour {
     slots = new();
     foreach (CustomiseSlot slot in slotsarray) {
       slots.Add(slot.slotName, slot);
-      if (CharCustoArrangement.instance != null)
+      if (isPlayerCharacter && CharCustoArrangement.instance != null) {
         slot.SetSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
+        slot.CustomiseColor(CharCustoArrangement.instance.hues[slot.slotName]);
+      }
     }
   }
 
