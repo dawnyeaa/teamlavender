@@ -41,7 +41,7 @@ public class ColorPicker : UIBehaviour, IDragHandler {
       localMousePosition = Clamp(localMousePosition, new Vector2(-width/2, -height/2), new Vector2(width/2, height/2));
     }
     handle.localPosition = new Vector3(localMousePosition.x, localMousePosition.y, handle.localPosition.z);
-    character.CustomiseColor(PositionToUV(localMousePosition));
+    // character.CustomiseColor(PositionToUV(localMousePosition));
   }
 
   private void SetWidthAndHeight() {

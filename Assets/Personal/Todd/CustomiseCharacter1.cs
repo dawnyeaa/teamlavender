@@ -29,11 +29,11 @@ public class CustomiseCharacter1 : MonoBehaviour {
     
   }
 
-  public void CustomiseColor(Vector2 uv) {
-    bodyMaterial.SetVector("_PickSkin", new Vector4(uv.x, uv.y, 0, 0));
-    foreach (CustomiseSlot slot in slots) {
-      slot.CustomiseColor(uv);
-    }
+  public void CustomiseColor(float newT) {
+    bodyMaterial.SetFloat("_T", newT);
+    // foreach (CustomiseSlot slot in slots) {
+    //   slot.CustomiseColor(newT);
+    // }
   }
 
   public void CustomiseColor(Vector2 uv, int slot, int maskIndex) {
