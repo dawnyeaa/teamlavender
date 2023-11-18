@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[ExecuteAlways]
 public class HueSlider : MonoBehaviour {
   [SerializeField, Range(0,1)] private float t = 0;
   [SerializeField] private MeshRenderer huesRenderer;
@@ -10,7 +9,8 @@ public class HueSlider : MonoBehaviour {
 
   void OnValidate() {
     hueDropper.anchoredPosition = new(Mathf.Lerp(sliderBounds.x, sliderBounds.y, t), hueDropper.anchoredPosition.y);
-    hueCircleRenderer.material.SetFloat("_T", t);
+    if (Application.isPlaying)
+      hueCircleRenderer.material.SetFloat("_T", t);
   }
 
   public float GetHueT() => t;
