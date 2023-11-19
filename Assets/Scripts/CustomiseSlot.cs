@@ -29,6 +29,8 @@ public class CustomiseSlot : MonoBehaviour {
   void Awake() {
     options = new List<GameObject>(optionMeshes.Count);
     optionMaterials = new List<Material>(optionMeshes.Count);
+    
+    character = GetComponent<CustomiseCharacter>();
 
     selected = defaultOption;
   }
@@ -36,10 +38,10 @@ public class CustomiseSlot : MonoBehaviour {
   void Start() {
     InstantiateOptions();
     SetActiveStates();
+    CustomiseColor(t);
   }
 
   private void InstantiateOptions() {
-    character = GetComponent<CustomiseCharacter>();
     for (int i = 0; i < optionMeshes.Count; ++i) {
       options.Insert(i, optionMeshes[i]);
       if (!optionMeshes[i]) continue;
@@ -84,6 +86,11 @@ public class CustomiseSlot : MonoBehaviour {
 
   public void SetSelected(int option) {
     selected = option;
+  }
+
+  public void UpdateSelected(int option) {
+    SetSelected(option);
+    SetActiveStates();
   }
 
   public void CustomiseColor(float newT) {

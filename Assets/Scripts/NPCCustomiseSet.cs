@@ -10,23 +10,20 @@ public class CustoSlotInfo {
 }
 
 public class NPCCustomiseSet : MonoBehaviour {
-  private NPCCustomiseSetObject custoObject;
+  public NPCCustomiseSetObject custoObject;
   void Start() {
     ApplySavedCustomisation();
   }
 
   public void SaveCustomisation() {
-    if (!custoObject) {
-      var path = $"Assets/Config/NPCCustoSaves/{gameObject.GetInstanceID()}.asset";
-      if (!string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(path, AssetPathToGUIDOptions.OnlyExistingAssets))) {
-        custoObject = AssetDatabase.LoadAssetAtPath<NPCCustomiseSetObject>(path);
-      }
-      else {
-        custoObject = ScriptableObject.CreateInstance<NPCCustomiseSetObject>();
+    var path = $"Assets/Config/NPCCustoSaves/{gameObject.name}.asset";
+    if (!string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(path, AssetPathToGUIDOptions.OnlyExistingAssets))) {
+      custoObject = AssetDatabase.LoadAssetAtPath<NPCCustomiseSetObject>(path);
+    }
+    else {
+      custoObject = ScriptableObject.CreateInstance<NPCCustomiseSetObject>();
 
-        AssetDatabase.CreateAsset(custoObject, path);
-        AssetDatabase.SaveAssets();
-      }
+      AssetDatabase.CreateAsset(custoObject, path);
     }
     var character = GetComponent<CustomiseCharacter>();
     var slots = GetComponents<CustomiseSlot>();
@@ -41,22 +38,19 @@ public class NPCCustomiseSet : MonoBehaviour {
         custoObject.selections[i] = info;
       }
       else {
-        Debug.Log($"slot: {slot.slotName}, selection = {info.selection}");
         custoObject.selections.Add(info);
       }
     }
-    AssetDatabase.SaveAssets();
+    EditorUtility.SetDirty(custoObject);
   }
 
   public void ApplySavedCustomisation() {
-    if (!custoObject) {
-      var path = $"Assets/Config/NPCCustoSaves/{gameObject.GetInstanceID()}.asset";
-      if (!string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(path, AssetPathToGUIDOptions.OnlyExistingAssets))) {
-        custoObject = AssetDatabase.LoadAssetAtPath<NPCCustomiseSetObject>(path);
-      }
-      else {
-        return;
-      }
+    var path = $"Assets/Config/NPCCustoSaves/{gameObject.name}.asset";
+    if (!string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(path, AssetPathToGUIDOptions.OnlyExistingAssets))) {
+      custoObject = AssetDatabase.LoadAssetAtPath<NPCCustomiseSetObject>(path);
+    }
+    else {
+      return;
     }
     var character = GetComponent<CustomiseCharacter>();
     var slots = GetComponents<CustomiseSlot>();
@@ -65,7 +59,7 @@ public class NPCCustomiseSet : MonoBehaviour {
       var slot = slots[i];
       if (i < custoObject.selections.Count) {
         var info = custoObject.selections[i];
-        slot.SetSelected(info.selection);
+        slot.UpdateSelected(info.selection);
         slot.CustomiseColor(info.hue);
       }
     }
