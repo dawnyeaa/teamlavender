@@ -28,24 +28,30 @@ public class CharCustoUI : MonoBehaviour {
     character = customiserChar.GetComponent<CustomiseCharacter>();
     var slotsarray = customiserChar.GetComponents<CustomiseSlot>();
     slots = new();
-    bool newCustoInstance = CharCustoArrangement.instance.selectedSlots.Count == 0;
-    if (newCustoInstance) {
-      CharCustoArrangement.instance.skinHue = character.colorT;
+    if (!PlayerPrefs.HasKey("pelt")) {
+      PlayerPrefs.SetFloat("pelt", character.colorT);
     }
     else {
-      character.CustomiseColor(CharCustoArrangement.instance.skinHue);
+      character.CustomiseColor(PlayerPrefs.GetFloat("pelt"));
     }
     foreach (CustomiseSlot slot in slotsarray) {
       slots.Add(slot.slotName, slot);
-      if (newCustoInstance) {
-        CharCustoArrangement.instance.selectedSlots.Add(slot.slotName, slot.defaultOption);
-        CharCustoArrangement.instance.hues.Add(slot.slotName, slot.GetT());
+      var selectionKey = $"{slot.slotName}.selection";
+      var hueKey = $"{slot.slotName}.hue";
+      if (!PlayerPrefs.HasKey(selectionKey)) {
+        PlayerPrefs.SetInt(selectionKey, slot.defaultOption);
       }
       else {
-        slots[slot.slotName].SetSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
-        slots[slot.slotName].CustomiseColor(CharCustoArrangement.instance.hues[slot.slotName]);
+        slots[slot.slotName].SetSelected(PlayerPrefs.GetInt(selectionKey));
+      }
+      if (!PlayerPrefs.HasKey(hueKey)) {
+        PlayerPrefs.SetFloat(hueKey, slot.GetT());
+      }
+      else {
+        slots[slot.slotName].CustomiseColor(PlayerPrefs.GetFloat(hueKey));
       }
     }
+    PlayerPrefs.Save();
   }
 
   public void EnterMenu() {
@@ -117,19 +123,17 @@ public class CharCustoUI : MonoBehaviour {
 
   public void SaveSelected() {
     foreach (var slot in slots) {
-      CharCustoArrangement.instance.selectedSlots[slot.Key] = slot.Value.GetSelected();
-      CharCustoArrangement.instance.hues[slot.Key] = slot.Value.GetT();
+      PlayerPrefs.SetInt($"{slot.Key}.selection", slot.Value.GetSelected());
+      PlayerPrefs.SetFloat($"{slot.Key}.hue", slot.Value.GetT());
     }
-    CharCustoArrangement.instance.skinHue = character.colorT;
+    PlayerPrefs.SetFloat("pelt", character.colorT);
+    PlayerPrefs.Save();
   }
 
   public void ResetSelected() {
     if (startingSelection != null && startingSelection.Count == slotNames.Length) {
-      Debug.Log("resetting");
       character.CustomiseColor(startingSelection["pelt"].hue);
       foreach (var slot in slots) {
-        Debug.Log($"setting {slot.Key} selection to {startingSelection[slot.Key].selection}");
-        Debug.Log($"setting {slot.Key} hue to {startingSelection[slot.Key].hue}");
         slots[slot.Key].UpdateSelected(startingSelection[slot.Key].selection);
         slots[slot.Key].CustomiseColor(startingSelection[slot.Key].hue);
       }

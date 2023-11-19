@@ -17,10 +17,19 @@ public class CustomiseCharacter : MonoBehaviour {
     slots = new();
     foreach (CustomiseSlot slot in slotsarray) {
       slots.Add(slot.slotName, slot);
-      if (isPlayerCharacter && CharCustoArrangement.instance != null && CharCustoArrangement.instance.selectedSlots.Count > 0) {
-        slot.UpdateSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
-        slot.CustomiseColor(CharCustoArrangement.instance.hues[slot.slotName]);
+      if (isPlayerCharacter) {
+        var selectionKey = $"{slot.slotName}.selection";
+        var hueKey = $"{slot.slotName}.hue";
+        if (PlayerPrefs.HasKey(selectionKey)) {
+          slot.UpdateSelected(PlayerPrefs.GetInt(selectionKey));
+        }
+        if (PlayerPrefs.HasKey(hueKey)) {
+          slot.CustomiseColor(PlayerPrefs.GetFloat(hueKey));
+        }
       }
+    }
+    if (PlayerPrefs.HasKey("pelt")) {
+      CustomiseColor(PlayerPrefs.GetFloat("pelt"));
     }
   }
 
