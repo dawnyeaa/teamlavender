@@ -8,12 +8,19 @@ public class HueSlider : MonoBehaviour {
   [SerializeField] private RectTransform hueDropper;
 
   void OnValidate() {
-    hueDropper.anchoredPosition = new(Mathf.Lerp(sliderBounds.x, sliderBounds.y, t), hueDropper.anchoredPosition.y);
-    if (Application.isPlaying)
-      hueCircleRenderer.material.SetFloat("_T", t);
+    UpdateHueSlider();
   }
 
   public float GetHueT() => t;
 
-  public void SetHueT(float newT) => t = newT;
+  public void SetHueT(float newT) {
+    t = Mathf.Clamp01(newT);
+    UpdateHueSlider();
+  }
+
+  private void UpdateHueSlider() {
+    hueDropper.anchoredPosition = new(Mathf.Lerp(sliderBounds.x, sliderBounds.y, t), hueDropper.anchoredPosition.y);
+    if (Application.isPlaying)
+      hueCircleRenderer.material.SetFloat("_T", t);
+  }
 }

@@ -7,7 +7,9 @@ public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
 
   public Action OnUnpausePerformed;
   public Action OnMenuRPerformed, OnMenuLPerformed, OnMenuUPerformed, OnMenuDPerformed;
+  public Action OnMenuLBPerformed, OnMenuRBPerformed;
   public float RSX = 0;
+  public float HueSliderX = 0;
 
   private Controls controls;
 
@@ -55,6 +57,22 @@ public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
     if (!context.performed)
       return;
     OnMenuDPerformed?.Invoke();
+  }
+
+  public void OnMenuLB(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnMenuLBPerformed?.Invoke();
+  }
+
+  public void OnMenuRB(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnMenuRBPerformed?.Invoke();
+  }
+
+  public void OnHueSliderX(InputAction.CallbackContext context) {
+    HueSliderX = context.ReadValue<float>();
   }
 
   public void OnRightStickX(InputAction.CallbackContext context) {

@@ -28,7 +28,7 @@ public class CustomiseCharacter : MonoBehaviour {
         }
       }
     }
-    if (PlayerPrefs.HasKey("pelt")) {
+    if (isPlayerCharacter && PlayerPrefs.HasKey("pelt")) {
       CustomiseColor(PlayerPrefs.GetFloat("pelt"));
     }
   }

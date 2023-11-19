@@ -1018,6 +1018,33 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MenuLB"",
+                    ""type"": ""Button"",
+                    ""id"": ""db62a746-428d-419d-a8e7-ff9f23fef18f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuRB"",
+                    ""type"": ""Button"",
+                    ""id"": ""3c3fe372-3d51-4094-bc97-3fe3bf0f94df"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HueSliderX"",
+                    ""type"": ""Value"",
+                    ""id"": ""4cf1398a-c82f-4613-adc4-a27f06044dca"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1130,6 +1157,50 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""MenuD"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cfa9c5d4-97e5-42fd-8f73-8d40ff5ded7d"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuLB"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3f868ad6-1feb-4395-9d57-818a8dc04550"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuRB"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db4fcbb3-d03e-4741-9e74-34fce3056045"",
+                    ""path"": ""<Gamepad>/leftStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HueSliderX"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""badc2e72-76ba-484d-a4d8-327ec715959a"",
+                    ""path"": ""<Gamepad>/rightStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HueSliderX"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1199,6 +1270,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_UI_MenuU = m_UI.FindAction("MenuU", throwIfNotFound: true);
         m_UI_MenuD = m_UI.FindAction("MenuD", throwIfNotFound: true);
         m_UI_RightStickX = m_UI.FindAction("RightStickX", throwIfNotFound: true);
+        m_UI_MenuLB = m_UI.FindAction("MenuLB", throwIfNotFound: true);
+        m_UI_MenuRB = m_UI.FindAction("MenuRB", throwIfNotFound: true);
+        m_UI_HueSliderX = m_UI.FindAction("HueSliderX", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1498,6 +1572,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_MenuU;
     private readonly InputAction m_UI_MenuD;
     private readonly InputAction m_UI_RightStickX;
+    private readonly InputAction m_UI_MenuLB;
+    private readonly InputAction m_UI_MenuRB;
+    private readonly InputAction m_UI_HueSliderX;
     public struct UIActions
     {
         private @Controls m_Wrapper;
@@ -1508,6 +1585,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @MenuU => m_Wrapper.m_UI_MenuU;
         public InputAction @MenuD => m_Wrapper.m_UI_MenuD;
         public InputAction @RightStickX => m_Wrapper.m_UI_RightStickX;
+        public InputAction @MenuLB => m_Wrapper.m_UI_MenuLB;
+        public InputAction @MenuRB => m_Wrapper.m_UI_MenuRB;
+        public InputAction @HueSliderX => m_Wrapper.m_UI_HueSliderX;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1535,6 +1615,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @RightStickX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
                 @RightStickX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
                 @RightStickX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
+                @MenuLB.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuLB;
+                @MenuLB.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuLB;
+                @MenuLB.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuLB;
+                @MenuRB.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuRB;
+                @MenuRB.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuRB;
+                @MenuRB.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuRB;
+                @HueSliderX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
+                @HueSliderX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
+                @HueSliderX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -1557,6 +1646,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @RightStickX.started += instance.OnRightStickX;
                 @RightStickX.performed += instance.OnRightStickX;
                 @RightStickX.canceled += instance.OnRightStickX;
+                @MenuLB.started += instance.OnMenuLB;
+                @MenuLB.performed += instance.OnMenuLB;
+                @MenuLB.canceled += instance.OnMenuLB;
+                @MenuRB.started += instance.OnMenuRB;
+                @MenuRB.performed += instance.OnMenuRB;
+                @MenuRB.canceled += instance.OnMenuRB;
+                @HueSliderX.started += instance.OnHueSliderX;
+                @HueSliderX.performed += instance.OnHueSliderX;
+                @HueSliderX.canceled += instance.OnHueSliderX;
             }
         }
     }
@@ -1616,5 +1714,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMenuU(InputAction.CallbackContext context);
         void OnMenuD(InputAction.CallbackContext context);
         void OnRightStickX(InputAction.CallbackContext context);
+        void OnMenuLB(InputAction.CallbackContext context);
+        void OnMenuRB(InputAction.CallbackContext context);
+        void OnHueSliderX(InputAction.CallbackContext context);
     }
 }

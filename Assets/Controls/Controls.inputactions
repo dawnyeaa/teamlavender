@@ -996,6 +996,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "MenuLB",
+                    "type": "Button",
+                    "id": "db62a746-428d-419d-a8e7-ff9f23fef18f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MenuRB",
+                    "type": "Button",
+                    "id": "3c3fe372-3d51-4094-bc97-3fe3bf0f94df",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HueSliderX",
+                    "type": "Value",
+                    "id": "4cf1398a-c82f-4613-adc4-a27f06044dca",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1106,6 +1133,50 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "MenuD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cfa9c5d4-97e5-42fd-8f73-8d40ff5ded7d",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuLB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f868ad6-1feb-4395-9d57-818a8dc04550",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuRB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "db4fcbb3-d03e-4741-9e74-34fce3056045",
+                    "path": "<Gamepad>/leftStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HueSliderX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "badc2e72-76ba-484d-a4d8-327ec715959a",
+                    "path": "<Gamepad>/rightStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HueSliderX",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

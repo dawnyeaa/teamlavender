@@ -4,6 +4,7 @@ using System.Linq;
 using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CharCustoUI : MonoBehaviour {
   public Transform customiserChar;
@@ -14,6 +15,11 @@ public class CharCustoUI : MonoBehaviour {
   private Dictionary<string, CustomiseSlot> slots;
   private Dictionary<string, CustoSlotInfo> startingSelection = new();
   private int currentSlot = 0;
+  public GameObject selectionObject;
+  public GameObject hueObject;
+  public HueSlider hueSlider;
+  public float hueSliderSpeed = 0.1f;
+  public bool inHueMode = false;
   private static readonly string[] slotNames = {
     "dome",
     "specs",
@@ -24,6 +30,13 @@ public class CharCustoUI : MonoBehaviour {
     "bits",
     "pelt"
   };
+
+  private static readonly List<string> noHueSlots = new() {
+    "specs",
+    "spitter",
+    "bits"
+  };
+
   void Start() {
     character = customiserChar.GetComponent<CustomiseCharacter>();
     var slotsarray = customiserChar.GetComponents<CustomiseSlot>();
@@ -59,6 +72,8 @@ public class CharCustoUI : MonoBehaviour {
     input.OnMenuLPerformed += PrevInCurrentSlot;
     input.OnMenuUPerformed += SelectPrevSlot;
     input.OnMenuDPerformed += SelectNextSlot;
+    input.OnMenuLBPerformed += ToggleHueMode;
+    input.OnMenuRBPerformed += ToggleHueMode;
     SaveStartingSelection();
   }
 
@@ -67,28 +82,66 @@ public class CharCustoUI : MonoBehaviour {
     input.OnMenuLPerformed -= PrevInCurrentSlot;
     input.OnMenuUPerformed -= SelectPrevSlot;
     input.OnMenuDPerformed -= SelectNextSlot;
+    input.OnMenuLBPerformed -= ToggleHueMode;
+    input.OnMenuRBPerformed -= ToggleHueMode;
+    ResetCharCustoMenu();
     if (saving) SaveSelected();
     else ResetSelected();
   }
 
   void Update() {
+    if (inHueMode) {
+      hueSlider.SetHueT(hueSlider.GetHueT()+input.HueSliderX*hueSliderSpeed*Time.deltaTime);
+      if (slotNames[currentSlot] == "pelt") {
+        character.CustomiseColor(hueSlider.GetHueT());
+      }
+      else {
+        slots[slotNames[currentSlot]].CustomiseColor(hueSlider.GetHueT());
+      }
+    }
     // customiserChar.Rotate(0, rotationSpeed*input.RSX, 0);
   }
 
+  private void ToggleHueMode() {
+    if (noHueSlots.Contains(slotNames[currentSlot])) return;
+    inHueMode = !inHueMode;
+    selectionObject.SetActive(!inHueMode);
+    hueObject.SetActive(inHueMode);
+    if (inHueMode) {
+      if (slotNames[currentSlot] == "pelt") {
+        hueSlider.SetHueT(character.colorT);
+      }
+      else {
+        hueSlider.SetHueT(slots[slotNames[currentSlot]].GetT());
+      }
+    }
+  }
+
+  private void ResetCharCustoMenu() {
+    // move it out of hue mode
+    if (inHueMode) ToggleHueMode();
+    // set it back to 'dome'
+    SelectSlot(0);
+  }
+
   public void NextInCurrentSlot() {
+    if (inHueMode) return;
     NextInSlot(currentSlot);
   }
 
   public void PrevInCurrentSlot() {
+    if (inHueMode) return;
     PrevInSlot(currentSlot);
   }
 
   public void SelectNextSlot() {
+    if (inHueMode) return;
     currentSlot = (currentSlot + 1) % slotNames.Length;
     DisplayCurrentSlot();
   }
 
   public void SelectPrevSlot() {
+    if (inHueMode) return;
     currentSlot = (slotNames.Length + (currentSlot - 1)) % slotNames.Length;
     DisplayCurrentSlot();
   }
@@ -103,6 +156,11 @@ public class CharCustoUI : MonoBehaviour {
     if (slot < slotNames.Length && slotNames[slot] != "pelt") {
       slots[slotNames[slot]].SelectPreviousOption();
     }
+  }
+
+  private void SelectSlot(int slot) {
+    currentSlot = slot;
+    DisplayCurrentSlot();
   }
 
   private void SaveStartingSelection() {
