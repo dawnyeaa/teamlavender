@@ -119,6 +119,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public DebugFrame debugFrame;
   [ReadOnly] public float TimeToLand = 0;
   [ReadOnly] public bool IsGoofy = false;
+  [ReadOnly] public bool IsNollie = false;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -162,7 +163,8 @@ public class SkateboardStateMachine : StateMachine {
   public RendererFeatureDynamicProperties RFprops;
   public SkateSoundController SFX;
   public UnityEvent OnLanding;
-  public UnityEvent OnPop;
+  public UnityEvent OnNosePop;
+  public UnityEvent OnTailPop;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
@@ -184,6 +186,12 @@ public class SkateboardStateMachine : StateMachine {
   }
 
   public void OnOllieForce() {
+    if (IsGoofy ^ IsNollie) {
+      OnNosePop?.Invoke();
+    }
+    else {
+      OnTailPop?.Invoke();
+    }
     SFX.PopSound();
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce * CurrentHopTrickVerticalMult + Vector3.Project(MainRB.velocity, Facing.transform.forward) * CurrentHopTrickHorizontalMult, ForceMode.Acceleration);
   }

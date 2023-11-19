@@ -993,9 +993,54 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""MenuU"",
+                    ""type"": ""Button"",
+                    ""id"": ""3678172b-9cbe-49b9-ba21-601c34d8b68a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuD"",
+                    ""type"": ""Button"",
+                    ""id"": ""77efe80e-57d3-40b4-bc00-ff6709e1e2cc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""RightStickX"",
                     ""type"": ""Value"",
                     ""id"": ""41074cbe-6750-481c-a457-1d9487ede323"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MenuLB"",
+                    ""type"": ""Button"",
+                    ""id"": ""db62a746-428d-419d-a8e7-ff9f23fef18f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuRB"",
+                    ""type"": ""Button"",
+                    ""id"": ""3c3fe372-3d51-4094-bc97-3fe3bf0f94df"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HueSliderX"",
+                    ""type"": ""Value"",
+                    ""id"": ""4cf1398a-c82f-4613-adc4-a27f06044dca"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1068,6 +1113,94 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""RightStickX"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74f905ec-819b-4441-b7ac-8e6ef179289f"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuU"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""593359ec-7e90-4175-b1d5-c9fe610eac14"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuU"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""585cdb7e-2ada-40d6-a587-694b5196200c"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""459b9f99-8355-4c1f-b86c-ef850affc519"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cfa9c5d4-97e5-42fd-8f73-8d40ff5ded7d"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuLB"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3f868ad6-1feb-4395-9d57-818a8dc04550"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuRB"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db4fcbb3-d03e-4741-9e74-34fce3056045"",
+                    ""path"": ""<Gamepad>/leftStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HueSliderX"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""badc2e72-76ba-484d-a4d8-327ec715959a"",
+                    ""path"": ""<Gamepad>/rightStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HueSliderX"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1134,7 +1267,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
         m_UI_MenuL = m_UI.FindAction("MenuL", throwIfNotFound: true);
         m_UI_MenuR = m_UI.FindAction("MenuR", throwIfNotFound: true);
+        m_UI_MenuU = m_UI.FindAction("MenuU", throwIfNotFound: true);
+        m_UI_MenuD = m_UI.FindAction("MenuD", throwIfNotFound: true);
         m_UI_RightStickX = m_UI.FindAction("RightStickX", throwIfNotFound: true);
+        m_UI_MenuLB = m_UI.FindAction("MenuLB", throwIfNotFound: true);
+        m_UI_MenuRB = m_UI.FindAction("MenuRB", throwIfNotFound: true);
+        m_UI_HueSliderX = m_UI.FindAction("HueSliderX", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1431,7 +1569,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Unpause;
     private readonly InputAction m_UI_MenuL;
     private readonly InputAction m_UI_MenuR;
+    private readonly InputAction m_UI_MenuU;
+    private readonly InputAction m_UI_MenuD;
     private readonly InputAction m_UI_RightStickX;
+    private readonly InputAction m_UI_MenuLB;
+    private readonly InputAction m_UI_MenuRB;
+    private readonly InputAction m_UI_HueSliderX;
     public struct UIActions
     {
         private @Controls m_Wrapper;
@@ -1439,7 +1582,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
         public InputAction @MenuL => m_Wrapper.m_UI_MenuL;
         public InputAction @MenuR => m_Wrapper.m_UI_MenuR;
+        public InputAction @MenuU => m_Wrapper.m_UI_MenuU;
+        public InputAction @MenuD => m_Wrapper.m_UI_MenuD;
         public InputAction @RightStickX => m_Wrapper.m_UI_RightStickX;
+        public InputAction @MenuLB => m_Wrapper.m_UI_MenuLB;
+        public InputAction @MenuRB => m_Wrapper.m_UI_MenuRB;
+        public InputAction @HueSliderX => m_Wrapper.m_UI_HueSliderX;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1458,9 +1606,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MenuR.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
                 @MenuR.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
                 @MenuR.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
+                @MenuU.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuU;
+                @MenuU.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuU;
+                @MenuU.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuU;
+                @MenuD.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuD;
+                @MenuD.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuD;
+                @MenuD.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuD;
                 @RightStickX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
                 @RightStickX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
                 @RightStickX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
+                @MenuLB.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuLB;
+                @MenuLB.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuLB;
+                @MenuLB.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuLB;
+                @MenuRB.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuRB;
+                @MenuRB.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuRB;
+                @MenuRB.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuRB;
+                @HueSliderX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
+                @HueSliderX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
+                @HueSliderX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -1474,9 +1637,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MenuR.started += instance.OnMenuR;
                 @MenuR.performed += instance.OnMenuR;
                 @MenuR.canceled += instance.OnMenuR;
+                @MenuU.started += instance.OnMenuU;
+                @MenuU.performed += instance.OnMenuU;
+                @MenuU.canceled += instance.OnMenuU;
+                @MenuD.started += instance.OnMenuD;
+                @MenuD.performed += instance.OnMenuD;
+                @MenuD.canceled += instance.OnMenuD;
                 @RightStickX.started += instance.OnRightStickX;
                 @RightStickX.performed += instance.OnRightStickX;
                 @RightStickX.canceled += instance.OnRightStickX;
+                @MenuLB.started += instance.OnMenuLB;
+                @MenuLB.performed += instance.OnMenuLB;
+                @MenuLB.canceled += instance.OnMenuLB;
+                @MenuRB.started += instance.OnMenuRB;
+                @MenuRB.performed += instance.OnMenuRB;
+                @MenuRB.canceled += instance.OnMenuRB;
+                @HueSliderX.started += instance.OnHueSliderX;
+                @HueSliderX.performed += instance.OnHueSliderX;
+                @HueSliderX.canceled += instance.OnHueSliderX;
             }
         }
     }
@@ -1533,6 +1711,11 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnUnpause(InputAction.CallbackContext context);
         void OnMenuL(InputAction.CallbackContext context);
         void OnMenuR(InputAction.CallbackContext context);
+        void OnMenuU(InputAction.CallbackContext context);
+        void OnMenuD(InputAction.CallbackContext context);
         void OnRightStickX(InputAction.CallbackContext context);
+        void OnMenuLB(InputAction.CallbackContext context);
+        void OnMenuRB(InputAction.CallbackContext context);
+        void OnHueSliderX(InputAction.CallbackContext context);
     }
 }
