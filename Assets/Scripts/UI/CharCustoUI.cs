@@ -6,6 +6,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class CustoSlotInfo {
+  public int selection;
+  public float hue;
+}
+
 public class CharCustoUI : MonoBehaviour {
   public Transform customiserChar;
   public GameObject[] slotDisplays;
