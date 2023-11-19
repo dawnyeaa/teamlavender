@@ -993,6 +993,24 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""MenuU"",
+                    ""type"": ""Button"",
+                    ""id"": ""3678172b-9cbe-49b9-ba21-601c34d8b68a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuD"",
+                    ""type"": ""Button"",
+                    ""id"": ""77efe80e-57d3-40b4-bc00-ff6709e1e2cc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""RightStickX"",
                     ""type"": ""Value"",
                     ""id"": ""41074cbe-6750-481c-a457-1d9487ede323"",
@@ -1068,6 +1086,50 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""RightStickX"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74f905ec-819b-4441-b7ac-8e6ef179289f"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuU"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""593359ec-7e90-4175-b1d5-c9fe610eac14"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuU"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""585cdb7e-2ada-40d6-a587-694b5196200c"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""459b9f99-8355-4c1f-b86c-ef850affc519"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""MenuD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1134,6 +1196,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_UI_Unpause = m_UI.FindAction("Unpause", throwIfNotFound: true);
         m_UI_MenuL = m_UI.FindAction("MenuL", throwIfNotFound: true);
         m_UI_MenuR = m_UI.FindAction("MenuR", throwIfNotFound: true);
+        m_UI_MenuU = m_UI.FindAction("MenuU", throwIfNotFound: true);
+        m_UI_MenuD = m_UI.FindAction("MenuD", throwIfNotFound: true);
         m_UI_RightStickX = m_UI.FindAction("RightStickX", throwIfNotFound: true);
     }
 
@@ -1431,6 +1495,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Unpause;
     private readonly InputAction m_UI_MenuL;
     private readonly InputAction m_UI_MenuR;
+    private readonly InputAction m_UI_MenuU;
+    private readonly InputAction m_UI_MenuD;
     private readonly InputAction m_UI_RightStickX;
     public struct UIActions
     {
@@ -1439,6 +1505,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @Unpause => m_Wrapper.m_UI_Unpause;
         public InputAction @MenuL => m_Wrapper.m_UI_MenuL;
         public InputAction @MenuR => m_Wrapper.m_UI_MenuR;
+        public InputAction @MenuU => m_Wrapper.m_UI_MenuU;
+        public InputAction @MenuD => m_Wrapper.m_UI_MenuD;
         public InputAction @RightStickX => m_Wrapper.m_UI_RightStickX;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
@@ -1458,6 +1526,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MenuR.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
                 @MenuR.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
                 @MenuR.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuR;
+                @MenuU.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuU;
+                @MenuU.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuU;
+                @MenuU.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuU;
+                @MenuD.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuD;
+                @MenuD.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuD;
+                @MenuD.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuD;
                 @RightStickX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
                 @RightStickX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
                 @RightStickX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnRightStickX;
@@ -1474,6 +1548,12 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MenuR.started += instance.OnMenuR;
                 @MenuR.performed += instance.OnMenuR;
                 @MenuR.canceled += instance.OnMenuR;
+                @MenuU.started += instance.OnMenuU;
+                @MenuU.performed += instance.OnMenuU;
+                @MenuU.canceled += instance.OnMenuU;
+                @MenuD.started += instance.OnMenuD;
+                @MenuD.performed += instance.OnMenuD;
+                @MenuD.canceled += instance.OnMenuD;
                 @RightStickX.started += instance.OnRightStickX;
                 @RightStickX.performed += instance.OnRightStickX;
                 @RightStickX.canceled += instance.OnRightStickX;
@@ -1533,6 +1613,8 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnUnpause(InputAction.CallbackContext context);
         void OnMenuL(InputAction.CallbackContext context);
         void OnMenuR(InputAction.CallbackContext context);
+        void OnMenuU(InputAction.CallbackContext context);
+        void OnMenuD(InputAction.CallbackContext context);
         void OnRightStickX(InputAction.CallbackContext context);
     }
 }

@@ -14,6 +14,5 @@ public class CustomiseSlotEditor : Editor {
     if (GUILayout.Button("Next Item")) {
       slot.SelectNextOption();
     }
-    slot.CustomiseColor(EditorGUILayout.Slider(slot.GetT(), 0, 1));
   }
 }

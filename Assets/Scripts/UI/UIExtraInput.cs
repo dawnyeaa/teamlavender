@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
 
   public Action OnUnpausePerformed;
-  public Action OnMenuRPerformed, OnMenuLPerformed;
+  public Action OnMenuRPerformed, OnMenuLPerformed, OnMenuUPerformed, OnMenuDPerformed;
   public float RSX = 0;
 
   private Controls controls;
@@ -43,6 +43,18 @@ public class UIExtraInput : MonoBehaviour, Controls.IUIActions {
     if (!context.performed)
       return;
     OnMenuRPerformed?.Invoke();
+  }
+
+  public void OnMenuU(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnMenuUPerformed?.Invoke();
+  }
+
+  public void OnMenuD(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+    OnMenuDPerformed?.Invoke();
   }
 
   public void OnRightStickX(InputAction.CallbackContext context) {

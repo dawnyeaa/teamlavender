@@ -22,7 +22,7 @@ public class CustomiseSlot : MonoBehaviour {
   private CustomiseCharacter character;
   [ReadOnly] private int selected;
   public int defaultOption;
-  private float t;
+  [Range(0, 1)] public float t;
   
   private List<Material> optionMaterials;
 
@@ -38,6 +38,10 @@ public class CustomiseSlot : MonoBehaviour {
   void Start() {
     InstantiateOptions();
     SetActiveStates();
+    CustomiseColor(t);
+  }
+
+  void OnValidate() {
     CustomiseColor(t);
   }
 

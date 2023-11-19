@@ -1,14 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CustomiseCharacter : MonoBehaviour {
   public bool isPlayerCharacter = false;
   private Dictionary<string, CustomiseSlot> slots;
   public GameObject characterMesh;
-  private float colorT;
+  [Range(0, 1)] public float colorT;
   private Material charMaterial;
 
   void Awake() {
@@ -20,11 +17,15 @@ public class CustomiseCharacter : MonoBehaviour {
     slots = new();
     foreach (CustomiseSlot slot in slotsarray) {
       slots.Add(slot.slotName, slot);
-      if (isPlayerCharacter && CharCustoArrangement.instance != null) {
-        slot.SetSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
+      if (isPlayerCharacter && CharCustoArrangement.instance != null && CharCustoArrangement.instance.selectedSlots.Count > 0) {
+        slot.UpdateSelected(CharCustoArrangement.instance.selectedSlots[slot.slotName]);
         slot.CustomiseColor(CharCustoArrangement.instance.hues[slot.slotName]);
       }
     }
+  }
+
+  void OnValidate() {
+    CustomiseColor(colorT);
   }
 
   public void CustomiseColor(float newT) {
