@@ -1045,6 +1045,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MenuB"",
+                    ""type"": ""Button"",
+                    ""id"": ""45dc5af2-6d1e-46f5-8821-93cf9ab2e056"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1201,6 +1210,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""HueSliderX"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e560b608-7f5f-4970-bca3-67e5a05b88eb"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MenuB"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1273,6 +1293,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_UI_MenuLB = m_UI.FindAction("MenuLB", throwIfNotFound: true);
         m_UI_MenuRB = m_UI.FindAction("MenuRB", throwIfNotFound: true);
         m_UI_HueSliderX = m_UI.FindAction("HueSliderX", throwIfNotFound: true);
+        m_UI_MenuB = m_UI.FindAction("MenuB", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1575,6 +1596,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_MenuLB;
     private readonly InputAction m_UI_MenuRB;
     private readonly InputAction m_UI_HueSliderX;
+    private readonly InputAction m_UI_MenuB;
     public struct UIActions
     {
         private @Controls m_Wrapper;
@@ -1588,6 +1610,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @MenuLB => m_Wrapper.m_UI_MenuLB;
         public InputAction @MenuRB => m_Wrapper.m_UI_MenuRB;
         public InputAction @HueSliderX => m_Wrapper.m_UI_HueSliderX;
+        public InputAction @MenuB => m_Wrapper.m_UI_MenuB;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1624,6 +1647,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @HueSliderX.started -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
                 @HueSliderX.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
                 @HueSliderX.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnHueSliderX;
+                @MenuB.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuB;
+                @MenuB.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuB;
+                @MenuB.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMenuB;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -1655,6 +1681,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @HueSliderX.started += instance.OnHueSliderX;
                 @HueSliderX.performed += instance.OnHueSliderX;
                 @HueSliderX.canceled += instance.OnHueSliderX;
+                @MenuB.started += instance.OnMenuB;
+                @MenuB.performed += instance.OnMenuB;
+                @MenuB.canceled += instance.OnMenuB;
             }
         }
     }
@@ -1717,5 +1746,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMenuLB(InputAction.CallbackContext context);
         void OnMenuRB(InputAction.CallbackContext context);
         void OnHueSliderX(InputAction.CallbackContext context);
+        void OnMenuB(InputAction.CallbackContext context);
     }
 }
