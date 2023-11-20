@@ -1023,6 +1023,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "MenuB",
+                    "type": "Button",
+                    "id": "45dc5af2-6d1e-46f5-8821-93cf9ab2e056",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1177,6 +1186,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "HueSliderX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e560b608-7f5f-4970-bca3-67e5a05b88eb",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuB",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
