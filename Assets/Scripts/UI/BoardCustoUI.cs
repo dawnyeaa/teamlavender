@@ -67,18 +67,19 @@ public class BoardCustoUI : MonoBehaviour {
     // }
     // PlayerPrefs.Save();
     if (PlayerPrefs.HasKey("deck")) {
-      UpdateDeck(PlayerPrefs.GetInt("deck"));
+      currentDeck = PlayerPrefs.GetInt("deck");
+      UpdateDeck(currentDeck);
     }
     else {
       PlayerPrefs.SetInt("deck", 0);
     }
     for (int i = 0; i < hueSlots.Count; ++i) {
       if (PlayerPrefs.HasKey(hueSlots[i])) {
-        hueValues[i] = PlayerPrefs.GetFloat(hueSlots[i]);
+        SetHue(i, PlayerPrefs.GetFloat(hueSlots[i]));
       }
       else {
         PlayerPrefs.SetFloat(hueSlots[i], defaultHues[i]);
-        hueValues[i] = defaultHues[i];
+        SetHue(i, defaultHues[i]);
       }
     }
     EnterMenu();
@@ -101,6 +102,7 @@ public class BoardCustoUI : MonoBehaviour {
     input.OnMenuBPerformed -= ExitMenu;
     // ResetCharCustoMenu();
     SaveSelected();
+    BoardCustoFlowManager.returningFromBoardCusto = true;
     SceneManager.LoadScene(0);
   }
 
@@ -202,6 +204,7 @@ public class BoardCustoUI : MonoBehaviour {
 
   public void SetHue(int index, float t) {
     boardCustomiserDeckRenderer.material.SetFloat(hueSlotProperties[index], t);
+    hueValues[index] = t;
   }
 
   public void SaveSelected() {

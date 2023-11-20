@@ -5,11 +5,18 @@ public class CustomiseCharacter : MonoBehaviour {
   public bool isPlayerCharacter = false;
   private Dictionary<string, CustomiseSlot> slots;
   public GameObject characterMesh;
+  public GameObject boardMesh;
   [Range(0, 1)] public float colorT;
   private Material charMaterial;
+  private Material boardMaterial;
+  public CustoDeck[] decks;
+  public int deckIndex;
+  [Range(0, 1)] public float truckColorT;
+  [Range(0, 1)] public float wheelsColorT;
 
   void Awake() {
     charMaterial = characterMesh.GetComponent<SkinnedMeshRenderer>().material;
+    boardMaterial = boardMesh.GetComponent<SkinnedMeshRenderer>().material;
   }
   
   void Start() {
@@ -28,8 +35,20 @@ public class CustomiseCharacter : MonoBehaviour {
         }
       }
     }
-    if (isPlayerCharacter && PlayerPrefs.HasKey("pelt")) {
-      CustomiseColor(PlayerPrefs.GetFloat("pelt"));
+    if (isPlayerCharacter) {
+      if (PlayerPrefs.HasKey("pelt")) {
+        CustomiseColor(PlayerPrefs.GetFloat("pelt"));
+      }
+      if (PlayerPrefs.HasKey("deck")) {
+        deckIndex = PlayerPrefs.GetInt("deck");
+      }
+      if (PlayerPrefs.HasKey("trucks")) {
+        boardMaterial.SetFloat("_TruckGradientX", PlayerPrefs.GetFloat("trucks"));
+      }
+      if (PlayerPrefs.HasKey("wheels")) {
+        boardMaterial.SetFloat("_WheelGradientX", PlayerPrefs.GetFloat("wheels"));
+      }
+      SelectDeck(deckIndex);
     }
   }
 
@@ -41,6 +60,10 @@ public class CustomiseCharacter : MonoBehaviour {
     colorT = newT;
     if (charMaterial == null) return;
     charMaterial.SetFloat("_GradientX", newT);
+  }
+
+  public void SelectDeck(int deck) {
+    boardMaterial.SetTexture("_DeckTex", decks[deck].deckTexture);
   }
 
   public void SetCutoutChannel(MaskChannel channel, float threshold) {

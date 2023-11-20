@@ -79,10 +79,10 @@ public class CharCustoUI : MonoBehaviour {
     input.OnMenuDPerformed += SelectNextSlot;
     input.OnMenuLBPerformed += ToggleHueMode;
     input.OnMenuRBPerformed += ToggleHueMode;
-    SaveStartingSelection();
+    // SaveStartingSelection();
   }
 
-  public void ExitMenu(bool saving = false) {
+  public void ExitMenu() {
     input.OnMenuRPerformed -= NextInCurrentSlot;
     input.OnMenuLPerformed -= PrevInCurrentSlot;
     input.OnMenuUPerformed -= SelectPrevSlot;
@@ -90,8 +90,8 @@ public class CharCustoUI : MonoBehaviour {
     input.OnMenuLBPerformed -= ToggleHueMode;
     input.OnMenuRBPerformed -= ToggleHueMode;
     ResetCharCustoMenu();
-    if (saving) SaveSelected();
-    else ResetSelected();
+    SaveSelected();
+    // else ResetSelected();
   }
 
   void Update() {
