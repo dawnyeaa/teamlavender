@@ -20,7 +20,6 @@ public class BoardCustoUI : MonoBehaviour {
   private int currentDeck = 0;
   public float hueSliderSpeed = 0.1f;
   public bool inHueMode = false;
-  public CustoDeck[] custoDecks;
   public float[] defaultHues;
   public TextMeshProUGUI deckTitle;
   private float[] hueValues = new float[2];
@@ -166,18 +165,19 @@ public class BoardCustoUI : MonoBehaviour {
   }
 
   private void UpdateDeck(int deck) {
-    boardCustomiserDeckRenderer.material.SetTexture("_DeckTex", custoDecks[deck].deckTexture);
-    boardCustoFrameDeck.material.SetTexture("_BaseMap", custoDecks[deck].deckTexture);
-    deckTitle.text = $"{custoDecks[deck].deckTitle}{(custoDecks[deck].deckArtist.Length != 0 ? "\nby" : "")} {custoDecks[deck].deckArtist}";
+    var custoDeck = CustoDeckStorage.instance.custoDecks[deck];
+    boardCustomiserDeckRenderer.material.SetTexture("_DeckTex", custoDeck.deckTexture);
+    boardCustoFrameDeck.material.SetTexture("_BaseMap", custoDeck.deckTexture);
+    deckTitle.text = $"{custoDeck.deckTitle}{(custoDeck.deckArtist.Length != 0 ? "\nby" : "")} {custoDeck.deckArtist}";
   }
 
   private void NextDeck() {
-    currentDeck = (currentDeck + 1) % custoDecks.Length;
+    currentDeck = (currentDeck + 1) % CustoDeckStorage.instance.custoDecks.Length;
     UpdateDeck(currentDeck);
   }
 
   private void PrevDeck() {
-    currentDeck = (custoDecks.Length + (currentDeck - 1)) % custoDecks.Length;
+    currentDeck = (CustoDeckStorage.instance.custoDecks.Length + (currentDeck - 1)) % CustoDeckStorage.instance.custoDecks.Length;
     UpdateDeck(currentDeck);
   }
 

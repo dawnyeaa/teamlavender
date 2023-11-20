@@ -9,7 +9,6 @@ public class CustomiseCharacter : MonoBehaviour {
   [Range(0, 1)] public float colorT;
   private Material charMaterial;
   private Material boardMaterial;
-  public CustoDeck[] decks;
   public int deckIndex;
   [Range(0, 1)] public float truckColorT;
   [Range(0, 1)] public float wheelsColorT;
@@ -63,7 +62,7 @@ public class CustomiseCharacter : MonoBehaviour {
   }
 
   public void SelectDeck(int deck) {
-    boardMaterial.SetTexture("_DeckTex", decks[deck].deckTexture);
+    boardMaterial.SetTexture("_DeckTex", CustoDeckStorage.instance.custoDecks[deck].deckTexture);
   }
 
   public void SetCutoutChannel(MaskChannel channel, float threshold) {
