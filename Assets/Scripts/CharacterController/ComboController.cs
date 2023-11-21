@@ -37,6 +37,10 @@ public class ComboController : MonoBehaviour {
     queueVis = comboBuffer.ToList();
   }
 
+  public void ClearCurrentCombo() {
+    currentlyPlayingCombo = null;
+  }
+
   public void CheckCombos() {
     // reverse the buffer so we can check inputs with the most recent first
     List<Input> reversedbuffer = comboBuffer.ToList();

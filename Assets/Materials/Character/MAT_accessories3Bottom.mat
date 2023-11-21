@@ -22,7 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: MAT_accessories3Bottom
   m_Shader: {fileID: 4800000, guid: 46580ec6758603d4988c23fd28b71307, type: 3}
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - USE_GRADIENT_MASK
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -148,6 +149,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _UpAmbientValue: 0.55
+    - _UseGradientMask: 1
     - _WashBalance: -0.16
     - _WashBalance2: 0.31
     - _WashContrast: 4.38
