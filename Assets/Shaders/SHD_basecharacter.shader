@@ -4,6 +4,8 @@ Shader "Character/BaseCharacter" {
     _BodyCutoutTex ("Body Cutout Tex", 2D) = "white" {}
     _GradientTex ("Gradient Tex", 2D) = "white" {}
 
+    [Toggle(USE_GRADIENT_MASK)] _UseGradientMask ("Use Gradient Mask in A?", Float) = 1
+
     _BackupShadowColor ("No-Gradient Shadow Color", Color) = (0, 0, 0, 1)
 
     _ShadowValue ("Shadow Value", Range(0, 1)) = 1
@@ -67,6 +69,7 @@ Shader "Character/BaseCharacter" {
       #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
 
       #pragma shader_feature SHOW_CUTOUT_MASK
+      #pragma shader_feature USE_GRADIENT_MASK
 
       #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
       #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
@@ -184,7 +187,11 @@ Shader "Character/BaseCharacter" {
 
         half4 mainTex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, TRANSFORM_TEX(i.uv, _BaseMap));
         half3 mainColor = pow(mainTex.rgb, 2.2);
-        float gradientMask = mainTex.a;
+        #ifdef USE_GRADIENT_MASK
+          float gradientMask = mainTex.a;
+        #else
+          float gradientMask = 0;
+        #endif
         float gradientT = mainTex.r;
 
         float lightDot = (dot(_LightDirection, i.normalWS)*0.5)+0.5;

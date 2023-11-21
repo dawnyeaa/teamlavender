@@ -2114,11 +2114,14 @@ MonoBehaviour:
   slowSpeedDisplay: {fileID: 0}
   maxSpeedDisplay: {fileID: 0}
   speedometerDisplay: {fileID: 2100000, guid: 309dd9d87b940fc419dbbeba8cb11d9c, type: 2}
+  comboController: {fileID: 0}
   comboDisplayManager: {fileID: 0}
   pointsPerHalfTurn: 10
   turnTolerance: 0.1
+  groundSpeed: 0
   groundSpeedSlowSpeed: 6
   groundSpeedSlowDuration: 2
+  speedPointValue: 1
 --- !u!65 &1705866020
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7594,11 +7597,6 @@ MonoBehaviour:
   characterMesh: {fileID: 4336612580946386513}
   boardMesh: {fileID: 846844723239859862}
   colorT: 0
-  decks:
-  - {fileID: 11400000, guid: 033063dbe8b854445ba3f4f146ff6c38, type: 2}
-  - {fileID: 11400000, guid: 2987ad613dcdc864db7bef0c1b6ed4ba, type: 2}
-  - {fileID: 11400000, guid: b23c1f2f2f5a76b4f9f0fbe451e13653, type: 2}
-  - {fileID: 11400000, guid: f76009eaa1d433e44ba9fe8b3ea38933, type: 2}
   deckIndex: 0
   truckColorT: 0
   wheelsColorT: 0
@@ -11365,7 +11363,6 @@ MonoBehaviour:
   characterMesh: {fileID: 4980477868980252765}
   boardMesh: {fileID: 8282138236565821594}
   colorT: 0
-  decks: []
   deckIndex: 0
   truckColorT: 0
   wheelsColorT: 0
