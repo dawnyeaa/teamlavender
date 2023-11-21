@@ -49,7 +49,7 @@ public class SkateboardMoveState : SkateboardBaseState
         cameraTarget = stateMachine.transform.Find("cameraTarget").GetComponent<CameraTargetController>();
         slopeCrouch = new ContinuousDataStepper(0, settings.slopeCrouchFPS);
         animator = new SkateboardMoveAnimator(this);
-        cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
+        //cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
     }
 
     public override void Enter()
