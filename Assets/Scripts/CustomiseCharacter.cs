@@ -7,6 +7,7 @@ public class CustomiseCharacter : MonoBehaviour {
   public GameObject characterMesh;
   public GameObject boardMesh;
   [Range(0, 1)] public float colorT;
+  public int gradientIndex = 0;
   private Material charMaterial;
   private Material boardMaterial;
   public int deckIndex;
@@ -26,17 +27,24 @@ public class CustomiseCharacter : MonoBehaviour {
       if (isPlayerCharacter) {
         var selectionKey = $"{slot.slotName}.selection";
         var hueKey = $"{slot.slotName}.hue";
+        var gradientKey = $"{slot.slotName}.gradient";
         if (PlayerPrefs.HasKey(selectionKey)) {
           slot.UpdateSelected(PlayerPrefs.GetInt(selectionKey));
         }
         if (PlayerPrefs.HasKey(hueKey)) {
           slot.CustomiseColor(PlayerPrefs.GetFloat(hueKey));
         }
+        if (PlayerPrefs.HasKey(gradientKey)) {
+          slot.SetGradient(PlayerPrefs.GetInt(gradientKey));
+        }
       }
     }
     if (isPlayerCharacter) {
       if (PlayerPrefs.HasKey("pelt")) {
         CustomiseColor(PlayerPrefs.GetFloat("pelt"));
+      }
+      if (PlayerPrefs.HasKey("pelt.gradient")) {
+        SetGradient(PlayerPrefs.GetInt("pelt.gradient"));
       }
       if (PlayerPrefs.HasKey("deck")) {
         deckIndex = PlayerPrefs.GetInt("deck");
@@ -47,12 +55,16 @@ public class CustomiseCharacter : MonoBehaviour {
       if (PlayerPrefs.HasKey("wheels")) {
         boardMaterial.SetFloat("_WheelGradientX", PlayerPrefs.GetFloat("wheels"));
       }
-      SelectDeck(deckIndex);
+      SetDeck(deckIndex);
     }
   }
 
   void OnValidate() {
     CustomiseColor(colorT);
+    // if (Application.isPlaying) {
+    //   SetGradient(gradientIndex);
+    //   SetDeck(deckIndex);
+    // }
   }
 
   public void CustomiseColor(float newT) {
@@ -61,8 +73,16 @@ public class CustomiseCharacter : MonoBehaviour {
     charMaterial.SetFloat("_GradientX", newT);
   }
 
-  public void SelectDeck(int deck) {
-    boardMaterial.SetTexture("_DeckTex", CustoDeckStorage.instance.custoDecks[deck].deckTexture);
+  public void SetGradient(int index) {
+    gradientIndex = index;
+    if (charMaterial == null) return;
+    if (GradientsManager.instance)
+      charMaterial.SetTexture("_GradientTex", GradientsManager.instance.gradients[gradientIndex]);
+  }
+
+  public void SetDeck(int deck) {
+    deckIndex = deck;
+    boardMaterial.SetTexture("_DeckTex", CustoDeckStorage.instance.custoDecks[deckIndex].deckTexture);
   }
 
   public void SetCutoutChannel(MaskChannel channel, float threshold) {

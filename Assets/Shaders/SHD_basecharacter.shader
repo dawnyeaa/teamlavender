@@ -221,7 +221,7 @@ Shader "Character/BaseCharacter" {
 
         float3 gradientShadedColor = lerp(gradientDeepShadow, SAMPLE_TEXTURE2D(_GradientTex, sampler_GradientTex, TRANSFORM_TEX(float2(_GradientX, saturate(gradientShadingValue)), _GradientTex)), step(0, gradientShadingValue));
         float3 mainShadedColor = lerp(mainColor, mainColor*(_BackupShadowColor.rgb + ambientValue), shading);
-        float3 maskedColor = lerp(mainShadedColor, gradientShadedColor, gradientMask);
+        float3 maskedColor = lerp(mainShadedColor, gradientShadedColor, pow(gradientMask, 1/8.0));
 
         #ifdef SHOW_CUTOUT_MASK
           return half4(1-mask, 1);
