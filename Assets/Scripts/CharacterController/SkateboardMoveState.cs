@@ -1,3 +1,4 @@
+using CharacterController;
 using UnityEngine;
 
 public class SkateboardMoveState : SkateboardBaseState
@@ -19,6 +20,7 @@ public class SkateboardMoveState : SkateboardBaseState
     public bool flipped;
     public float jumpTimer;
     public float pushTimer;
+    private SkateboardMoveAnimator animator;
 
     public Truck[] trucks = new Truck[4];
 
@@ -35,7 +37,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
-        //animator = new SkateboardMoveAnimator(this);
+        animator = new SkateboardMoveAnimator(this);
         cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
     }
 
@@ -123,7 +125,7 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyBrakeForce();
         CheckForWalls();
         UpdateCamera();
-        //animator.Tick();
+        animator.Tick();
         
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
 
