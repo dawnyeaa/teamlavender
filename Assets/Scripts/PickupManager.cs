@@ -24,6 +24,11 @@ public class PickupManager : MonoBehaviour {
     SetEnabled();
   }
 
+  public void Pickup() {
+    ChooseNextPickup();
+    PointManager.instance.UpdatePickupDisplay();
+  }
+
   public void SetFrankMode(bool enabled) {
     
   }

@@ -346,7 +346,7 @@ public class SkateboardMoveState : SkateboardBaseState
         {
             var nextPosition = position + velocity * deltaTime;
 
-            if (Physics.Linecast(position, nextPosition, out var hit))
+            if (Physics.Linecast(position, nextPosition, out var hit, LayerMask.GetMask("Ground")))
             {
                 if (!ValidateHit(hit)) return;
 

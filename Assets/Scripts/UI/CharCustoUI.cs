@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class CustoSlotInfo {
   public int selection;
   public float hue;
+  public int gradientIndex;
 }
 
 public class CharCustoUI : MonoBehaviour {
@@ -20,11 +21,14 @@ public class CharCustoUI : MonoBehaviour {
   private Dictionary<string, CustomiseSlot> slots;
   private Dictionary<string, CustoSlotInfo> startingSelection = new();
   private int currentSlot = 0;
+  private List<int> lastGradients;
+  private int currentGradient;
   public GameObject selectionObject;
   public GameObject hueObject;
   public HueSlider hueSlider;
   public float hueSliderSpeed = 0.1f;
   public bool inHueMode = false;
+  public List<int> defaultGradients;
   private static readonly string[] slotNames = {
     "dome",
     "specs",
@@ -45,6 +49,10 @@ public class CharCustoUI : MonoBehaviour {
   void Start() {
     character = customiserChar.GetComponent<CustomiseCharacter>();
     var slotsarray = customiserChar.GetComponents<CustomiseSlot>();
+    lastGradients = new();
+    for (int i = 0; i < slotNames.Length; ++i) {
+      lastGradients.Add(-1);
+    }
     slots = new();
     if (!PlayerPrefs.HasKey("pelt")) {
       PlayerPrefs.SetFloat("pelt", character.colorT);
@@ -52,10 +60,19 @@ public class CharCustoUI : MonoBehaviour {
     else {
       character.CustomiseColor(PlayerPrefs.GetFloat("pelt"));
     }
-    foreach (CustomiseSlot slot in slotsarray) {
+    if (!PlayerPrefs.HasKey("pelt.gradient")) {
+      PlayerPrefs.SetInt("pelt.gradient", defaultGradients[7]);
+    }
+    else {
+      character.SetGradient(PlayerPrefs.GetInt("pelt.gradient"));
+      lastGradients[7] = PlayerPrefs.GetInt("pelt.gradient");
+    }
+    for (int i = 0; i < slotsarray.Length; ++i) {
+      var slot = slotsarray[i];
       slots.Add(slot.slotName, slot);
       var selectionKey = $"{slot.slotName}.selection";
       var hueKey = $"{slot.slotName}.hue";
+      var gradientKey = $"{slot.slotName}.gradient";
       if (!PlayerPrefs.HasKey(selectionKey)) {
         PlayerPrefs.SetInt(selectionKey, slot.defaultOption);
       }
@@ -67,6 +84,13 @@ public class CharCustoUI : MonoBehaviour {
       }
       else {
         slots[slot.slotName].CustomiseColor(PlayerPrefs.GetFloat(hueKey));
+      }
+      if (!PlayerPrefs.HasKey(gradientKey)) {
+        PlayerPrefs.SetInt(gradientKey, defaultGradients[i]);
+      }
+      else {
+        slots[slot.slotName].SetGradient(PlayerPrefs.GetInt(gradientKey));
+        lastGradients[i] = PlayerPrefs.GetInt(gradientKey);
       }
     }
     PlayerPrefs.Save();
@@ -113,6 +137,13 @@ public class CharCustoUI : MonoBehaviour {
     selectionObject.SetActive(!inHueMode);
     hueObject.SetActive(inHueMode);
     if (inHueMode) {
+      if (lastGradients[currentSlot] == -1) {
+        currentGradient = defaultGradients[currentSlot];
+      }
+      else {
+        currentGradient = lastGradients[currentSlot];
+      }
+      ApplyGradient();
       if (slotNames[currentSlot] == "pelt") {
         hueSlider.SetHueT(character.colorT);
       }
@@ -140,15 +171,25 @@ public class CharCustoUI : MonoBehaviour {
   }
 
   public void SelectNextSlot() {
-    if (inHueMode) return;
-    currentSlot = (currentSlot + 1) % slotNames.Length;
-    DisplayCurrentSlot();
+    if (inHueMode) {
+      currentGradient = (currentGradient + 1) % GradientsManager.instance.gradients.Length;
+      ApplyGradient();
+    }
+    else {
+      currentSlot = (currentSlot + 1) % slotNames.Length;
+      DisplayCurrentSlot();
+    }
   }
 
   public void SelectPrevSlot() {
-    if (inHueMode) return;
-    currentSlot = (slotNames.Length + (currentSlot - 1)) % slotNames.Length;
-    DisplayCurrentSlot();
+    if (inHueMode) {
+      currentGradient = (GradientsManager.instance.gradients.Length + (currentGradient - 1)) % GradientsManager.instance.gradients.Length;
+      ApplyGradient();
+    }
+    else {
+      currentSlot = (slotNames.Length + (currentSlot - 1)) % slotNames.Length;
+      DisplayCurrentSlot();
+    }
   }
 
   public void NextInSlot(int slot) {
@@ -188,8 +229,10 @@ public class CharCustoUI : MonoBehaviour {
     foreach (var slot in slots) {
       PlayerPrefs.SetInt($"{slot.Key}.selection", slot.Value.GetSelected());
       PlayerPrefs.SetFloat($"{slot.Key}.hue", slot.Value.GetT());
+      PlayerPrefs.SetInt($"{slot.Key}.gradient", slot.Value.gradientIndex);
     }
     PlayerPrefs.SetFloat("pelt", character.colorT);
+    PlayerPrefs.SetInt("pelt.gradient", character.gradientIndex);
     PlayerPrefs.Save();
   }
 
@@ -200,6 +243,17 @@ public class CharCustoUI : MonoBehaviour {
         slots[slot.Key].UpdateSelected(startingSelection[slot.Key].selection);
         slots[slot.Key].CustomiseColor(startingSelection[slot.Key].hue);
       }
+    }
+  }
+
+  private void ApplyGradient() {
+    hueSlider.SetGradient(currentGradient);
+    lastGradients[currentSlot] = currentGradient;
+    if (slotNames[currentSlot] == "pelt") {
+      character.SetGradient(currentGradient);
+    }
+    else {
+      slots[slotNames[currentSlot]].SetGradient(currentGradient);
     }
   }
 

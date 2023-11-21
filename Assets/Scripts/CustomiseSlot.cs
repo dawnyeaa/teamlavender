@@ -23,6 +23,7 @@ public class CustomiseSlot : MonoBehaviour {
   [ReadOnly] private int selected;
   public int defaultOption;
   [Range(0, 1)] public float t;
+  public int gradientIndex;
   
   private List<Material> optionMaterials;
 
@@ -33,16 +34,18 @@ public class CustomiseSlot : MonoBehaviour {
     character = GetComponent<CustomiseCharacter>();
 
     selected = defaultOption;
+    InstantiateOptions();
   }
 
   void Start() {
-    InstantiateOptions();
     SetActiveStates();
     CustomiseColor(t);
+    SetGradient(gradientIndex);
   }
 
   void OnValidate() {
     CustomiseColor(t);
+    if (Application.isPlaying) SetGradient(gradientIndex);
   }
 
   private void InstantiateOptions() {
@@ -104,6 +107,17 @@ public class CustomiseSlot : MonoBehaviour {
       optionMaterial.SetFloat("_GradientX", newT);
     }
   }
+
+  public void SetGradient(int index) {
+    gradientIndex = index;
+    if (optionMaterials == null) return;
+    if (!GradientsManager.instance) return;
+    foreach (var optionMaterial in optionMaterials) {
+      optionMaterial.SetTexture("_GradientTex", GradientsManager.instance.gradients[index]);
+    }
+  }
+
+  public int GetGradientIndex() => gradientIndex;
 
   public float GetT() => t;
 }
