@@ -97,7 +97,6 @@ public class CharacterPointHandler : MonoBehaviour {
     var halfturns = Mathf.FloorToInt((Mathf.Max(cwturnAmount, ccwturnAmount)*2f)+turnTolerance);
 
     pointSystem.AddPoints(halfturns * pointsPerHalfTurn);
-    Debug.Log("half turn points added: " + halfturns * pointsPerHalfTurn);
     cwturnAmount = ccwturnAmount = 0;
     lastHalfturns = 0;
   }
