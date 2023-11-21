@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour {
   [SerializeField] GameObject[] Menus;
+  [SerializeField] ButtonSelectionHandler[] MenuDefauts;
   [SerializeField] int CurrentMenu;
-  [SerializeField] Button PauseMenuDefault, PauseReturnToMenuDefault;
   [SerializeField] Animator PauseViewfinderAnimator;
   [SerializeField] SkateboardStateMachine CharController;
 
@@ -24,15 +24,7 @@ public class PauseMenuManager : MonoBehaviour {
     Menus[CurrentMenu].SetActive(false);
     CurrentMenu = menu;
     Menus[menu].SetActive(true);
-    switch (menu) {
-      case 0:
-        PauseMenuDefault.Select();
-        break;
-      
-      case 1:
-        PauseReturnToMenuDefault.Select();
-        break;
-    }
+    MenuDefauts[menu].ManualSelect();
   }
 
   public void ChangeScene(string sceneName) {
@@ -46,6 +38,7 @@ public class PauseMenuManager : MonoBehaviour {
     gameplayUI.SetActive(false);
     PauseViewfinderAnimator.SetBool("enabled", true);
     extraInput.OnUnpausePerformed += ResumeGame;
+    ChangeMenu(0);
   }
 
   public void ResumeGame() {

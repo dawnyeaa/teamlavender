@@ -60,19 +60,19 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "manny",
+                    "type": "Value",
+                    "id": "07a177a8-5d4b-4657-81b0-6fd64e162bdf",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "rightStick",
                     "type": "PassThrough",
                     "id": "2b5fdc0f-4303-4b92-a6a6-29bba3fd010f",
                     "expectedControlType": "Stick",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ollieCrouch",
-                    "type": "Button",
-                    "id": "83528823-48cd-4d9d-99ec-528c5c805bfb",
-                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -529,17 +529,6 @@
                 },
                 {
                     "name": "",
-                    "id": "0c6998c7-2065-45c8-b8ad-793f52cc1d60",
-                    "path": "<Gamepad>/rightStick/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "ollieCrouch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "2c3ba339-daeb-42ad-9783-c57ac7f13633",
                     "path": "<Keyboard>/backspace",
                     "interactions": "",
@@ -579,6 +568,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "debug.pointsDisplay",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2090bd8e-a408-4206-89cf-a1e8b6fabdea",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "manny",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -971,6 +971,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "MenuU",
+                    "type": "Button",
+                    "id": "3678172b-9cbe-49b9-ba21-601c34d8b68a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MenuD",
+                    "type": "Button",
+                    "id": "77efe80e-57d3-40b4-bc00-ff6709e1e2cc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "RightStickX",
                     "type": "Value",
                     "id": "41074cbe-6750-481c-a457-1d9487ede323",
@@ -978,6 +996,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "MenuLB",
+                    "type": "Button",
+                    "id": "db62a746-428d-419d-a8e7-ff9f23fef18f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MenuRB",
+                    "type": "Button",
+                    "id": "3c3fe372-3d51-4094-bc97-3fe3bf0f94df",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HueSliderX",
+                    "type": "Value",
+                    "id": "4cf1398a-c82f-4613-adc4-a27f06044dca",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MenuB",
+                    "type": "Button",
+                    "id": "45dc5af2-6d1e-46f5-8821-93cf9ab2e056",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1044,6 +1098,105 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "RightStickX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "74f905ec-819b-4441-b7ac-8e6ef179289f",
+                    "path": "<Gamepad>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "MenuU",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "593359ec-7e90-4175-b1d5-c9fe610eac14",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "MenuU",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "585cdb7e-2ada-40d6-a587-694b5196200c",
+                    "path": "<Gamepad>/leftStick/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "MenuD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "459b9f99-8355-4c1f-b86c-ef850affc519",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "gamepad",
+                    "action": "MenuD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cfa9c5d4-97e5-42fd-8f73-8d40ff5ded7d",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuLB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f868ad6-1feb-4395-9d57-818a8dc04550",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuRB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "db4fcbb3-d03e-4741-9e74-34fce3056045",
+                    "path": "<Gamepad>/leftStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HueSliderX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "badc2e72-76ba-484d-a4d8-327ec715959a",
+                    "path": "<Gamepad>/rightStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HueSliderX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e560b608-7f5f-4970-bca3-67e5a05b88eb",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuB",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

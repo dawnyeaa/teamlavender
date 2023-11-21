@@ -11,7 +11,8 @@ public class SkateboardMoveState : SkateboardBaseState
     private Vector3 upVector;
     private Vector3 leanVector;
 
-    private Transform cameraTargetTransform;
+    // private Transform cameraTargetTransform;
+    private CameraTargetController cameraTarget;
     private Vector3 cameraTargetPosition;
     private Vector3 cameraTargetVelocity;
     private Quaternion cameraTargetRotation;
@@ -22,12 +23,15 @@ public class SkateboardMoveState : SkateboardBaseState
     public float pushTimer;
     private SkateboardMoveAnimator animator;
 
+    public float currentPushForceFactor = 1;
+
     public Truck[] trucks = new Truck[4];
 
     public Transform transform => sm.transform;
     public SkateboardMoveSettings settings => sm.moveSettings;
     public Rigidbody body => sm.MainRB;
     public float steer { get; private set; }
+    public float modifiedSteer { get; private set; }
     public Vector3 Gravity => Physics.gravity * (body.velocity.y > 0.0f || isOnGround ? settings.upGravity : settings.downGravity);
     public bool isOnGround
     {
@@ -35,8 +39,15 @@ public class SkateboardMoveState : SkateboardBaseState
         set => sm.Grounded = value;
     }
 
+    public bool inManny = false;
+
+    public ContinuousDataStepper slopeCrouch;
+    private float slopeCrouchDampingSpeed = 0;
+
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
+        cameraTarget = stateMachine.transform.Find("cameraTarget").GetComponent<CameraTargetController>();
+        slopeCrouch = new ContinuousDataStepper(0, settings.slopeCrouchFPS);
         animator = new SkateboardMoveAnimator(this);
         cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
     }
@@ -52,14 +63,17 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["kickflip"] += OnHopTrickInput;
         sm.ComboActions["heelflip"] += OnHopTrickInput;
         sm.ComboActions["popShuvit"] += OnHopTrickInput;
+        sm.ComboActions["nollie"] += OnHopTrickInput;
+        sm.ComboActions["nollieKickflip"] += OnHopTrickInput;
+        sm.ComboActions["nollieHeelflip"] += OnHopTrickInput;
 
         InitTrucks();
-        body.velocity = Vector3.zero;
-        body.angularVelocity = Vector3.zero;
+        // body.velocity = Vector3.zero;
+        // body.angularVelocity = Vector3.zero;
 
-        sm.HeadSensZone.AddCallback(sm.Die);
+        sm.PointHandler.SetMaxSpeed(settings.maxSpeed);
 
-        StartRollingSFX();
+        // StartRollingSFX();
     }
 
 
@@ -74,20 +88,20 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["kickflip"] -= OnHopTrickInput;
         sm.ComboActions["heelflip"] -= OnHopTrickInput;
         sm.ComboActions["popShuvit"] -= OnHopTrickInput;
+        sm.ComboActions["nollie"] -= OnHopTrickInput;
+        sm.ComboActions["nollieKickflip"] -= OnHopTrickInput;
+        sm.ComboActions["nollieHeelflip"] -= OnHopTrickInput;
 
-        sm.HeadSensZone.RemoveCallback(sm.Die);
-
-        SetWheelSpinParticleChance();
-        SetSpeedyLines();
-        SetRollingVolume();
         StopRollingSFX();
-        PassGroundSpeedToPointSystem();
+        PassDataToPointSystem();
         PassSpeedToMotionBlur();
     }
 
     private void OnSwitch2()
     {
-        transform.rotation *= Quaternion.Euler(Vector3.up * 180.0f);
+        sm.IsGoofy = !sm.IsGoofy;
+        sm.CharacterAnimator.SetFloat("mirrored", sm.IsGoofy ? 1 : 0);
+        sm.Facing.rotation *= Quaternion.Euler(Vector3.up * 180.0f);
     }
 
     private void InitTrucks()
@@ -100,9 +114,27 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void OnPush()
     {
-        if (pushTimer > 0.0) return;
+        if (pushTimer > 0.0)
+        {
+            if (!sm.PushBuffered)
+            {
+                sm.CharacterAnimator.SetTrigger("push");
+                sm.PushBuffered = true;
+            }
+            return;
+        }
+
+        var slopeAngle = Mathf.Abs(Vector3.Angle(GetForward(), Vector3.ProjectOnPlane(GetForward(), Vector3.up)));
+        if (slopeAngle > settings.pushingMaxSlope) 
+        {
+            pushTimer = 0;
+            sm.CharacterAnimator.ResetTrigger("push");
+            sm.PushBuffered = false;
+            return;
+        }
         sm.CharacterAnimator.SetTrigger("push");
         pushTimer = 1.0f;
+        currentPushForceFactor = settings.pushStrengthPerSpeed.Evaluate(GetForwardSpeed()/settings.maxSpeed);
     }
 
     public override void Tick()
@@ -112,11 +144,17 @@ public class SkateboardMoveState : SkateboardBaseState
         var rawSteerInput = sm.Input.turn;
         steer += (rawSteerInput * settings.maxSteer - steer) * (1.0f - settings.steerInputSmoothing);
 
+        modifiedSteer = steer * GoofyMultiplier() * (inManny ? 1-settings.mannyTurnReduction : 1);
+        
+        float normalizedSteer = 0.5f * modifiedSteer / sm.MaxAnimatedTruckTurnDeg + 0.5f;
+        sm.CharacterAnimator.SetFloat("leanValue", normalizedSteer);
+        sm.BoardIKTiltAnimator.SetFloat("leanValue", normalizedSteer);
+
         body.centerOfMass = settings.localCenterOfMass;
         body.inertiaTensor = settings.inertiaTensor;
         
-        sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
-
+        SetManny();
+        SetCrouching();
         UpdateTrucks();
         DoPrediction();
         ApplyResistance();
@@ -125,12 +163,18 @@ public class SkateboardMoveState : SkateboardBaseState
         ApplyBrakeForce();
         CheckForWalls();
         UpdateCamera();
+        SetSlopeCrouching();
+        SetWheelSpinParticleChance();
+        SetSpeedyLines();
+        CheckFacing();
+        SpinWheels();
+        SetRollingVolume();
         animator.Tick();
         
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
 
-        //sm.collisionProcessor.FixedUpdate(sm);
-        PassGroundSpeedToPointSystem();
+        sm.collisionProcessor.FixedUpdate(sm);
+        PassDataToPointSystem();
         PassSpeedToMotionBlur();
 
         SaveDebugFrame();
@@ -138,44 +182,154 @@ public class SkateboardMoveState : SkateboardBaseState
 
     private void UpdateCamera()
     {
-        if (!cameraTargetTransform) return;
-
-        var force = (body.position + new Vector3(0.0f, 0.9590001f, 0.0f) - cameraTargetPosition) * settings.cameraTargetSpring + (body.velocity - cameraTargetVelocity) * settings.cameraTargetDamp;
+        if (!cameraTarget) return;
         
-        cameraTargetPosition += cameraTargetVelocity * Time.deltaTime;
-        cameraTargetVelocity += force * Time.deltaTime;
-        cameraTargetTransform.position = cameraTargetPosition;
-        
-        if (isOnGround)
-        {
-            cameraTargetRotation = sm.FacingParent.rotation;
-        }
-
-        cameraTargetTransform.rotation = cameraTargetRotation;
+        cameraTarget.update = isOnGround;
     }
 
-    private float GetForwardSpeed() => Vector3.Dot(transform.forward, body.velocity);
+    private void SetSlopeCrouching()
+    {
+        var horizontalness = Mathf.Clamp01(1-Vector3.Dot(transform.up, Vector3.up));
+        var speedFactor = GetForwardSpeed()/settings.maxSpeed;
+        var crouchTarget = horizontalness + settings.speedCrouchCurve.Evaluate(speedFactor);
+        slopeCrouch.Tick(Mathf.SmoothDamp(slopeCrouch.GetContinuous(), crouchTarget, ref slopeCrouchDampingSpeed, settings.slopeCrouchDamping), Time.deltaTime);
+        sm.CharacterAnimator.SetLayerWeight(5, slopeCrouch.GetStepped());
+    }
+
+    private void PassDataToPointSystem()
+    {
+        if (!isOnGround)
+            sm.PointHandler.SetOrientation(sm.transform.up, sm.transform.forward);
+
+        var flatMovement = Vector3.ProjectOnPlane(sm.MainRB.velocity, -sm.RawDown);
+        sm.PointHandler.SetSpeed(flatMovement.magnitude);
+
+        sm.PointHandler.SetGrounded(isOnGround);
+
+        sm.PointHandler.SetGoofy(sm.IsGoofy);
+    }
+
+    private void CheckFacing() 
+    {
+        if (GetForwardSpeed() < -settings.autoSwitchThreshold && isOnGround) OnSwitch2();
+    }
+
+    private int GoofyMultiplier() => sm.IsGoofy ? -1 : 1;
+
+    private Vector3 GetForward() => transform.forward * GoofyMultiplier();
+
+    private float GetForwardSpeed() => Vector3.Dot(GetForward(), body.velocity);
+
+    Vector3 CircleWallCheck(float radius, Vector3 forward, Vector3 up, Vector3 pos, int rayCount)
+    {
+        var closestDistance = float.PositiveInfinity;
+        RaycastHit closestHit = new();
+        bool hit = false;
+        for (int i = 0; i < rayCount; ++i)
+        {
+            var direction = Quaternion.AngleAxis(i*(360/rayCount), up)*forward;
+
+            Debug.DrawRay(pos, direction*radius);
+
+            if (!Physics.Raycast(pos, direction, out RaycastHit hitInfo, radius, LayerMask.GetMask("Ground"))) continue;
+
+            if (hitInfo.distance < closestDistance) 
+            {
+                closestDistance = hitInfo.distance;
+                closestHit = hitInfo;
+                hit = true;
+            }
+        }
+
+        if (hit) 
+        {
+            Debug.DrawRay(closestHit.point, closestHit.normal);
+            return closestHit.normal;
+        }
+        return Vector3.zero;
+    }
 
     private void CheckForWalls()
     {
         var fwdSpeed = GetForwardSpeed();
-        var ray = new Ray(transform.position, transform.forward);
-        if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance)) return;
+        var ray = new Ray(transform.position, GetForward());
+        var boardForwardExtent = body.GetComponent<BoxCollider>().size.z/2;
 
-        var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
-        var torque = cross  * settings.wallSlideTorque * fwdSpeed;
-        body.AddTorque(torque);
+        var pos = transform.position+(settings.hipsHeight*transform.up);
+
+        var wallNorm = CircleWallCheck(settings.wallSlideDistance, GetForward(), Vector3.up, pos, 10);
+
+        // if (!Physics.Raycast(ray, out var hit, settings.wallSlideDistance, LayerMask.GetMask("Ground"))) return;
+
+        if (wallNorm.magnitude > 0.1f)
+        {
+            if (Vector3.Dot(wallNorm, GetForward()) < -Mathf.Epsilon)
+            {
+                var desiredDir = Vector3.ProjectOnPlane(GetForward(), wallNorm).normalized;
+
+                if (Vector3.Dot(desiredDir, GetForward()) > (1-Mathf.Clamp01(settings.wallSlideSnapThreshold)))
+                {
+                    body.MoveRotation(Quaternion.LookRotation(desiredDir * GoofyMultiplier(), transform.up));
+                    body.angularVelocity = Vector3.zero;
+                    body.velocity = desiredDir * GetForwardSpeed();
+                }
+
+                var cross = Vector3.Cross(GetForward(), desiredDir);
+
+                var angle = Mathf.Deg2Rad * Vector3.Angle(desiredDir, GetForward()) / Time.fixedDeltaTime;
+                var angularVelocity = Vector3.Dot(body.angularVelocity, cross);
+
+                var torque = cross * (settings.wallSlideTorqueP * angle - settings.wallSlideTorqueD * angularVelocity);
+                body.AddTorque(torque);
+            }
+        }
+
+        // var cross = Vector3.Cross(ray.direction, hit.normal * (1.0f - hit.distance / settings.wallSlideDistance));
+        // var torque = cross  * settings.wallSlideTorque * fwdSpeed;
+        // body.AddTorque(torque);
+    }
+
+    private void SetRollingVolume()
+    {
+        sm.SFX.SetRollingSpeed(GetForwardSpeed());
+    }
+
+    private void SetCrouching() 
+    {
+        if ((sm.Input.crouching && !sm.CharacterAnimator.GetBool("crouching")) ||
+            (sm.Input.nolliecrouching && !sm.CharacterAnimator.GetBool("nollieCrouching"))) 
+        {
+            if (pushTimer > 0) 
+            {
+                sm.CharacterAnimator.Play("idle");
+                sm.PushBuffered = false;
+                sm.CharacterAnimator.ResetTrigger("push");
+                pushTimer = 0;
+            }
+        }
+        sm.CharacterAnimator.SetBool("crouching", sm.Input.crouching);
+        sm.CharacterAnimator.SetBool("nollieCrouching", sm.Input.nolliecrouching);
+    }
+
+    private void SetManny() 
+    {
+        inManny = sm.Input.mannyValue > settings.mannyWindow.x && sm.Input.mannyValue < settings.mannyWindow.y;
+        sm.CharacterAnimator.SetBool("manny", inManny);
     }
 
     private void ApplyBrakeForce()
     {
-        if (!sm.Input.braking) return;
+        if (!sm.Input.braking && !inManny) return;
 
         var fwdSpeed = GetForwardSpeed();
-        var friction = Mathf.Lerp(settings.staticBrake, settings.dynamicBrake, settings.lastEvaluatedBrakeThreshold = Mathf.Abs(fwdSpeed) / settings.brakeThreshold);
-        settings.lastEvaluatedBrakeThreshold = Mathf.Clamp01(settings.lastEvaluatedBrakeThreshold);
+        var friction = 0f;
+        if (sm.Input.braking)
+        {
+            friction = Mathf.Lerp(settings.staticBrake, settings.dynamicBrake, settings.lastEvaluatedBrakeThreshold = Mathf.Abs(fwdSpeed) / settings.brakeThreshold);
+            settings.lastEvaluatedBrakeThreshold = Mathf.Clamp01(settings.lastEvaluatedBrakeThreshold);
+        }
 
-        var force = transform.forward * -fwdSpeed * Mathf.Min(friction, 1.0f);
+        var force = GetForward() * -fwdSpeed * Mathf.Min(friction + (inManny ? settings.mannyFriction : 0), 1.0f);
         body.AddForce(force * body.mass / Time.deltaTime);
     }
 
@@ -199,6 +353,7 @@ public class SkateboardMoveState : SkateboardBaseState
                 Debug.DrawLine(position, hit.point, Color.magenta);
                 Debug.DrawRay(hit.point, hit.normal * 2.0f, Color.magenta);
                 upVector = hit.normal * settings.predictionWeight;
+                sm.TimeToLand = t;
                 break;
             }
 
@@ -221,7 +376,7 @@ public class SkateboardMoveState : SkateboardBaseState
     {
         var up = upVector;
         var weight = upVector.magnitude;
-        leanVector = transform.right * steer * settings.rotationalLean;
+        leanVector = transform.right * modifiedSteer * settings.rotationalLean;
         var target = (up + leanVector).normalized * weight;
         var cross = Vector3.Cross(transform.up, target);
 
@@ -242,11 +397,31 @@ public class SkateboardMoveState : SkateboardBaseState
     }
 
     private void ApplyPushForce()
-    {
-        if (pushTimer < 0.0f) return;
+    {   
+        if (!isOnGround) return;
+        if (pushTimer <= 0.0f)
+        {
+            if (sm.PushBuffered)
+            {
+                sm.PushBuffered = false;
+                pushTimer = 1;
+                currentPushForceFactor = settings.pushStrengthPerSpeed.Evaluate(GetForwardSpeed()/settings.maxSpeed);
+            }
+            return;
+        }
 
-        var forwardSpeed = Vector3.Dot(transform.forward, body.velocity);
-        var force = transform.forward * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
+        var slopeAngle = Mathf.Abs(Vector3.Angle(GetForward(), Vector3.ProjectOnPlane(GetForward(), Vector3.up)));
+        if (slopeAngle > settings.pushingMaxSlope)
+        {
+            sm.CharacterAnimator.Play("idle");
+            sm.CharacterAnimator.ResetTrigger("push");
+            pushTimer = 0;
+            return;
+        }
+
+        var forwardSpeed = Vector3.Dot(GetForward(), body.velocity);
+        var force = GetForward() * (settings.maxSpeed - forwardSpeed) * settings.acceleration * settings.pushCurve.Evaluate(pushTimer);
+        force *= currentPushForceFactor;
         force *= wheelsOnGround / 4.0f;
         body.AddForce(force * body.mass);
 
@@ -268,15 +443,41 @@ public class SkateboardMoveState : SkateboardBaseState
 
         var wasOnGround = isOnGround;
         isOnGround = wheelsOnGround > 0;
+        sm.CharacterAnimator.SetBool("grounded", isOnGround);
         if (isOnGround)
         {
-            if (!wasOnGround) sm.CharacterAnimator.SetTrigger("startAirborne");
+            if (!wasOnGround) 
+            {
+                // we just landed
+                sm.SFX.LandingSound();
+                sm.OnLanding?.Invoke();
+                // uncommenting this line can look real jank
+                // sm.CharacterAnimator.SetFloat("landStrength", airborneTimer/1f);
+            }
             
             upVector = up.normalized;
             airborneTimer = 0.0f;
         }
-        else airborneTimer += Time.deltaTime;
-        sm.CharacterAnimator.SetBool("falling", !isOnGround && Vector3.Dot(body.velocity, Vector3.up) < 0.0f);
+        else
+        {
+            airborneTimer += Time.deltaTime;
+            if (wasOnGround)
+            {
+                // do stuff here for leaving the ground
+                sm.SFX.Airborne();
+            }
+        }
+
+        if (!isOnGround && Vector3.Dot(body.velocity, Vector3.up) < 0.0f)
+        {
+            sm.CharacterAnimator.SetBool("falling", true);
+            sm.CharacterAnimator.SetInteger("Ollie", 0);
+            sm.CharacterAnimator.SetInteger("Nollie", 0);
+        }
+        else
+        {
+            sm.CharacterAnimator.SetBool("falling", false);
+        }
     }
 
     private void ApplyResistance()
@@ -284,8 +485,15 @@ public class SkateboardMoveState : SkateboardBaseState
         var velocity = body.velocity;
 
         var force = -velocity.normalized * velocity.sqrMagnitude * settings.airResistance;
-        force -= Vector3.Project(velocity, transform.forward) * settings.rollingResistance;
+        force -= Vector3.Project(velocity, GetForward()) * settings.rollingResistance;
         body.AddForce(force * body.mass, ForceMode.Acceleration);
+    }
+
+    private void SpinWheels() 
+    {
+        float circum = ThisIsJustTau.TAU * settings.wheelRadius;
+        float rotation = Time.fixedDeltaTime*GetForwardSpeed()*GoofyMultiplier()/circum;
+        sm.WheelSpinAnimationController.AddRotation(rotation*360f);
     }
 
     public override void DrawGizmos(bool selected)
@@ -308,9 +516,9 @@ public class SkateboardMoveState : SkateboardBaseState
         public float rotation;
         public float evaluatedTangentialFriction;
 
-        public Vector3 Position => state.sm.transform.TransformPoint(Settings.truckOffset.x * xSign, Settings.truckOffset.y, Settings.truckOffset.z * zSign);
-        public Quaternion Rotation => state.sm.transform.rotation * Quaternion.Euler(0.0f, state.steer * zSign, 0.0f);
-        private SkateboardMoveSettings Settings => state.sm.moveSettings;
+        public Vector3 Position => state.sm.transform.TransformPoint(settings.truckOffset.x * xSign, settings.truckOffset.y, settings.truckOffset.z * zSign);
+        public Quaternion Rotation => state.sm.transform.rotation * Quaternion.Euler(0.0f, state.modifiedSteer * zSign, 0.0f);
+        private SkateboardMoveSettings settings => state.sm.moveSettings;
         public Rigidbody Body => state.sm.MainRB;
 
         public Truck(SkateboardMoveState state, int xSign, int zSign)
@@ -334,8 +542,8 @@ public class SkateboardMoveState : SkateboardBaseState
             if (isOnGround)
             {
                 var velocity = Body.GetPointVelocity(groundHit.point);
-                var speed = Vector3.Dot(velocity, state.transform.forward);
-                rotation += speed / Settings.wheelRadius * Time.deltaTime * Mathf.Rad2Deg;
+                var speed = Vector3.Dot(velocity, state.GetForward());
+                rotation += speed / settings.wheelRadius * Time.deltaTime * Mathf.Rad2Deg;
             }
         }
 
@@ -344,7 +552,7 @@ public class SkateboardMoveState : SkateboardBaseState
             GetGroundRay();
 
             isOnGround = false;
-            var results = Physics.RaycastAll(groundRay, groundRayLength);
+            var results = Physics.RaycastAll(groundRay, groundRayLength, LayerMask.GetMask("Ground"));
             var best = float.MaxValue;
 
             foreach (var e in results)
@@ -360,7 +568,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
         private void GetGroundRay()
         {
-            groundRayLength = Settings.distanceToGround;
+            groundRayLength = settings.distanceToGround;
             groundRay = new Ray(Position, -state.transform.up);
         }
 
@@ -372,11 +580,11 @@ public class SkateboardMoveState : SkateboardBaseState
             {
                 var point = groundHit.point;
                 var normal = groundHit.normal;
-                force += Vector3.Project(groundHit.normal * (groundRayLength - groundHit.distance), normal) * Settings.truckDepenetrationSpring;
+                force += Vector3.Project(groundHit.normal * (groundRayLength - groundHit.distance), normal) * settings.truckDepenetrationSpring;
 
                 var velocity = Body.GetPointVelocity(point);
                 var dot = Vector3.Dot(velocity, normal);
-                force += normal * Mathf.Max(0.0f, -dot) * Settings.truckDepenetrationDamper;
+                force += normal * Mathf.Max(0.0f, -dot) * settings.truckDepenetrationDamper;
                 Body.AddForceAtPosition(force / 8 * Body.mass, point);
 
                 Debug.DrawLine(groundHit.point, point, Color.red);
@@ -390,7 +598,13 @@ public class SkateboardMoveState : SkateboardBaseState
             var right = Rotation * Vector3.right;
             var velocity = Body.GetPointVelocity(groundHit.point);
             var dot = Vector3.Dot(right, -velocity);
-            evaluatedTangentialFriction = dot * Settings.tangentialFriction;
+            evaluatedTangentialFriction = dot * settings.tangentialFriction;
+
+            if (evaluatedTangentialFriction > settings.maxWheelFriction)
+            {
+                state.sm.Die();
+            }
+
             var force = right * evaluatedTangentialFriction;
 
             Body.AddForceAtPosition(force * Body.mass, groundHit.point);

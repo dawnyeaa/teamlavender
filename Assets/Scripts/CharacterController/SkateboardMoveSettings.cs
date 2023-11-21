@@ -17,6 +17,8 @@ public class SkateboardMoveSettings : ScriptableObject
     public float acceleration = 1.0f;
     public float pushDuration = 1.0f;
     public AnimationCurve pushCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
+    public float pushingMaxSlope = 30f;
+    public AnimationCurve pushStrengthPerSpeed;
     public Vector3 localCenterOfMass = new (0.0f, -0.8f, 0.0f);
     public Vector3 inertiaTensor = new (0.3f, 0.4f, 0.04f);
     public float upGravity = 1.5f;
@@ -26,6 +28,10 @@ public class SkateboardMoveSettings : ScriptableObject
     [FormerlySerializedAs("leanSpring")] public float rotationalForce = 150.0f;
     public float rotationalDamping = 10.0f;
     public float rotationalLean = 10.0f;
+    public float slopeCrouchDamping = 5f;
+    public float slopeCrouchFPS = 12f;
+    public float autoSwitchThreshold = 0.1f;
+    public AnimationCurve speedCrouchCurve;
     public float spinAcceleration = 10.0f;
     public float spinMaxRps = 1.0f;
     public float spinMaxRpsCrouching = 3.0f;
@@ -34,6 +40,10 @@ public class SkateboardMoveSettings : ScriptableObject
     [Range(0.0f, 50.0f)] public float airResistance;
     [Range(0.0f, 50.0f)] public float tangentialFriction = 20.0f;
 
+    [Space]
+    public Vector2 mannyWindow = new(0.1f, 0.9f);
+    public float mannyFriction = 0.05f;
+    [Range(0f, 1f)] public float mannyTurnReduction = 0.1f;
     [Space]
     [Header("GROUND CHECK")]
     public float distanceToGround = 0.13f;
@@ -51,8 +61,13 @@ public class SkateboardMoveSettings : ScriptableObject
 
     [Space]
     [Header("WALL SETTINGS")]
+    public float hipsHeight;
     public float wallSlideDistance;
-    public float wallSlideTorque;
+    public float wallSlideTorqueP = 0.5f;
+    public float wallSlideTorqueD = 1f;
+    public float wallSlideSnapThreshold = 0.1f;
+    [Space]
+    public float maxWheelFriction;
     
     [Space]
     [Header("LANDING PREDICTION")]

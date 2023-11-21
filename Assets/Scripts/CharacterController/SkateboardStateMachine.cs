@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using CharacterController;
 using Cinemachine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(InputController))]
 // [RequireComponent(typeof(WheelController))]
@@ -109,17 +110,22 @@ public class SkateboardStateMachine : StateMachine {
     { "ollie", null },
     { "kickflip", null },
     { "heelflip", null },
-    { "popShuvit", null }
+    { "popShuvit", null },
+    { "nollie", null },
+    { "nollieKickflip", null },
+    { "nollieHeelflip", null }
   };
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
+  [ReadOnly] public float TimeToLand = 0;
+  [ReadOnly] public bool IsGoofy = false;
+  [ReadOnly] public bool IsNollie = false;
 
   // Objects to link
   [Header("Link Slot Objects")]
   public Rigidbody MainRB;
   public Transform frontAxis, backAxis;
-  public Transform FacingParent;
-  public Spinner Facing;
+  public Transform Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
   public Transform footRepresentation;
@@ -130,12 +136,14 @@ public class SkateboardStateMachine : StateMachine {
   public Animator CharacterAnimator;
   public Animator BoardIKTiltAnimator;
   public Animator CharacterLeanAnimator;
+  public WheelController WheelSpinAnimationController;
   public Transform RegularModel, RagdollModel;
   public Rigidbody[] RagdollTransformsToPush;
-  public ParentConstraint LookatConstraint;
+  public PositionConstraint FollowTargetConstraint;
+  public PositionConstraint LookAtTargetConstraint;
+  public CinemachineFreeLook cinemachineLook;
   public TransformHeirarchyMatch RagdollMatcher;
   public SpawnPointManager SpawnPointManager;
-  public HeadSensWrapper HeadSensZone;
   public PointManager PointManager;
   public PauseMenuManager PauseMenuManager;
   public RailManager RailManager;
@@ -152,7 +160,11 @@ public class SkateboardStateMachine : StateMachine {
   public AudioClip FartClip;
   public DebugFrameHandler DebugFrameHandler;
   public CharacterPointHandler PointHandler;
-  public Material MotionBlurMat;
+  public RendererFeatureDynamicProperties RFprops;
+  public SkateSoundController SFX;
+  public UnityEvent OnLanding;
+  public UnityEvent OnNosePop;
+  public UnityEvent OnTailPop;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
@@ -171,16 +183,22 @@ public class SkateboardStateMachine : StateMachine {
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
-
-    PointHandler.SetMaxSpeed(MaxSpeed);
   }
 
   public void OnOllieForce() {
+    if (IsGoofy ^ IsNollie) {
+      OnNosePop?.Invoke();
+    }
+    else {
+      OnTailPop?.Invoke();
+    }
+    SFX.PopSound();
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce * CurrentHopTrickVerticalMult + Vector3.Project(MainRB.velocity, Facing.transform.forward) * CurrentHopTrickHorizontalMult, ForceMode.Acceleration);
   }
 
   public void StartPushForce(float duration) {
-    SoundEffectsManager.instance.PlaySoundFXClip(PushClip, transform, 1);
+    // SoundEffectsManager.instance.PlaySoundFXClip(PushClip, transform, 1);
+    SFX.PushSound();
     Pushing = true;
     MaxPushT = duration;
     CurrentPushT = duration;

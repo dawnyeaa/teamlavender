@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class TransformHeirarchyMatch : MonoBehaviour {
@@ -20,7 +21,16 @@ public class TransformHeirarchyMatch : MonoBehaviour {
   }
 
   private static void CopyTransform(Transform source, Transform destination) {
+    #if UNITY_EDITOR
+    Undo.RecordObject(destination, "transform positions");
+    #endif
     destination.SetLocalPositionAndRotation(source.localPosition, source.localRotation);
+  }
+
+  public void Match(Transform sourceTransform) {
+    if (!sourceTransform) return;
+    this.sourceTransform = sourceTransform;
+    Match();
   }
 
 }

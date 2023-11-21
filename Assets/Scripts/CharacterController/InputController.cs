@@ -45,14 +45,19 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public float turn;
   public bool braking;
   public bool crouching;
+  public bool nolliecrouching;
   public Vector2 mouseDelta;
   public Vector2 rightStick;
   public Vector2 rightStickDigital;
+
+  public float mannyValue = 0;
 
   public float rightStickDead = 0.2f;
   public float comboStickDead = 0.2f;
   public float comboStickMidRadius = 0.1f;
   public float comboStickMidVelocityThreshold = 0.1f;
+  public float comboStickMidToleranceDuration = 0.1f;
+  public float comboStickMidTimer = 0;
 
   private Vector2 rightStickLast = new(0, 0);
   private Vector2 leftStickLast = new(0, 0);
@@ -106,6 +111,17 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     instance ??= this;
   }
 
+  void FixedUpdate() {
+    if (rsNumpad == 5) {
+      comboStickMidTimer += Time.fixedDeltaTime;
+      if (comboStickMidTimer > comboStickMidToleranceDuration) {
+        OnOllieCrouch(false);
+        OnNollieCrouch(false);
+        comboController.ClearBuffer();
+      }
+    }
+  }
+
   public void OnMove(InputAction.CallbackContext context) {
     turn = context.ReadValue<float>();
   }
@@ -142,6 +158,10 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     // rightStickDigital = ParseStickDigitalDir(rightStick, rightStickDead);
   }
 
+  public void OnManny(InputAction.CallbackContext context) {
+    mannyValue = context.ReadValue<float>();
+  }
+
   public void OnOllie(InputAction.CallbackContext context) {
     if (context.performed) {
       crouching = true;
@@ -152,11 +172,38 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     }
   }
 
+  public void OnNollieCrouch(InputAction.CallbackContext context) {
+    if (context.performed) {
+      nolliecrouching = true;
+    }
+    else if (context.canceled) {
+      nolliecrouching = false;
+    }
+  }
+
+  public void OnNollieCrouch(bool start) {
+    if (start) {
+      nolliecrouching = true;
+    }
+    else {
+      nolliecrouching = false;
+    }
+  }
+
   public void OnOllieCrouch(InputAction.CallbackContext context) {
     if (context.performed) {
       crouching = true;
     }
     else if (context.canceled) {
+      crouching = false;
+    }
+  }
+
+  public void OnOllieCrouch(bool start) {
+    if (start) {
+      crouching = true;
+    }
+    else {
       crouching = false;
     }
   }
@@ -248,12 +295,15 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     var stickNumpadValueOffset = (isLeftStick ? Input.ls1 : Input.rs1) - 1;
     bool isStickValueNew = stickNumpad != lastNumpad;
 
-    if (stickNumpad == 5) {
-      // I REALLY WANT TO UNCOMMENT THIS BUT IT MAKES IT VERY HARD TO DO STUFF RN
-      // comboController.ClearBuffer();
-    }
-    else if (stickNumpad != 0 && isStickValueNew) {
-      comboController.AddToBuffer(stickIndex+stickNumpadValueOffset);
+    if (isStickValueNew && stickNumpad != 0) {
+      if (stickNumpad == 5) {
+        comboStickMidTimer = 0;
+      }
+      else {
+        OnOllieCrouch(stickNumpad == 2);
+        OnNollieCrouch(stickNumpad == 8);
+        comboController.AddToBuffer(stickIndex+stickNumpadValueOffset);
+      }
     }
 
     if (isLeftStick) {
