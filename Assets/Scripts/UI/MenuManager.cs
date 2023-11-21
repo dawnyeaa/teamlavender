@@ -1,13 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.LowLevel;
 
 public class MenuManager : MonoBehaviour
 {
@@ -15,6 +9,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] ButtonSelectionHandler[] menuDefaults;
     [SerializeField] int currentMenu;
     [SerializeField] Animator menuAnimator;
+    [SerializeField] BoardCustoFlowManager boardCustoFlowManager;
     private EventSystem eventsys;
 
     void Awake() {
@@ -24,6 +19,11 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (BoardCustoFlowManager.returningFromBoardCusto) {
+            BoardCustoFlowManager.returningFromBoardCusto = false;
+            menuAnimator.SetTrigger("returnFromBoardCusto");
+            ChangeMenu(3);
+        }
     }
 
     public void EnableMenu() 
@@ -36,7 +36,8 @@ public class MenuManager : MonoBehaviour
         // menus[currentMenu].SetActive(false);
         currentMenu = menu;
         // menus[menu].SetActive(true);
-        menuDefaults[menu].ManualSelect();
+        if (menuDefaults.Length > menu)
+            menuDefaults[menu].ManualSelect();
         menuAnimator.SetInteger("menu", menu);
     }
 
