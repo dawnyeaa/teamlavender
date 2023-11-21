@@ -117,7 +117,7 @@ MonoBehaviour:
   downGravity: 2
   rotationalForce: 300
   rotationalDamping: 20
-  rotationalLean: 0.01
+  rotationalLean: 0
   slopeCrouchDamping: 0.2
   slopeCrouchFPS: 12
   autoSwitchThreshold: 0.1
@@ -184,17 +184,10 @@ MonoBehaviour:
   predictionWeight: 0.2
   cameraTargetSpring: 600
   cameraTargetDamp: 60
-  animationSmoothing: 0.25
-  hipsSpring: 200
-  hipsDamper: 20
-  visualLean: {x: 0.02, y: -3}
-  hipPBasis: {x: 0, y: 1.1619, z: 0}
-  hipRBasis: {x: 0, y: 0, z: 0}
-  crouchPBasis: {x: 0, y: 1.1619, z: 0}
-  crouchRBasis: {x: 0, y: 0, z: 0}
-  globalHorizontalOffset: {x: 0, y: 0, z: 0}
-  localHorizontalOffsetLeft: {x: 0.26, y: -0.55, z: 0}
-  localHorizontalOffsetRight: {x: -0.95, y: -1.33, z: 0}
-  rotationHorizontalOffsetLeft: {x: 0, y: 0, z: 3.94}
-  rotationHorizontalOffsetRight: {x: 0, y: 0, z: -32.96}
-  swapBasis: 0
+  uprightLean:
+    translation: {x: 0, y: 0}
+    rotation: 0.6
+  turnLean:
+    translation: {x: 0.2, y: -0.05}
+    rotation: 0
+  leanSmoothing: 0.1

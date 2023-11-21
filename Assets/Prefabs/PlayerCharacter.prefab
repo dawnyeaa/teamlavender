@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 1764158007}
   - component: {fileID: 1764158009}
   - component: {fileID: 1764158008}
+  - component: {fileID: 1725015435734727185}
   m_Layer: 7
   m_Name: Hips Rig
   m_TagString: Untagged
@@ -156,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Data:
     m_ConstrainedObject: {fileID: 7096163994362797159}
     m_SourceObjects:
@@ -198,6 +199,53 @@ MonoBehaviour:
       x: 1
       y: 1
       z: 1
+--- !u!114 &1725015435734727185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764158006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10bdb03db33fb148b858a4a3b646cea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Weight: 1
+  m_Data:
+    m_ConstrainedObject: {fileID: 7096163994362797159}
+    m_SourceObjects:
+      m_Length: 1
+      m_Item0:
+        transform: {fileID: 1866958914355683588}
+        weight: 1
+      m_Item1:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item2:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item3:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item4:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item5:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item6:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item7:
+        transform: {fileID: 0}
+        weight: 0
+    m_Offset: {x: 0, y: 0, z: 0}
+    m_ConstrainedAxes:
+      x: 1
+      y: 1
+      z: 1
+    m_MaintainOffset: 0
 --- !u!1 &291323995211372371
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,7 +2368,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3832982824695889963}
   m_LocalRotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.043093666, y: 0.9474903, z: 0.020228606}
+  m_LocalPosition: {x: -0.04309369, y: 0.9474903, z: 0.020228382}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7597,6 +7645,7 @@ MonoBehaviour:
   characterMesh: {fileID: 4336612580946386513}
   boardMesh: {fileID: 846844723239859862}
   colorT: 0
+  gradientIndex: 0
   deckIndex: 0
   truckColorT: 0
   wheelsColorT: 0
@@ -7623,6 +7672,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 2
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7643,6 +7693,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 1
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7663,6 +7714,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 1
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7693,6 +7745,7 @@ MonoBehaviour:
   cutoutChannel: 1
   defaultOption: 0
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7719,6 +7772,7 @@ MonoBehaviour:
   cutoutChannel: 2
   defaultOption: 0
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7739,6 +7793,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 1
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7769,6 +7824,7 @@ MonoBehaviour:
   cutoutChannel: 3
   defaultOption: 0
   t: 0
+  gradientIndex: 0
 --- !u!114 &3832982825729624562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11347,6 +11403,7 @@ MonoBehaviour:
   cutoutChannel: 2
   defaultOption: 0
   t: 0
+  gradientIndex: 0
 --- !u!114 &971680564102669215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11363,6 +11420,7 @@ MonoBehaviour:
   characterMesh: {fileID: 4980477868980252765}
   boardMesh: {fileID: 8282138236565821594}
   colorT: 0
+  gradientIndex: 0
   deckIndex: 0
   truckColorT: 0
   wheelsColorT: 0
@@ -11386,6 +11444,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 1
   t: 0
+  gradientIndex: 0
 --- !u!114 &2706062316350989091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11406,6 +11465,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 1
   t: 0
+  gradientIndex: 0
 --- !u!114 &3337573348858915039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11426,6 +11486,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 1
   t: 0
+  gradientIndex: 0
 --- !u!114 &5712464224671844981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11462,6 +11523,7 @@ MonoBehaviour:
   cutoutChannel: 0
   defaultOption: 2
   t: 0
+  gradientIndex: 0
 --- !u!114 &7151737188622784164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11492,6 +11554,7 @@ MonoBehaviour:
   cutoutChannel: 1
   defaultOption: 0
   t: 0
+  gradientIndex: 0
 --- !u!114 &8632119530642372533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11522,6 +11585,7 @@ MonoBehaviour:
   cutoutChannel: 3
   defaultOption: 0
   t: 0
+  gradientIndex: 0
 --- !u!1 &4980477868980252765 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8565912769193144242, guid: 769970106fb6b4e4e9b72c2ced7f0746,
