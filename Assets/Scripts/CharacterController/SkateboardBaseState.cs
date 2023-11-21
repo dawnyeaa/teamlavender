@@ -106,7 +106,7 @@ public abstract class SkateboardBaseState : State {
     }
     if (!sm.Grounded) {
       if (sm.AirTimeCounter > sm.MinimumAirTime)
-        sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
+        // sm.PointManager.AddPoints(Mathf.RoundToInt(Time.fixedDeltaTime*sm.PointsPerAirTimeSecond));
       sm.AirTimeCounter += Time.fixedDeltaTime;
     }
     sm.Down = Vector3.Slerp(sm.Down, sm.RawDown, 1f/Mathf.Pow(2, sm.BoardPositionDamping));
