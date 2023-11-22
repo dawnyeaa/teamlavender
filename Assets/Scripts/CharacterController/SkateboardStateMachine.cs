@@ -120,6 +120,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public float TimeToLand = 0;
   [ReadOnly] public bool IsGoofy = false;
   [ReadOnly] public bool IsNollie = false;
+  [ReadOnly] public bool CanDie = true;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -215,8 +216,10 @@ public class SkateboardStateMachine : StateMachine {
 
   public void Die() => Die(null);
   public void Die(Vector3? velocityOverride) {
-    EnterDead(velocityOverride);
-    SlamRumble();
+    if (CanDie) {
+      EnterDead(velocityOverride);
+      SlamRumble();
+    }
   }
 
   public async void EnterDead(Vector3? velocityOverride) {

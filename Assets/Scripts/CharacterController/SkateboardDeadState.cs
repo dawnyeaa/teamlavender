@@ -12,6 +12,7 @@ public class SkateboardDeadState : SkateboardBaseState
   
   ConstraintSource CharacterSource, RagdollSource;
   public override void Enter() {
+    sm.CanDie = false;
     SoundEffectsManager.instance.PlaySoundFXClip(sm.DeathClip, sm.transform, 1);
     // change to ragdoll here
     sm.FollowTargetConstraint.weight = 1;
@@ -34,6 +35,7 @@ public class SkateboardDeadState : SkateboardBaseState
   }
 
   public override void Exit() {
+    sm.CanDie = true;
     // change back from ragdoll here
     sm.FollowTargetConstraint.weight = 0;
     sm.LookAtTargetConstraint.weight = 0;
