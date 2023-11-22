@@ -14,6 +14,7 @@ namespace CharacterController
 
         private Lean lean;
         private Lean smoothedLean;
+        private bool wasOnGround;
 
         public SkateboardStateMachine sm => moveState.sm;
         public Transform transform => moveState.transform;
@@ -22,24 +23,34 @@ namespace CharacterController
         public float steerInput => moveState.steer / settings.maxSteer;
         public Transform hipHelper => sm.HipHelper;
 
-        private Vector3 hipHelperOffset;
-
         public SkateboardMoveAnimator(SkateboardMoveState moveState)
         {
             this.moveState = moveState;
-            hipHelperOffset = hipHelper.transform.localPosition;
         }
 
         public void Tick()
         {
             lean = Vector3.zero;
 
-            CalcUprightLean();
-            CalcTurnLean();
+            if (moveState.isOnGround)
+            {
+                CalcUprightLean();
+                CalcTurnLean();
 
-            SmoothLean(ref smoothedLean.translation.x, lean.translation.x);
-            SmoothLean(ref smoothedLean.translation.y, lean.translation.y);
-            SmoothLean(ref smoothedLean.rotation, lean.rotation);
+                if (wasOnGround)
+                {
+                    SmoothLean(ref smoothedLean.translation.x, lean.translation.x);
+                    SmoothLean(ref smoothedLean.translation.y, lean.translation.y);
+                    SmoothLean(ref smoothedLean.rotation, lean.rotation);
+                }
+                else smoothedLean = lean;
+            }
+            else
+            {
+                smoothedLean = Vector3.zero;
+            }
+
+            wasOnGround = moveState.isOnGround;
 
             ApplyLean(smoothedLean);
         }
@@ -64,13 +75,14 @@ namespace CharacterController
         private void ApplyLean(Lean lean)
         {
             hipHelper.localRotation = Quaternion.Euler(Vector3.forward * lean.rotation);
-            hipHelper.localPosition = hipHelperOffset + lean.ComputeLean();
+            hipHelper.localPosition = lean.ComputeLean();
         }
 
         [System.Serializable]
         public struct Lean
         {
             public Vector2 translation;
+
             [Range(-90.0f, 90.0f)]
             public float rotation;
 
@@ -84,7 +96,7 @@ namespace CharacterController
             {
                 return new Vector3(-translation.x, -Mathf.Abs(translation.y), 0.0f);
             }
-            
+
             public static implicit operator Vector3 (Lean lean) => new (lean.translation.x, lean.translation.y, lean.rotation);
             public static implicit operator Lean (Vector3 v) => new (v, v.z);
 
@@ -92,8 +104,8 @@ namespace CharacterController
             public static Lean operator - (Lean lean, Vector3 v) => (Vector3)lean - v;
             public static Lean operator * (Lean lean, float x) => (Vector3)lean * x;
         }
-        
-        #if UNITY_EDITOR
+
+#if UNITY_EDITOR
         [CustomPropertyDrawer(typeof(Lean))]
         public class LeanPropertyDrawer : PropertyDrawer
         {
@@ -111,6 +123,6 @@ namespace CharacterController
                 EditorGUI.PropertyField(b, property.FindPropertyRelative(nameof(Lean.rotation)), new GUIContent(labelText + " Rotation"));
             }
         }
-        #endif
+#endif
     }
 }
