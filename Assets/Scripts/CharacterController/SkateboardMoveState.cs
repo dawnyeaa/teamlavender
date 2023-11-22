@@ -1,3 +1,4 @@
+using CharacterController;
 using UnityEngine;
 
 public class SkateboardMoveState : SkateboardBaseState
@@ -20,6 +21,7 @@ public class SkateboardMoveState : SkateboardBaseState
     public bool flipped;
     public float jumpTimer;
     public float pushTimer;
+    private SkateboardMoveAnimator animator;
 
     public float currentPushForceFactor = 1;
 
@@ -44,10 +46,10 @@ public class SkateboardMoveState : SkateboardBaseState
 
     public SkateboardMoveState(SkateboardStateMachine stateMachine) : base(stateMachine)
     {
-        //animator = new SkateboardMoveAnimator(this);
-        // cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
         cameraTarget = stateMachine.transform.Find("cameraTarget").GetComponent<CameraTargetController>();
         slopeCrouch = new ContinuousDataStepper(0, settings.slopeCrouchFPS);
+        animator = new SkateboardMoveAnimator(this);
+        //cameraTargetTransform = stateMachine.transform.Find("cameraTarget");
     }
 
     public override void Enter()
@@ -167,7 +169,7 @@ public class SkateboardMoveState : SkateboardBaseState
         CheckFacing();
         SpinWheels();
         SetRollingVolume();
-        //animator.Tick();
+        animator.Tick();
         
         body.AddForce(Gravity - Physics.gravity, ForceMode.Acceleration);
 
