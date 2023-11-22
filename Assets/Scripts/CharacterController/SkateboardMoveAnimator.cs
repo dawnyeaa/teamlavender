@@ -69,7 +69,7 @@ namespace CharacterController
 
         private void CalcTurnLean()
         {
-            lean -= settings.turnLean * steerInput;
+            lean -= settings.turnLean * steerInput * (sm.IsGoofy ? -1 : 1);
         }
 
         private void ApplyLean(Lean lean)
