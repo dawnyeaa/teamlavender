@@ -96,7 +96,7 @@ public class CharacterPointHandler : MonoBehaviour {
     var fs = cwturnAmount > ccwturnAmount ^ airborneGoofy;
     var halfturns = Mathf.FloorToInt((Mathf.Max(cwturnAmount, ccwturnAmount)*2f)+turnTolerance);
 
-    pointSystem.AddPoints(halfturns * pointsPerHalfTurn);
+    pointSystem.AddPoints(Mathf.Pow(pointsPerHalfTurn, halfturns*0.5f));
     cwturnAmount = ccwturnAmount = 0;
     lastHalfturns = 0;
   }
