@@ -17,7 +17,7 @@ public class VoronoiPass : ScriptableRenderPass {
   private RenderTargetIdentifier _voronoiRenderTarget;
   private int _fps;
 
-  public VoronoiPass(string profilerTag, int voronoiRenderTargetId, PoissonArrangementObject poissonPoints, float pointDensity, int fps) {
+  public VoronoiPass(string profilerTag, int voronoiRenderTargetId, PoissonArrangementObject poissonPoints, float pointDensity) {
     _profilingSampler = new ProfilingSampler(profilerTag);
 
     _voronoiRenderTargetId = voronoiRenderTargetId;
@@ -25,8 +25,6 @@ public class VoronoiPass : ScriptableRenderPass {
     _points = poissonPoints.points;
 
     _pointDensity = pointDensity;
-    
-    _fps = fps;
 
     renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
   }
@@ -54,8 +52,10 @@ public class VoronoiPass : ScriptableRenderPass {
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
     var RFprops = renderingData.cameraData.camera.GetComponent<RendererFeatureDynamicProperties>();
+    _fps = 3;
     if (RFprops) {
       if (!RFprops.StrokesEnabled) return;
+      _fps = RFprops.StrokeFPS;
     }
     var cmd = CommandBufferPool.Get();
 

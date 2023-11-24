@@ -17,7 +17,7 @@ public class PointManager : MonoBehaviour {
   public TextMeshProUGUI pendingPointsDebugDisplay, newPointsDebugDisplay, currentLinePointsDebugDisplay, totalPointsDebugDisplay;
   public TextMeshProUGUI pendingPointsDebugTimerDisplay;
   public TextMeshProUGUI lineMessageDisplay, lineTimeDisplay, linePickupDisplay;
-  [SerializeField] Image lineLineBarImage;
+  [SerializeField] Renderer lineLineBarImage;
 
   public GameObject pointsDebugContainer;
 
@@ -157,7 +157,7 @@ public class PointManager : MonoBehaviour {
     lineLineBarMat = new(lineLineBarImage.material);
     lineLineBarImage.material = lineLineBarMat;
     if (lineLineBarMat)
-      lineLineBarMat.SetFloat("_currentSpeed", lineValue);
+      lineLineBarMat.SetFloat("_current", lineValue);
   }
 
   private void UpdateLineTimeDisplay() {

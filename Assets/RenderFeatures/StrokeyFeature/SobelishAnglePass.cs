@@ -8,7 +8,7 @@ public class SobelishAnglePass : ScriptableRenderPass {
   public Material _boxBlurMaterial;
   private ProfilingSampler _profilingSampler;
   // the render target that we're grabbing the id map from
-  private static readonly int _idMapId = Shader.PropertyToID("_IDPassRT");
+  private int _idMapId;
   // making an id for the render target we're gonna draw the sobelish thing to
   private int _renderTargetId;
   // an identifier SPECIFICALLY for the command buffer
@@ -20,9 +20,10 @@ public class SobelishAnglePass : ScriptableRenderPass {
 
   private int _angleBlurSize;
 
-  public SobelishAnglePass(string profilerTag, int renderTargetId, int angleBlurSize) {
+  public SobelishAnglePass(string profilerTag, int idRenderTargetId, int renderTargetId, int angleBlurSize) {
     // set up the profiler so it has a slot in there
     _profilingSampler = new ProfilingSampler(profilerTag);
+    _idMapId = idRenderTargetId;
     _renderTargetId = renderTargetId;
 
     _angleBlurSize = angleBlurSize;
@@ -72,7 +73,7 @@ public class SobelishAnglePass : ScriptableRenderPass {
   }
 
   public override void OnCameraCleanup(CommandBuffer cmd) {
-    cmd.ReleaseTemporaryRT(_idMapId);
+    // cmd.ReleaseTemporaryRT(_idMapId);
     cmd.ReleaseTemporaryRT(_tmpId);
   }
 }

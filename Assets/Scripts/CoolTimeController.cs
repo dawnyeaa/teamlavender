@@ -8,6 +8,11 @@ public class CoolTimeController : MonoBehaviour {
   public float coolTimeScale = 0.05f;
   private float playingTime = 0;
   private bool playing = false;
+  private RendererFeatureDynamicProperties rfdp;
+
+  void Start() {
+    rfdp = Camera.main.GetComponent<RendererFeatureDynamicProperties>();
+  }
 
   public void StartCoolTime() {
     if (!playing) {
@@ -34,12 +39,16 @@ public class CoolTimeController : MonoBehaviour {
         t = 1;
       }
       SetTimeScale(Mathf.SmoothStep(0, 1, t));
+      rfdp.StrokeThicknessFactor = t;
 
       playingTime += Time.unscaledDeltaTime;
     }
+    rfdp.StrokesEnabled = playing;
+    rfdp.DropShadowEnabled = playing;
   }
 
   private void SetTimeScale(float t) {
     Time.timeScale = Mathf.Lerp(1, coolTimeScale, Mathf.Clamp01(t));
+    rfdp.StrokeFPS = (int)(6f / Time.timeScale);
   }
 }

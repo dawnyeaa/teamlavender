@@ -45,8 +45,7 @@ public class StrokeQuadPass : ScriptableRenderPass {
                         float strokeWidth,
                         float strokeHeight,
                         Vector2 strokeRandomWidthBounds,
-                        Vector2 strokeRandomHeightBounds,
-                        int fps) {
+                        Vector2 strokeRandomHeightBounds) {
     _profilingSampler = new ProfilingSampler(profilerTag);
     _inputRenderTargetId = renderTargetId;
     _voronoiTexId = voronoiTexId;
@@ -81,7 +80,7 @@ public class StrokeQuadPass : ScriptableRenderPass {
       0 // byte offset of first instance
     });
 
-    _fps = fps;
+    _fps = 3;
 
     renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
   }
@@ -104,6 +103,7 @@ public class StrokeQuadPass : ScriptableRenderPass {
     if (RFprops) {
       if (!RFprops.StrokesEnabled) return;
       strokeThicknessFactor = RFprops.StrokeThicknessFactor;
+      _fps = RFprops.StrokeFPS;
     }
     var cmd = CommandBufferPool.Get();
     cmd.Clear();

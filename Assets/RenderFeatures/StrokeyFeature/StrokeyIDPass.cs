@@ -9,18 +9,20 @@ public class StrokeyIDPass : ScriptableRenderPass {
   // this is the pass to find in shaders to run
   private static readonly ShaderTagId _shaderTag = new ShaderTagId("ID");
   // making an id for the render target we're gonna draw the id map to
-  private static readonly int _renderTargetId = Shader.PropertyToID("_IDPassRT");
+  private int _renderTargetId;
   // an identifier SPECIFICALLY for the command buffer
   private RenderTargetIdentifier _renderTargetIdentifier;
 
   public Material _overrideMat;
 
-  public StrokeyIDPass(string profilerTag, LayerMask layerMask) {
+  public StrokeyIDPass(string profilerTag, LayerMask layerMask, int renderTargetId) {
     // set up the profiler so it has a slot in there
     _profilingSampler = new ProfilingSampler(profilerTag);
 
     // set up that filter from the layer mask i mentioned earlier
     _filteringSettings = new FilteringSettings(null, layerMask);
+
+    _renderTargetId = renderTargetId;
 
     // i get to choose when this pass happens!
     renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
@@ -38,10 +40,10 @@ public class StrokeyIDPass : ScriptableRenderPass {
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
-    var RFprops = renderingData.cameraData.camera.GetComponent<RendererFeatureDynamicProperties>();
-    if (RFprops) {
-      if (!RFprops.StrokesEnabled) return;
-    }
+    // var RFprops = renderingData.cameraData.camera.GetComponent<RendererFeatureDynamicProperties>();
+    // if (RFprops) {
+    //   if (!RFprops.StrokesEnabled) return;
+    // }
     var camera = renderingData.cameraData.camera;
     // some settings we need for drawing the draw renderers
     var drawingSettings = CreateDrawingSettings(_shaderTag, ref renderingData, SortingCriteria.CommonOpaque);

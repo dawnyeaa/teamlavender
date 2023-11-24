@@ -18,7 +18,7 @@ public class AnimationEventHandler : MonoBehaviour {
   }
 
   public void CoolTime() {
-    if (sm.TimeToLand > coolTimeAirDurationThreshold && !nonCoolTimeTricks.Contains(comboController.currentlyPlayingCombo._ComboName))
+    if (sm.TimeToLand > coolTimeAirDurationThreshold && comboController.currentlyPlayingCombo != null && !nonCoolTimeTricks.Contains(comboController.currentlyPlayingCombo._ComboName))
       coolTime.StartCoolTime();
   }
 

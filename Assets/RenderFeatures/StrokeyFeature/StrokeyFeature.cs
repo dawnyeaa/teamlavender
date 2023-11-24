@@ -5,9 +5,9 @@ using UnityEngine.Rendering.Universal;
 public class StrokeyFeature : ScriptableRendererFeature {
   private StrokeyIDPass _idPass;
   private SobelishAnglePass _sobelishPass;
-  private JFAPass _jfaPass;
   private VoronoiPass _voronoiPass;
   private StrokeQuadPass _strokeQuadPass;
+  private DropShadowPass _dropShadowPass;
 
   [SerializeField] LayerMask _layerMask;
   [SerializeField] Material _sobelishMaterial;
@@ -15,6 +15,7 @@ public class StrokeyFeature : ScriptableRendererFeature {
   [SerializeField] Material _sobelBlitMaterial;
   [SerializeField] Material _boxBlurMaterial;
   [SerializeField] Material _idOverrideMat;
+  [SerializeField] Material _dropShadowMat;
   [SerializeField] Mesh _voronoiMesh;
   [SerializeField] Material _voronoiMaterial;
   // [SerializeField] ComputeShader _jfaComputeShader;
@@ -30,19 +31,19 @@ public class StrokeyFeature : ScriptableRendererFeature {
   [SerializeField] Vector2 _strokeRandomHeightBounds = new(0.7f, 1.4f);
 
   [SerializeField] float _strokeDensity = 1;
-  [SerializeField] int _fps = 3;
 
   public override void Create() {
+    int IDOutRT = Shader.PropertyToID("_IDPassRT");
     int SobelOutRT = Shader.PropertyToID("_sobelOutRT");
     int VoronoiOutRT = Shader.PropertyToID("_voronoiOutRT");
-    _idPass = new StrokeyIDPass("Strokey ID Pass", _layerMask) {
+    _idPass = new StrokeyIDPass("Strokey ID Pass", _layerMask, IDOutRT) {
       _overrideMat = _idOverrideMat
     };
-    _sobelishPass = new SobelishAnglePass("Sobelish Pass", SobelOutRT, _angleBlurSize) {
+    _sobelishPass = new SobelishAnglePass("Sobelish Pass", IDOutRT, SobelOutRT, _angleBlurSize) {
       _sobelishMaterial = _sobelishMaterial,
       _boxBlurMaterial = _boxBlurMaterial
     };
-    _voronoiPass = new VoronoiPass("Voronoi Pass", VoronoiOutRT, _poissonPoints, _strokeDensity, _fps) {
+    _voronoiPass = new VoronoiPass("Voronoi Pass", VoronoiOutRT, _poissonPoints, _strokeDensity) {
       _voronoiMesh = _voronoiMesh,
       _voronoiMaterial = _voronoiMaterial
     };
@@ -58,10 +59,12 @@ public class StrokeyFeature : ScriptableRendererFeature {
                                         _strokeWidth,
                                         _strokeHeight,
                                         _strokeRandomWidthBounds,
-                                        _strokeRandomHeightBounds,
-                                        _fps) {
+                                        _strokeRandomHeightBounds) {
       _quadMaterial = _strokeQuadMaterial,
       _sobelBlitMat = _sobelBlitMaterial
+    };
+    _dropShadowPass = new DropShadowPass("Drop Shadow Pass", IDOutRT) {
+      _dropShadowMat = _dropShadowMat
     };
   }
 
@@ -72,6 +75,7 @@ public class StrokeyFeature : ScriptableRendererFeature {
     renderer.EnqueuePass(_sobelishPass);
     renderer.EnqueuePass(_voronoiPass);
     renderer.EnqueuePass(_strokeQuadPass);
+    renderer.EnqueuePass(_dropShadowPass);
   }
 
   protected override void Dispose(bool disposing) {
