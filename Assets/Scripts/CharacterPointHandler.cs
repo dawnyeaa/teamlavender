@@ -11,6 +11,7 @@ public class CharacterPointHandler : MonoBehaviour {
   // 5. air turns
   // 6. ???
   PointManager pointSystem;
+  SkateboardStateMachine sm;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
   [SerializeField] Image speedometerDisplay;
   [SerializeField] ComboController comboController;
@@ -31,8 +32,10 @@ public class CharacterPointHandler : MonoBehaviour {
   public float groundSpeedSlowDuration = 1f;
   public float speedPointValue = 0.5f;
   float slowDurationTimer = 0;
+  int midTrickPointThreshold = 10;
 
   void Start() {
+    sm = GetComponent<SkateboardStateMachine>();
     pointSystem = PointManager.instance;
     speedometerDisplayMat = new(speedometerDisplay.material);
     speedometerDisplay.material = speedometerDisplayMat;
@@ -51,7 +54,6 @@ public class CharacterPointHandler : MonoBehaviour {
   }
 
   public void CompleteTrick(Combo trick) {
-    comboController.ClearCurrentCombo();
     pointSystem.StartLine();
     // depending on the trick, add points corresponding to that trick
     pointSystem.AddPoints(trick._ComboTrickValue);
@@ -71,6 +73,11 @@ public class CharacterPointHandler : MonoBehaviour {
     pointSystem.EndLine();
   }
 
+  public void EvaluateVFX(Combo combo) {
+    if (combo._ComboTrickValue > midTrickPointThreshold)
+      sm.TryLandVFXTier(1);
+  }
+
   private void UpdateRotation() {
     var maxTurn = Mathf.Max(cwturnAmount, ccwturnAmount);
     if (maxTurn < (0.5f-turnTolerance)) return;
@@ -83,6 +90,13 @@ public class CharacterPointHandler : MonoBehaviour {
     // here we update the trick display to show the turn
     comboDisplayManager.SetTurnModifiers(halfturns, fs);
     comboDisplayManager.SetComboDisplay();
+
+    if (halfturns > 2) {
+      sm.TryLandVFXTier(1);
+      if (comboController.currentlyPlayingCombo != null) {
+        sm.TryLandVFXTier(2);
+      }
+    } 
 
     lastHalfturns = halfturns;
   }
@@ -104,6 +118,7 @@ public class CharacterPointHandler : MonoBehaviour {
   private void Landed() {
     ResolveRotation();
     CompleteAndValidateTrick(comboController.currentlyPlayingCombo);
+    comboController.ClearCurrentCombo();
   }
 
   private void Launched() {

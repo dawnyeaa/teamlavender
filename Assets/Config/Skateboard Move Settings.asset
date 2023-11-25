@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skateboard Move Settings
   m_EditorClassIdentifier: 
   maxSteer: 5
-  steerInputSmoothing: 0
+  steerInputSmoothing: 0.1
   maxSpeed: 40
   acceleration: 0.6
   pushDuration: 1
@@ -164,15 +164,15 @@ MonoBehaviour:
   mannyWindow: {x: 0.1, y: 0.9}
   mannyFriction: 0.002
   mannyTurnReduction: 0.5
-  distanceToGround: 0.21
+  distanceToGround: 0.17
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
-  truckDepenetrationSpring: 300
+  truckDepenetrationSpring: 200
   truckDepenetrationDamper: 200
   wheelRadius: 0.12
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 6.5942126e-12
+  lastEvaluatedBrakeThreshold: 3.111574e-14
   hipsHeight: 2
   wallSlideDistance: 1
   wallSlideTorqueP: 7

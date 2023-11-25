@@ -34,6 +34,20 @@ MonoBehaviour:
   _outlineWobbleStrength: 0.14
   _outlineWobbleFPS: 5
   _outlineWobbleTexScrollDir: {x: -11.78, y: 32.38, z: 0.73}
+--- !u!114 &-5722276703725301271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af06237f5f7ed5d4ea62767087d1dc06, type: 3}
+  m_Name: ChromaticAbberationFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  chromAbbMat: {fileID: 2100000, guid: 3036b5cf3cced40458040a76e6001c85, type: 2}
 --- !u!114 &-5701755353244619207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,7 +144,9 @@ MonoBehaviour:
   - {fileID: -7418620359027704615}
   - {fileID: -2503473586965459435}
   - {fileID: -5701755353244619207}
-  m_RendererFeatureMap: fcd99222f4e7eef0d93cacc816c40b9915ce596009e041dd392eac25b74bdfb0
+  - {fileID: -5722276703725301271}
+  - {fileID: 494522943271630585}
+  m_RendererFeatureMap: fcd99222f4e7eef0d93cacc816c40b9915ce596009e041dd392eac25b74bdfb0e9d1f5e7a76396b0f976fc2effe5dc06
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -171,3 +187,17 @@ MonoBehaviour:
   m_ClusteredRendering: 0
   m_TileSize: 32
   m_IntermediateTextureMode: 0
+--- !u!114 &494522943271630585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4b26bafa3e473c4c9318959bd42234a, type: 3}
+  m_Name: SpeedLinesFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  speedLinesMat: {fileID: 2100000, guid: d6502719e62c85744b0aae66a3390186, type: 2}

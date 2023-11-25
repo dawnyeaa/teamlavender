@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 public class ComboController : MonoBehaviour {
+  private CharacterPointHandler pointHandler;
   public ComboDisplayManager comboDisplayManager;
   public Combo currentlyPlayingCombo { get; private set; }
   public float maxTimeBetweenInputs = 0.1f;
@@ -13,6 +14,10 @@ public class ComboController : MonoBehaviour {
   public const int capacity = 5;
   public ComboController() {
     comboBuffer = new Queue<Input>(capacity);
+  }
+
+  void Start() {
+    pointHandler = GetComponent<CharacterPointHandler>();
   }
 
   void FixedUpdate() {
@@ -56,6 +61,7 @@ public class ComboController : MonoBehaviour {
           if (comboI >= comboInput.Count) {
             combo.ExecuteCombo();
             currentlyPlayingCombo = combo;
+            pointHandler.EvaluateVFX(combo);
             ClearBuffer();
             return;
           }

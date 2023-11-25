@@ -1,4 +1,5 @@
 using CharacterController;
+using UnityEditor;
 using UnityEngine;
 
 public class SkateboardMoveState : SkateboardBaseState
@@ -353,7 +354,9 @@ public class SkateboardMoveState : SkateboardBaseState
                 Debug.DrawLine(position, hit.point, Color.magenta);
                 Debug.DrawRay(hit.point, hit.normal * 2.0f, Color.magenta);
                 upVector = hit.normal * settings.predictionWeight;
+                var justLaunched = sm.TimeToLand <= Mathf.Epsilon;
                 sm.TimeToLand = t;
+                sm.CurrentJumpAirtime = justLaunched ? sm.TimeToLand : sm.CurrentJumpAirtime;
                 break;
             }
 
@@ -361,7 +364,7 @@ public class SkateboardMoveState : SkateboardBaseState
 
             position = nextPosition;
             velocity += force * deltaTime;
-            force = Physics.gravity;
+            force = Physics.gravity * (velocity.y > 0.0f ? settings.upGravity : settings.downGravity);
         }
     }
 
@@ -450,6 +453,22 @@ public class SkateboardMoveState : SkateboardBaseState
             {
                 // we just landed
                 sm.SFX.LandingSound();
+                if (sm.CurrentJumpAirtime > sm.SmallLandVFXThreshold)
+                {
+                    switch (sm.LandVFXTier)
+                    {
+                        case 1:
+                            sm.OnMedLanding?.Invoke();
+                            break;
+                        case 2:
+                            sm.OnBigLanding?.Invoke();
+                            break;
+                        default:
+                            sm.OnSmallLanding?.Invoke();
+                            break;
+                    }
+                    sm.LandVFXTier = 0;
+                }
                 sm.OnLanding?.Invoke();
                 // uncommenting this line can look real jank
                 // sm.CharacterAnimator.SetFloat("landStrength", airborneTimer/1f);
@@ -465,6 +484,7 @@ public class SkateboardMoveState : SkateboardBaseState
             {
                 // do stuff here for leaving the ground
                 sm.SFX.Airborne();
+                sm.OnLaunching?.Invoke();
             }
         }
 

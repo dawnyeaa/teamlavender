@@ -76,6 +76,7 @@ public class SkateboardStateMachine : StateMachine {
   public float LipAngleTolerance = 0.75f;
   public float MaxMotionBlur = 35f;
   public float AverageSecondsPerBreath = 8f;
+  public float SmallLandVFXThreshold = 0.1f;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -118,9 +119,11 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
   [ReadOnly] public float TimeToLand = 0;
+  [ReadOnly] public float CurrentJumpAirtime = 0;
   [ReadOnly] public bool IsGoofy = false;
   [ReadOnly] public bool IsNollie = false;
   [ReadOnly] public bool CanDie = true;
+  [ReadOnly] public int LandVFXTier = 0;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -152,8 +155,8 @@ public class SkateboardStateMachine : StateMachine {
   public WheelSpinParticleHandler[] WheelSpinParticles;
   public GameObject GrindParticles;
   public EmitterBundle LandEmit;
-  public MeshRenderer SpeedyLines;
-  public Material SpeedyLinesMat;
+  // public MeshRenderer SpeedyLines;
+  // public Material SpeedyLinesMat;
   public AudioClip LandingHardClip;
   public AudioClip DeathClip;
   public AudioClip PushClip;
@@ -163,7 +166,12 @@ public class SkateboardStateMachine : StateMachine {
   public CharacterPointHandler PointHandler;
   public RendererFeatureDynamicProperties RFprops;
   public SkateSoundController SFX;
+  public DynamicCameraController DynamicCam;
   public UnityEvent OnLanding;
+  public UnityEvent OnSmallLanding;
+  public UnityEvent OnMedLanding;
+  public UnityEvent OnBigLanding;
+  public UnityEvent OnLaunching;
   public UnityEvent OnNosePop;
   public UnityEvent OnTailPop;
 
@@ -177,7 +185,7 @@ public class SkateboardStateMachine : StateMachine {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
-    SpeedyLinesMat = SpeedyLines.material;
+    // SpeedyLinesMat = SpeedyLines.material;
 
     CurrentAnimTrickIndexes = new int[Enum.GetValues(typeof(TrickAnimationGroup)).Length];
 
@@ -212,6 +220,10 @@ public class SkateboardStateMachine : StateMachine {
   public void PushingEnd() {
     PushingAnim = false;
     Pushing = false;
+  }
+
+  public void TryLandVFXTier(int tier) {
+    LandVFXTier = Mathf.Max(tier, LandVFXTier);
   }
 
   public void Die() => Die(null);

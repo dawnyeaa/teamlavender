@@ -264,7 +264,7 @@ public abstract class SkateboardBaseState : State {
   }
 
   protected void SetSpeedyLines() {
-    sm.SpeedyLinesMat.SetFloat("_amount", Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.MaxSpeed, sm.MainRB.velocity.magnitude));
+    sm.RFprops.speedLinesAmount = Mathf.InverseLerp(sm.MinSpeedyLineSpeed, sm.moveSettings.maxSpeed*0.6f, sm.MainRB.velocity.magnitude);
   }
 
   protected void OnSwitch() {

@@ -125,6 +125,7 @@ public class PointManager : MonoBehaviour {
       linePickups = 0;
       lineDecreaseSpeed = lineStartDecreaseSpeed;
       lineValue = lineStartValue;
+      ResetPickupDisplay();
     }
   }
 
@@ -149,6 +150,8 @@ public class PointManager : MonoBehaviour {
     inLine = false;
     lineCooldownTimer = lineCooldown;
     currentLinePoints = 0;
+    lineValue = 0;
+    DrawLineValue();
     TrashPending();
     Display();
   }

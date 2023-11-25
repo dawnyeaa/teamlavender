@@ -3896,6 +3896,7 @@ MonoBehaviour:
   IsGoofy: 0
   IsNollie: 0
   CanDie: 1
+  LandVFXTier: 0
   MainRB: {fileID: 3832982824073343641}
   frontAxis: {fileID: 3832982825911100688}
   backAxis: {fileID: 3832982824258907185}
@@ -3954,6 +3955,7 @@ MonoBehaviour:
   PointHandler: {fileID: 782263955143857083}
   RFprops: {fileID: 0}
   SFX: {fileID: 0}
+  DynamicCam: {fileID: 0}
   OnLanding:
     m_PersistentCalls:
       m_Calls:
@@ -3969,6 +3971,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnLaunching:
+    m_PersistentCalls:
+      m_Calls: []
   OnNosePop:
     m_PersistentCalls:
       m_Calls: []
@@ -4022,6 +4027,43 @@ MonoBehaviour:
   duration: 1
   transitionTime: 0.1
   coolTimeScale: 0.2
+  coolTimeAirDurationThreshold: 1
+  chromAbb:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 5.080482
+      outSlope: 5.080482
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.33333334
+      outWeight: 0.16397518
+    - serializedVersion: 3
+      time: 0.4825864
+      value: 1.0079143
+      inSlope: -0.013527537
+      outSlope: -0.013527537
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.49444202
+      outWeight: 0.5436857
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -4.0577817
+      outSlope: -4.0577817
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.13404791
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  chromAbbScale: 0.45
+  fisheye: {fileID: 0}
+  camZoom: {fileID: 0}
 --- !u!114 &782263955143857083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12455,7 +12497,6 @@ MonoBehaviour:
   coolTime: {fileID: 2908417279074541027}
   comboController: {fileID: 5959250916401455701}
   comboDisplayManager: {fileID: 0}
-  coolTimeAirDurationThreshold: 1
   framesPerSecond: 30
   nonCoolTimeTricks:
   - ollie
