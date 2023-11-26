@@ -7,8 +7,6 @@ public class VoronoiPass : ScriptableRenderPass {
   private ProfilingSampler _profilingSampler;
   public Mesh _voronoiMesh;
   public Material _voronoiMaterial;
-
-  private Vector4[] _points;
   private float _pointDensity;
   private ComputeBuffer _poissonPointsBuffer;
 
@@ -17,12 +15,12 @@ public class VoronoiPass : ScriptableRenderPass {
   private RenderTargetIdentifier _voronoiRenderTarget;
   private int _fps;
 
-  public VoronoiPass(string profilerTag, int voronoiRenderTargetId, PoissonArrangementObject poissonPoints, float pointDensity) {
+  public VoronoiPass(string profilerTag, int voronoiRenderTargetId, ComputeBuffer poissonPoints, float pointDensity) {
     _profilingSampler = new ProfilingSampler(profilerTag);
 
     _voronoiRenderTargetId = voronoiRenderTargetId;
 
-    _points = poissonPoints.points;
+    _poissonPointsBuffer = poissonPoints;
 
     _pointDensity = pointDensity;
 
@@ -36,10 +34,6 @@ public class VoronoiPass : ScriptableRenderPass {
     cmd.GetTemporaryRT(_voronoiRenderTargetId, desc);
 
     _voronoiRenderTarget = new RenderTargetIdentifier(_voronoiRenderTargetId);
-
-    if (_poissonPointsBuffer == null)
-      _poissonPointsBuffer = new ComputeBuffer(_points.Length, Marshal.SizeOf(typeof(Vector4)));
-    _poissonPointsBuffer.SetData(_points);
 
     ConfigureTarget(_voronoiRenderTarget);
     ConfigureClear(ClearFlag.All, Color.clear);
@@ -62,7 +56,7 @@ public class VoronoiPass : ScriptableRenderPass {
     using (new ProfilingScope(cmd, _profilingSampler)) {
       MaterialPropertyBlock properties = new();
 
-      properties.SetInt("_PositionsSize", _points.Length);
+      properties.SetInt("_PositionsSize", _poissonPointsBuffer.count);
       properties.SetBuffer("_Positions", _poissonPointsBuffer);
       properties.SetFloat("_PointDensity", _pointDensity);
       properties.SetInt("_FPS", _fps);
@@ -76,9 +70,5 @@ public class VoronoiPass : ScriptableRenderPass {
   }
 
   public override void OnCameraCleanup(CommandBuffer cmd) {
-  }
-
-  public void Dispose() {
-    _poissonPointsBuffer?.Dispose();
   }
 }

@@ -25,8 +25,6 @@ public class StrokeQuadPass : ScriptableRenderPass {
   private float _strokeWidth;
   private float _strokeHeight;
   private Vector4 _strokeRandomSizeBounds;
-  private Vector4[] _poissonPointsArray;
-  private PoissonArrangementObject _poissonPointsArrangement;
 
   private ComputeBuffer _poissonPoints;
 
@@ -37,7 +35,9 @@ public class StrokeQuadPass : ScriptableRenderPass {
                         string profilerTag, 
                         int renderTargetId, 
                         int voronoiTexId, 
-                        PoissonArrangementObject poissonPoints, 
+                        ComputeBuffer poissonPoints, 
+                        ComputeBuffer quadPointsAppend, 
+                        ComputeBuffer drawQuadsArgs, 
                         int scanSize, 
                         Texture2D strokeTexture,
                         float strokeDensity,
@@ -53,7 +53,9 @@ public class StrokeQuadPass : ScriptableRenderPass {
 
     _scanSize = Mathf.Max(scanSize, 1);
 
-    _poissonPointsArrangement = poissonPoints;
+    _poissonPoints = poissonPoints;
+    _quadPoints = quadPointsAppend;
+    _drawArgsBuffer = drawQuadsArgs;
     // _poissonPointsArray = poissonPoints.tiledPoints4;
 
     _strokeTex = strokeTexture;
@@ -69,17 +71,6 @@ public class StrokeQuadPass : ScriptableRenderPass {
 
     _quadPointsId = Shader.PropertyToID("_quadPoints");
 
-    _quadPoints = new ComputeBuffer(poissonPoints.points.Length, sizeof(uint)*2 + sizeof(float) + sizeof(uint)*2, ComputeBufferType.Append);
-
-    _drawArgsBuffer = new ComputeBuffer(4, sizeof(uint), ComputeBufferType.IndirectArguments);
-
-    _drawArgsBuffer.SetData(new uint[] {
-      6, // vertices per instance
-      0, // instance count
-      0, // byte offset of first vertex
-      0 // byte offset of first instance
-    });
-
     _fps = 3;
 
     renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
@@ -91,10 +82,6 @@ public class StrokeQuadPass : ScriptableRenderPass {
   public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData) {
     _inputRenderTargetIdentifier = new RenderTargetIdentifier(_inputRenderTargetId);
     _voronoiTexIdentifier = new RenderTargetIdentifier(_voronoiTexId);
-
-    if (_poissonPoints == null)
-      _poissonPoints = new ComputeBuffer(_poissonPointsArrangement.points.Length, Marshal.SizeOf(typeof(Vector4)));
-    _poissonPoints.SetData(_poissonPointsArrangement.points);
   }
 
   public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
@@ -125,7 +112,7 @@ public class StrokeQuadPass : ScriptableRenderPass {
       cmd.SetComputeBufferParam(_strokeQuadCompute, _strokeyQuadsKernel, _quadPointsId, _quadPoints);
 
       cmd.DispatchCompute(_strokeQuadCompute, _strokeyQuadsKernel,
-                          Mathf.CeilToInt(_poissonPointsArrangement.points.Length * 2f / 64f),
+                          Mathf.CeilToInt(_poissonPoints.count * 2f / 64f),
                           1,
                           1);
       
@@ -162,6 +149,7 @@ public class StrokeQuadPass : ScriptableRenderPass {
   }
 
   public void Dispose() {
+    _poissonPoints?.Dispose();
     _quadPoints?.Dispose();
     _drawArgsBuffer?.Dispose();
   }

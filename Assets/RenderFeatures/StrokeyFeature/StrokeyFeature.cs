@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using System.Runtime.InteropServices;
 
 public class StrokeyFeature : ScriptableRendererFeature {
   private StrokeyIDPass _idPass;
@@ -31,11 +32,35 @@ public class StrokeyFeature : ScriptableRendererFeature {
   [SerializeField] Vector2 _strokeRandomHeightBounds = new(0.7f, 1.4f);
 
   [SerializeField] float _strokeDensity = 1;
+  private ComputeBuffer _poissonPointsBuffer;
+  private ComputeBuffer _quadPointsAppendBuffer;
+  private ComputeBuffer _drawQuadsArgsBuffer;
 
   public override void Create() {
     int IDOutRT = Shader.PropertyToID("_IDPassRT");
     int SobelOutRT = Shader.PropertyToID("_sobelOutRT");
     int VoronoiOutRT = Shader.PropertyToID("_voronoiOutRT");
+
+    Debug.Log(_poissonPoints.points);
+    Debug.Log($"buffer: {_poissonPointsBuffer}");
+
+    if (_poissonPointsBuffer == null || !_poissonPointsBuffer.IsValid())
+      _poissonPointsBuffer = new ComputeBuffer(_poissonPoints.points.Length, Marshal.SizeOf(typeof(Vector4)));
+    _poissonPointsBuffer.SetData(_poissonPoints.points);
+    
+
+    if (_quadPointsAppendBuffer == null || !_quadPointsAppendBuffer.IsValid())
+      _quadPointsAppendBuffer = new ComputeBuffer(_poissonPoints.points.Length, sizeof(uint)*2 + sizeof(float) + sizeof(uint)*2, ComputeBufferType.Append);
+
+    if (_drawQuadsArgsBuffer == null || !_drawQuadsArgsBuffer.IsValid())
+      _drawQuadsArgsBuffer = new ComputeBuffer(4, sizeof(uint), ComputeBufferType.IndirectArguments);
+    _drawQuadsArgsBuffer.SetData(new uint[] {
+      6, // vertices per instance
+      0, // instance count
+      0, // byte offset of first vertex
+      0 // byte offset of first instance
+    });
+
     _idPass = new StrokeyIDPass("Strokey ID Pass", _layerMask, IDOutRT) {
       _overrideMat = _idOverrideMat
     };
@@ -43,7 +68,7 @@ public class StrokeyFeature : ScriptableRendererFeature {
       _sobelishMaterial = _sobelishMaterial,
       _boxBlurMaterial = _boxBlurMaterial
     };
-    _voronoiPass = new VoronoiPass("Voronoi Pass", VoronoiOutRT, _poissonPoints, _strokeDensity) {
+    _voronoiPass = new VoronoiPass("Voronoi Pass", VoronoiOutRT, _poissonPointsBuffer, _strokeDensity) {
       _voronoiMesh = _voronoiMesh,
       _voronoiMaterial = _voronoiMaterial
     };
@@ -51,7 +76,9 @@ public class StrokeyFeature : ScriptableRendererFeature {
                                         "Strokey Quads Pass", 
                                         SobelOutRT, 
                                         VoronoiOutRT, 
-                                        _poissonPoints, 
+                                        _poissonPointsBuffer,
+                                        _quadPointsAppendBuffer,
+                                        _drawQuadsArgsBuffer, 
                                         _pointScanSize,
                                         _strokeTexture,
                                         _strokeDensity,
@@ -66,6 +93,7 @@ public class StrokeyFeature : ScriptableRendererFeature {
     _dropShadowPass = new DropShadowPass("Drop Shadow Pass", IDOutRT) {
       _dropShadowMat = _dropShadowMat
     };
+
   }
 
   public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData) {
@@ -79,8 +107,14 @@ public class StrokeyFeature : ScriptableRendererFeature {
   }
 
   protected override void Dispose(bool disposing) {
-    _voronoiPass.Dispose();
-    _strokeQuadPass.Dispose();
+    // _voronoiPass.Dispose();
+    // _strokeQuadPass.Dispose();
+    _poissonPointsBuffer?.Release();
+    _quadPointsAppendBuffer?.Release();
+    _drawQuadsArgsBuffer?.Release();
+    // _poissonPointsBuffer = null;
+    // _quadPointsAppendBuffer = null;
+    // _drawQuadsArgsBuffer = null;
     base.Dispose(disposing);
   }
 }
