@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PickupManager : MonoBehaviour {
+  public SkateboardStateMachine sm;
   public List<Pickup> pickups;
   public int currentlyEnabled = 0;
 
@@ -25,6 +26,7 @@ public class PickupManager : MonoBehaviour {
   }
 
   public void Pickup() {
+    sm.OnPickup();
     ChooseNextPickup();
     PointManager.instance.UpdatePickupDisplay();
   }

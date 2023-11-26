@@ -451,9 +451,13 @@ public class SkateboardMoveState : SkateboardBaseState
         {
             if (!wasOnGround) 
             {
+                if (sm.CurrentlyPlayingTrick != null && sm.CurrentlyPlayingTrick._ComboTrickValue > sm.MidTrickPointVFXThreshold) 
+                {
+                    sm.TryLandVFXTier(1);
+                }
                 // we just landed
                 sm.SFX.LandingSound();
-                if (sm.CurrentJumpAirtime > sm.SmallLandVFXThreshold)
+                if (airborneTimer > sm.SmallLandVFXThreshold)
                 {
                     switch (sm.LandVFXTier)
                     {
@@ -467,11 +471,19 @@ public class SkateboardMoveState : SkateboardBaseState
                             sm.OnSmallLanding?.Invoke();
                             break;
                     }
-                    sm.LandVFXTier = 0;
+                    sm.CharacterAnimator.SetBool("landedWithAirtime", true);
+                }
+                else 
+                {
+                    sm.CharacterAnimator.SetBool("landedWithAirtime", false);
                 }
                 sm.OnLanding?.Invoke();
                 // uncommenting this line can look real jank
                 // sm.CharacterAnimator.SetFloat("landStrength", airborneTimer/1f);
+                sm.TimeToLand = 0;
+                sm.LandVFXTier = 0;
+                sm.CurrentJumpAirtime = 0;
+                sm.CurrentlyPlayingTrick = null;
             }
             
             upVector = up.normalized;

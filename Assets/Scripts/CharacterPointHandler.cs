@@ -64,18 +64,13 @@ public class CharacterPointHandler : MonoBehaviour {
   }
 
   public void CompleteAndValidateTrick(Combo trick) {
-    if (trick != null)
+    if (trick != null && sm.CurrentlyPlayingTrick != null)
       CompleteTrick(trick);
     ValidateTricks();
   }
 
   public void Die() {
     pointSystem.EndLine();
-  }
-
-  public void EvaluateVFX(Combo combo) {
-    if (combo._ComboTrickValue > midTrickPointThreshold)
-      sm.TryLandVFXTier(1);
   }
 
   private void UpdateRotation() {
@@ -93,7 +88,7 @@ public class CharacterPointHandler : MonoBehaviour {
 
     if (halfturns > 2) {
       sm.TryLandVFXTier(1);
-      if (comboController.currentlyPlayingCombo != null) {
+      if (sm.CurrentlyPlayingTrick != null) {
         sm.TryLandVFXTier(2);
       }
     } 
