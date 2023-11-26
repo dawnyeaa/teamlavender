@@ -61,7 +61,6 @@ public class ComboController : MonoBehaviour {
           if (comboI >= comboInput.Count) {
             combo.ExecuteCombo();
             currentlyPlayingCombo = combo;
-            pointHandler.EvaluateVFX(combo);
             ClearBuffer();
             return;
           }

@@ -9,6 +9,8 @@ Shader "VFX/InkTrailInFront" {
     _Threshold ("Threshold", Range(0, 1)) = 0.218
     _EdgeStrength ("Edge Strength", Float) = 0.3
 
+    _StartFadeSize ("Start Fade Size", Float) = 0.1
+
     _BrushScale ("Brush Noise Scale", Float) = 1
 
     _NoiseStrength ("Noise Texture Strength", Range(0, 1)) = 0.4
@@ -55,6 +57,8 @@ Shader "VFX/InkTrailInFront" {
       float _EdgeStrength;
 
       float _BrushScale;
+
+      float _StartFadeSize;
 
       float _NoiseStrength;
       float _PaperStrength;
@@ -117,12 +121,13 @@ Shader "VFX/InkTrailInFront" {
 
         float dialledEdges = edges * _EdgeStrength;
 
-        float combinedShape = overlay((bigNoise*dialledEdges)+((1-i.uv.x)*_Threshold), noise, _NoiseStrength);
+        float startFade = saturate((i.uv.x*_length) * (1.0/_StartFadeSize));
+        float combinedShape = overlay(((bigNoise*dialledEdges)+((1-i.uv.x)*_Threshold)) * startFade, noise, _NoiseStrength);
         combinedShape = overlay(combinedShape, paper, _PaperStrength);
         combinedShape *= brush * _BrushStrength * 4;
 
         float steppedShape = smoothstep(0.06, 0.09, combinedShape);
-        // color.rgb = (bigNoise*dialledEdges)+((1-i.uv.x)*_Threshold);
+        // color.rgb = (i.uv.x*_length);
         // color.a = 1;
 
         float rounded = step(1, i.color.r*(1-i.uv.x)/pow(trailCenter, _EndChunk));

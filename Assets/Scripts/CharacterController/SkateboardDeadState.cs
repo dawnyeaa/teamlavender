@@ -42,6 +42,8 @@ public class SkateboardDeadState : SkateboardBaseState
     sm.LookAtTargetConstraint.weight = 0;
     sm.RagdollModel.gameObject.SetActive(false);
     sm.RegularModel.gameObject.SetActive(true);
+    sm.LandVFXTier = 0;
+    sm.ComboController.ClearCurrentCombo();
     Spawn();
     sm.DynamicCam.EndDead();
     sm.DynamicCam.OverrideZoom(1);

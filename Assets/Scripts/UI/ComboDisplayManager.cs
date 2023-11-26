@@ -1,7 +1,9 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 public class ComboDisplayManager : MonoBehaviour {
+  public SkateboardStateMachine sm;
   public ComboController comboController;
   public TextMeshProUGUI comboNameDisplay;
   private int currentHalfturns = 0;
@@ -22,7 +24,7 @@ public class ComboDisplayManager : MonoBehaviour {
   }
 
   public void SetComboDisplay() {
-    if (comboNameDisplay != null && comboController.currentlyPlayingCombo != null) {
+    if (comboNameDisplay != null && comboController.currentlyPlayingCombo != null && sm.CurrentlyPlayingTrick != null) {
       var displayName = comboController.currentlyPlayingCombo._ComboDisplayName;
       var turnModifier = "";
       if (currentHalfturns > 0) turnModifier = (currentFS?"FS":"BS") + " " + currentHalfturns*180 + " ";
