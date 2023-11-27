@@ -170,6 +170,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""trickOverlayHide"",
+                    ""type"": ""Button"",
+                    ""id"": ""26bcd40d-f275-4e72-8918-6b67963d68ab"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -621,6 +630,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""helpToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a635472b-3f0f-4cbd-80e1-318400fde2cb"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""trickOverlayHide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1293,6 +1313,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_comboInputButton = m_player.FindAction("comboInputButton", throwIfNotFound: true);
         m_player_comboInputStick = m_player.FindAction("comboInputStick", throwIfNotFound: true);
         m_player_helpToggle = m_player.FindAction("helpToggle", throwIfNotFound: true);
+        m_player_trickOverlayHide = m_player.FindAction("trickOverlayHide", throwIfNotFound: true);
         // debugFly
         m_debugFly = asset.FindActionMap("debugFly", throwIfNotFound: true);
         m_debugFly_look = m_debugFly.FindAction("look", throwIfNotFound: true);
@@ -1390,6 +1411,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_comboInputButton;
     private readonly InputAction m_player_comboInputStick;
     private readonly InputAction m_player_helpToggle;
+    private readonly InputAction m_player_trickOverlayHide;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -1410,6 +1432,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @comboInputButton => m_Wrapper.m_player_comboInputButton;
         public InputAction @comboInputStick => m_Wrapper.m_player_comboInputStick;
         public InputAction @helpToggle => m_Wrapper.m_player_helpToggle;
+        public InputAction @trickOverlayHide => m_Wrapper.m_player_trickOverlayHide;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1467,6 +1490,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @helpToggle.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHelpToggle;
                 @helpToggle.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHelpToggle;
                 @helpToggle.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHelpToggle;
+                @trickOverlayHide.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTrickOverlayHide;
+                @trickOverlayHide.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTrickOverlayHide;
+                @trickOverlayHide.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTrickOverlayHide;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -1519,6 +1545,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @helpToggle.started += instance.OnHelpToggle;
                 @helpToggle.performed += instance.OnHelpToggle;
                 @helpToggle.canceled += instance.OnHelpToggle;
+                @trickOverlayHide.started += instance.OnTrickOverlayHide;
+                @trickOverlayHide.performed += instance.OnTrickOverlayHide;
+                @trickOverlayHide.canceled += instance.OnTrickOverlayHide;
             }
         }
     }
@@ -1753,6 +1782,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnComboInputButton(InputAction.CallbackContext context);
         void OnComboInputStick(InputAction.CallbackContext context);
         void OnHelpToggle(InputAction.CallbackContext context);
+        void OnTrickOverlayHide(InputAction.CallbackContext context);
     }
     public interface IDebugFlyActions
     {
