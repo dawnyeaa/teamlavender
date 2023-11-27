@@ -239,6 +239,10 @@ public class SkateboardStateMachine : StateMachine {
     Pushing = false;
   }
 
+  public void CompleteTrick() {
+    CurrentlyPlayingTrick = null;
+  }
+
   public void TryLandVFXTier(int tier) {
     LandVFXTier = Mathf.Max(tier, LandVFXTier);
   }
