@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways]
 public class TrailHelper : MonoBehaviour {
-  public Material mat;
-  public TrailRenderer trail;
+  private Material mat;
+  private TrailRenderer trail;
+
+  void Start() {
+    trail = GetComponent<TrailRenderer>();
+    mat = trail.material;
+  }
 
   void Update() {
     mat.SetFloat("_length", GetTrailLength(trail));

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Skateboard Move Settings
   m_EditorClassIdentifier: 
   maxSteer: 5
-  steerInputSmoothing: 0
+  steerInputSmoothing: 0.1
   maxSpeed: 40
   acceleration: 0.6
   pushDuration: 1
@@ -117,7 +117,7 @@ MonoBehaviour:
   downGravity: 2
   rotationalForce: 300
   rotationalDamping: 20
-  rotationalLean: 0.01
+  rotationalLean: 0
   slopeCrouchDamping: 0.2
   slopeCrouchFPS: 12
   autoSwitchThreshold: 0.1
@@ -164,15 +164,15 @@ MonoBehaviour:
   mannyWindow: {x: 0.1, y: 0.9}
   mannyFriction: 0.002
   mannyTurnReduction: 0.5
-  distanceToGround: 0.21
+  distanceToGround: 0.17
   truckOffset: {x: 0.14, y: -0.05, z: 0.24}
-  truckDepenetrationSpring: 300
+  truckDepenetrationSpring: 200
   truckDepenetrationDamper: 200
   wheelRadius: 0.12
   dynamicBrake: 0.04
   staticBrake: 1
   brakeThreshold: 0.3
-  lastEvaluatedBrakeThreshold: 1.28979214e-11
+  lastEvaluatedBrakeThreshold: 3.111574e-14
   hipsHeight: 2
   wallSlideDistance: 1
   wallSlideTorqueP: 7
@@ -184,17 +184,10 @@ MonoBehaviour:
   predictionWeight: 0.2
   cameraTargetSpring: 600
   cameraTargetDamp: 60
-  animationSmoothing: 0.25
-  hipsSpring: 200
-  hipsDamper: 20
-  visualLean: {x: 0.02, y: -3}
-  hipPBasis: {x: 0, y: 1.1619, z: 0}
-  hipRBasis: {x: 0, y: 0, z: 0}
-  crouchPBasis: {x: 0, y: 1.1619, z: 0}
-  crouchRBasis: {x: 0, y: 0, z: 0}
-  globalHorizontalOffset: {x: 0, y: 0, z: 0}
-  localHorizontalOffsetLeft: {x: 0.26, y: -0.55, z: 0}
-  localHorizontalOffsetRight: {x: -0.95, y: -1.33, z: 0}
-  rotationHorizontalOffsetLeft: {x: 0, y: 0, z: 3.94}
-  rotationHorizontalOffsetRight: {x: 0, y: 0, z: -32.96}
-  swapBasis: 0
+  uprightLean:
+    translation: {x: 0, y: 0}
+    rotation: 49
+  turnLean:
+    translation: {x: 0.1, y: -0.02}
+    rotation: 6
+  leanSmoothing: 0.1

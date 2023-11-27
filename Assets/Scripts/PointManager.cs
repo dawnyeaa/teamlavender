@@ -17,7 +17,7 @@ public class PointManager : MonoBehaviour {
   public TextMeshProUGUI pendingPointsDebugDisplay, newPointsDebugDisplay, currentLinePointsDebugDisplay, totalPointsDebugDisplay;
   public TextMeshProUGUI pendingPointsDebugTimerDisplay;
   public TextMeshProUGUI lineMessageDisplay, lineTimeDisplay, linePickupDisplay;
-  [SerializeField] Image lineLineBarImage;
+  [SerializeField] Renderer lineLineBarImage, lineLineBarImage2;
 
   public GameObject pointsDebugContainer;
 
@@ -37,7 +37,7 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public float newPoints;
   [ReadOnly] public float currentLinePoints;
   [ReadOnly] public float totalPoints;
-  [ReadOnly] public Material lineLineBarMat;
+  [ReadOnly] public Material lineLineBarMat, lineLineBarMat2;
 
   [ReadOnly] public float pointHeat;
   
@@ -125,6 +125,7 @@ public class PointManager : MonoBehaviour {
       linePickups = 0;
       lineDecreaseSpeed = lineStartDecreaseSpeed;
       lineValue = lineStartValue;
+      ResetPickupDisplay();
     }
   }
 
@@ -149,15 +150,21 @@ public class PointManager : MonoBehaviour {
     inLine = false;
     lineCooldownTimer = lineCooldown;
     currentLinePoints = 0;
+    lineValue = 0;
+    DrawLineValue();
     TrashPending();
     Display();
   }
 
   private void DrawLineValue() {
     lineLineBarMat = new(lineLineBarImage.material);
+    lineLineBarMat2 = new(lineLineBarImage2.material);
     lineLineBarImage.material = lineLineBarMat;
+    lineLineBarImage2.material = lineLineBarMat2;
     if (lineLineBarMat)
-      lineLineBarMat.SetFloat("_currentSpeed", lineValue);
+      lineLineBarMat.SetFloat("_current", lineValue);
+    if (lineLineBarMat2)
+      lineLineBarMat2.SetFloat("_current", lineValue);
   }
 
   private void UpdateLineTimeDisplay() {

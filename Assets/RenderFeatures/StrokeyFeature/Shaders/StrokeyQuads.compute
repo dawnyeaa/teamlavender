@@ -1,0 +1,83 @@
+#include "StrokePoint.hlsl"
+
+#define FLT_MAX 3.402823466e+38
+#define TAU 6.2831853072; 
+
+Texture2D<float3> _sobelOutRT;
+Texture2D<float3> _voronoiTex;
+
+uint _RTWidth;
+uint _RTHeight;
+
+StructuredBuffer<float4> _poissonPoints;
+
+uint _scanSize;
+
+float _pointDensity;
+
+float2 _PointOffset;
+
+int _FPS;
+float4 _Time;
+
+AppendStructuredBuffer<StrokePoint> _quadPoints;
+
+float mag(int2 vec) {
+  return sqrt((float)(vec.x*vec.x + vec.y*vec.y));
+}
+
+StrokePoint MakeStrokePoint(int2 positionTexel, float angle, int2 mainPosTexel) {
+  StrokePoint p;
+  p.middle = positionTexel;
+  p.angle = angle;
+  p.mainPoint = mainPosTexel;
+  return p;
+}
+
+#pragma kernel StrokeyQuads
+[numthreads(64,1,1)]
+void StrokeyQuads (uint3 id : SV_DispatchThreadID) {
+  float4 poissonPoint = _poissonPoints[id.x/2];
+  int2 mainPoint = id.x % 2 == 0 ? int2(poissonPoint.x, poissonPoint.y) : int2(poissonPoint.z, poissonPoint.w);
+  mainPoint += floor(_Time.y * _FPS) % 5;
+  int2 diff = int2(5000, 5000) - int2(_RTWidth, _RTHeight);
+  mainPoint -= diff/2.0;
+
+  mainPoint = ((int2(_RTWidth/2, _RTHeight/2) - mainPoint) * _pointDensity);
+  mainPoint = int2(-mainPoint.x, mainPoint.y)+int2(_RTWidth/2, _RTHeight/2);
+
+  // check the starting point just in case
+  float mask = _sobelOutRT[mainPoint].x;
+
+  // if (mask > 0.9999) {
+  //   _quadPoints.Append(MakeStrokePoint(mainPoint, _sobelOutRT[mainPoint].y));
+  //   return;
+  // }
+
+  int scanRadius = (int)(_scanSize/2.0);
+
+  float minDistance = FLT_MAX;
+  int2 bestPoint = int2(0, 0);
+
+  float currentDistance;
+
+  for (int i = mainPoint.x-scanRadius; i <= mainPoint.x+scanRadius; ++i) {
+    for (int j = mainPoint.y-scanRadius; j <= mainPoint.y+scanRadius; ++j) {
+      if (i < 0 || j < 0 || i >= _RTWidth || j >= _RTHeight) continue;
+      mask = _sobelOutRT[int2(i, j)].x;
+      if (mask <= 0.9999) continue;
+      int2 offset = mainPoint-int2(i, j);
+      currentDistance = mag(offset);
+      if (currentDistance < minDistance) {
+        minDistance = currentDistance;
+        bestPoint = int2(i, j);
+      }
+    }
+  }
+
+  if (minDistance < FLT_MAX) {
+    float2 facingVector = (_sobelOutRT[bestPoint].yz*2)-1;
+    float angle = atan2(facingVector.y, facingVector.x)/TAU;
+    _quadPoints.Append(MakeStrokePoint(bestPoint, angle, mainPoint));
+  }
+}

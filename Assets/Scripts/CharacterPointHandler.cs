@@ -11,6 +11,7 @@ public class CharacterPointHandler : MonoBehaviour {
   // 5. air turns
   // 6. ???
   PointManager pointSystem;
+  SkateboardStateMachine sm;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
   [SerializeField] Image speedometerDisplay;
   [SerializeField] ComboController comboController;
@@ -31,8 +32,10 @@ public class CharacterPointHandler : MonoBehaviour {
   public float groundSpeedSlowDuration = 1f;
   public float speedPointValue = 0.5f;
   float slowDurationTimer = 0;
+  int midTrickPointThreshold = 10;
 
   void Start() {
+    sm = GetComponent<SkateboardStateMachine>();
     pointSystem = PointManager.instance;
     speedometerDisplayMat = new(speedometerDisplay.material);
     speedometerDisplay.material = speedometerDisplayMat;
@@ -51,7 +54,6 @@ public class CharacterPointHandler : MonoBehaviour {
   }
 
   public void CompleteTrick(Combo trick) {
-    comboController.ClearCurrentCombo();
     pointSystem.StartLine();
     // depending on the trick, add points corresponding to that trick
     pointSystem.AddPoints(trick._ComboTrickValue);
@@ -62,7 +64,7 @@ public class CharacterPointHandler : MonoBehaviour {
   }
 
   public void CompleteAndValidateTrick(Combo trick) {
-    if (trick != null)
+    if (trick != null && sm.CurrentlyPlayingTrick != null)
       CompleteTrick(trick);
     ValidateTricks();
   }
@@ -84,6 +86,13 @@ public class CharacterPointHandler : MonoBehaviour {
     comboDisplayManager.SetTurnModifiers(halfturns, fs);
     comboDisplayManager.SetComboDisplay();
 
+    if (halfturns > 2) {
+      sm.TryLandVFXTier(1);
+      if (sm.CurrentlyPlayingTrick != null) {
+        sm.TryLandVFXTier(2);
+      }
+    } 
+
     lastHalfturns = halfturns;
   }
 
@@ -96,7 +105,7 @@ public class CharacterPointHandler : MonoBehaviour {
     var fs = cwturnAmount > ccwturnAmount ^ airborneGoofy;
     var halfturns = Mathf.FloorToInt((Mathf.Max(cwturnAmount, ccwturnAmount)*2f)+turnTolerance);
 
-    pointSystem.AddPoints(halfturns * pointsPerHalfTurn);
+    pointSystem.AddPoints(Mathf.Pow(pointsPerHalfTurn, halfturns*0.5f));
     cwturnAmount = ccwturnAmount = 0;
     lastHalfturns = 0;
   }
@@ -104,6 +113,7 @@ public class CharacterPointHandler : MonoBehaviour {
   private void Landed() {
     ResolveRotation();
     CompleteAndValidateTrick(comboController.currentlyPlayingCombo);
+    comboController.ClearCurrentCombo();
   }
 
   private void Launched() {

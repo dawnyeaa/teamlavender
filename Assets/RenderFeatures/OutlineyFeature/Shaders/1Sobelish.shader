@@ -79,7 +79,7 @@ Shader "OutlineyFeature/1Sobelish" {
         return mag;
       }
 
-      float2 actuallySobel(float2 uv, float stepx, float stepy) {
+      float3 actuallySobel(float2 uv, float stepx, float stepy) {
         float tleft  = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(-stepx, -stepy)));
         float top    = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(0, -stepy)));
         float tright = intensity(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + half2(stepx, -stepy)));
@@ -92,7 +92,8 @@ Shader "OutlineyFeature/1Sobelish" {
         float x = (1*tleft + 1*bleft + (2*left)) - (1*tright + 1*bright + (2*right));
         float y = (1*tleft + 1*tright + (2*top)) - (1*bleft + 1*bright + (2*bottom));
         float mag = sqrt((x*x) + (y*y));
-        return float2(mag, (atan2(y, x)/(2*PI))+0.5);
+        float ang = atan2(y, x);
+        return float3(mag, cos(ang)*0.5+0.5, sin(ang)*0.5+0.5);
       }
 
       float GetDepth(float2 uv) {
@@ -161,7 +162,7 @@ Shader "OutlineyFeature/1Sobelish" {
       }
 
       void frag(VertexOutput i, out half4 GRT0 : SV_TARGET0, out float4 GRT1 : SV_TARGET1) {
-        half4 color = half4(actuallySobel(i.uv, _MainTex_TexelSize.x, _MainTex_TexelSize.y), 0, 0);
+        half4 color = half4(actuallySobel(i.uv, _MainTex_TexelSize.x, _MainTex_TexelSize.y), 0);
         GRT0 = color;
         GRT1 = objectSpacePos(i.uv, _MainTex_TexelSize.x, _MainTex_TexelSize.y, color.r);
       }

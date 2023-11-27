@@ -31,6 +31,7 @@ public class SkateSoundController : MonoBehaviour
     
     float pushPitchModifier = 0f;
     float airTime = 0f;
+    public bool isPaused = false;
     bool audioSourceA = true; //use this to ping-pong between audio sources loading up the appropriate loop in the other source
 
     [SerializeField]
@@ -80,7 +81,8 @@ public class SkateSoundController : MonoBehaviour
     }
     void ProcessRoll()
     {
-        if (rolling)
+        var isRolling = rolling && !isPaused;
+        if (isRolling)
         {
             boardLoopSourceA.pitch = speedPitchBoost + rollingSpeed * speedPitchModifier + pushPitchModifier * pushPitchScale;
             boardLoopSourceB.pitch = speedPitchBoost + rollingSpeed * speedPitchModifier + pushPitchModifier * pushPitchScale;
@@ -89,7 +91,7 @@ public class SkateSoundController : MonoBehaviour
 
             airTime = 0f;
         }
-        if (!rolling)
+        if (!isRolling)
         {
             airTime += Time.deltaTime;
             boardLoopSourceA.volume = Mathf.Clamp((((1f - airTime) * 0.15f) - 0.1f),0f,1f); //im magic numbering this and i dont care the way this sounds is right
@@ -122,7 +124,7 @@ public class SkateSoundController : MonoBehaviour
             surfaceTransitionTime = surfaceTransitionCrossfadeDuration;
         }
 
-        if (rolling && surfaceTransitionTime > 0)
+        if (isRolling && surfaceTransitionTime > 0)
         {
             if (audioSourceA)
             {

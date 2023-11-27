@@ -34,6 +34,57 @@ MonoBehaviour:
   _outlineWobbleStrength: 0.14
   _outlineWobbleFPS: 5
   _outlineWobbleTexScrollDir: {x: -11.78, y: 32.38, z: 0.73}
+--- !u!114 &-5722276703725301271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af06237f5f7ed5d4ea62767087d1dc06, type: 3}
+  m_Name: ChromaticAbberationFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  chromAbbMat: {fileID: 2100000, guid: 3036b5cf3cced40458040a76e6001c85, type: 2}
+--- !u!114 &-5701755353244619207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83fa4dc77ad6988428465504bfaa1df3, type: 3}
+  m_Name: StrokeyFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _sobelishMaterial: {fileID: 2100000, guid: 8059bc148d72b03459653a24cc7133c0, type: 2}
+  _strokeQuadMaterial: {fileID: 2100000, guid: a27931184aa70174eab1d248575b860b, type: 2}
+  _sobelBlitMaterial: {fileID: 2100000, guid: 4d078ecd5b219634da298b81a62d58a7, type: 2}
+  _boxBlurMaterial: {fileID: 2100000, guid: aec61fe864113d1438dcb0b817ca1665, type: 2}
+  _idOverrideMat: {fileID: 2100000, guid: 527dd2ab8f2608b4dbe2a60b8c8a41e7, type: 2}
+  _dropShadowMat: {fileID: 2100000, guid: 0af283696d8083146a4f4c363c702f7b, type: 2}
+  _voronoiMesh: {fileID: -462981019419857548, guid: 4435a4e12bbc71b4f83f31336ab9155d,
+    type: 3}
+  _voronoiMaterial: {fileID: 2100000, guid: 50fba0c55186c1348a7ff9e456bb8c58, type: 2}
+  _strokeyQuadsComputeShader: {fileID: 7200000, guid: 2289e0735d900594d8652934a5ecd8cb,
+    type: 3}
+  _angleBlurSize: 42
+  _poissonPoints: {fileID: 11400000, guid: 34ac265ee52a1e04caa7477c16c9eaaf, type: 2}
+  _pointScanSize: 60
+  _strokeTexture: {fileID: 2800000, guid: 57464c73acabef040bc154b77b590b09, type: 3}
+  _strokeSize: 0.15
+  _strokeWidth: 11.24
+  _strokeHeight: 3.38
+  _strokeRandomWidthBounds: {x: 0.2, y: 0.97}
+  _strokeRandomHeightBounds: {x: 0.42, y: 1.4}
+  _strokeDensity: 1.4
 --- !u!114 &-2503473586965459435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +143,10 @@ MonoBehaviour:
   - {fileID: -1085675424411624964}
   - {fileID: -7418620359027704615}
   - {fileID: -2503473586965459435}
-  m_RendererFeatureMap: fcd99222f4e7eef0d93cacc816c40b9915ce596009e041dd
+  - {fileID: -5701755353244619207}
+  - {fileID: -5722276703725301271}
+  - {fileID: 494522943271630585}
+  m_RendererFeatureMap: fcd99222f4e7eef0d93cacc816c40b9915ce596009e041dd392eac25b74bdfb0e9d1f5e7a76396b0f976fc2effe5dc06
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -133,3 +187,17 @@ MonoBehaviour:
   m_ClusteredRendering: 0
   m_TileSize: 32
   m_IntermediateTextureMode: 0
+--- !u!114 &494522943271630585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4b26bafa3e473c4c9318959bd42234a, type: 3}
+  m_Name: SpeedLinesFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  speedLinesMat: {fileID: 2100000, guid: d6502719e62c85744b0aae66a3390186, type: 2}

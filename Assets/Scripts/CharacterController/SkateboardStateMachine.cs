@@ -76,6 +76,8 @@ public class SkateboardStateMachine : StateMachine {
   public float LipAngleTolerance = 0.75f;
   public float MaxMotionBlur = 35f;
   public float AverageSecondsPerBreath = 8f;
+  public float SmallLandVFXThreshold = 0.1f;
+  public int MidTrickPointVFXThreshold = 10;
 
   // Internal State Processing
   [Header("Internal State")]
@@ -113,13 +115,18 @@ public class SkateboardStateMachine : StateMachine {
     { "popShuvit", null },
     { "nollie", null },
     { "nollieKickflip", null },
-    { "nollieHeelflip", null }
+    { "nollieHeelflip", null },
+    { "treFlip", null }
   };
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
   [ReadOnly] public float TimeToLand = 0;
+  [ReadOnly] public float CurrentJumpAirtime = 0;
   [ReadOnly] public bool IsGoofy = false;
   [ReadOnly] public bool IsNollie = false;
+  [ReadOnly] public bool CanDie = true;
+  [ReadOnly] public int LandVFXTier = 0;
+  [ReadOnly] public Combo CurrentlyPlayingTrick;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -128,6 +135,7 @@ public class SkateboardStateMachine : StateMachine {
   public Transform Facing;
   public Transform MainCamera { get; private set; }
   public InputController Input { get; private set; }
+  public ComboController ComboController { get; private set; }
   public Transform footRepresentation;
   public Transform SmoothHipHelper;
   public Transform HipHelper;
@@ -151,8 +159,8 @@ public class SkateboardStateMachine : StateMachine {
   public WheelSpinParticleHandler[] WheelSpinParticles;
   public GameObject GrindParticles;
   public EmitterBundle LandEmit;
-  public MeshRenderer SpeedyLines;
-  public Material SpeedyLinesMat;
+  // public MeshRenderer SpeedyLines;
+  // public Material SpeedyLinesMat;
   public AudioClip LandingHardClip;
   public AudioClip DeathClip;
   public AudioClip PushClip;
@@ -162,9 +170,16 @@ public class SkateboardStateMachine : StateMachine {
   public CharacterPointHandler PointHandler;
   public RendererFeatureDynamicProperties RFprops;
   public SkateSoundController SFX;
+  public DynamicCameraController DynamicCam;
   public UnityEvent OnLanding;
+  public UnityEvent OnSmallLanding;
+  public UnityEvent OnMedLanding;
+  public UnityEvent OnBigLanding;
+  public UnityEvent OnLaunching;
   public UnityEvent OnNosePop;
   public UnityEvent OnTailPop;
+  public UnityEvent OnPickupPickup;
+  public UnityEvent OnTrick;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
@@ -176,7 +191,8 @@ public class SkateboardStateMachine : StateMachine {
     MainCamera = Camera.main.transform;
 
     Input = GetComponent<InputController>();
-    SpeedyLinesMat = SpeedyLines.material;
+    ComboController = GetComponent<ComboController>();
+    // SpeedyLinesMat = SpeedyLines.material;
 
     CurrentAnimTrickIndexes = new int[Enum.GetValues(typeof(TrickAnimationGroup)).Length];
 
@@ -193,7 +209,16 @@ public class SkateboardStateMachine : StateMachine {
       OnTailPop?.Invoke();
     }
     SFX.PopSound();
+    CurrentlyPlayingTrick = ComboController.currentlyPlayingCombo;
     MainRB.AddForce((Vector3.up - Down).normalized*OllieForce * CurrentHopTrickVerticalMult + Vector3.Project(MainRB.velocity, Facing.transform.forward) * CurrentHopTrickHorizontalMult, ForceMode.Acceleration);
+  }
+
+  public void OnPickup() {
+    OnPickupPickup?.Invoke();
+  }
+
+  public void OnTrickPeak() {
+    OnTrick?.Invoke();
   }
 
   public void StartPushForce(float duration) {
@@ -213,10 +238,16 @@ public class SkateboardStateMachine : StateMachine {
     Pushing = false;
   }
 
+  public void TryLandVFXTier(int tier) {
+    LandVFXTier = Mathf.Max(tier, LandVFXTier);
+  }
+
   public void Die() => Die(null);
   public void Die(Vector3? velocityOverride) {
-    EnterDead(velocityOverride);
-    SlamRumble();
+    if (CanDie) {
+      EnterDead(velocityOverride);
+      SlamRumble();
+    }
   }
 
   public async void EnterDead(Vector3? velocityOverride) {

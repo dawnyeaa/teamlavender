@@ -41,7 +41,6 @@ public class CharCustoUI : MonoBehaviour {
   };
 
   private static readonly List<string> noHueSlots = new() {
-    "specs",
     "spitter",
     "bits"
   };
