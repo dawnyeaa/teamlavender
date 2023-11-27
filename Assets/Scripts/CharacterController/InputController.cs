@@ -76,6 +76,8 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
   public Action OnSlamPerformed;
   public Action OnPausePerformed;
   public Action OnStartBraking, OnEndBraking;
+  public Action OnToggleHelpPerformed;
+  public Action OnTrickOverlayHidePerformed;
   public Action OnShowDebugPointsPerformed;
   public Action EnterDebugMode;
 
@@ -206,6 +208,20 @@ public class InputController : MonoBehaviour, Controls.IPlayerActions {
     else {
       crouching = false;
     }
+  }
+
+  public void OnHelpToggle(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+      
+    OnToggleHelpPerformed?.Invoke();
+  }
+
+  public void OnTrickOverlayHide(InputAction.CallbackContext context) {
+    if (!context.performed)
+      return;
+      
+    OnTrickOverlayHidePerformed?.Invoke();
   }
 
   public void OnComboInputButton(InputAction.CallbackContext context) {

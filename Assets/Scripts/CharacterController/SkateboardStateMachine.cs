@@ -171,6 +171,7 @@ public class SkateboardStateMachine : StateMachine {
   public RendererFeatureDynamicProperties RFprops;
   public SkateSoundController SFX;
   public DynamicCameraController DynamicCam;
+  public TutorialDisplay TuteDisplay;
   public UnityEvent OnLanding;
   public UnityEvent OnSmallLanding;
   public UnityEvent OnMedLanding;
@@ -288,6 +289,10 @@ public class SkateboardStateMachine : StateMachine {
 
   public void Unpause() {
     SwitchState(new SkateboardMoveState(this));
+  }
+
+  public void HideTuteTrickHint() {
+    TuteDisplay.HideTrickHelp();
   }
 
   public void OnCombo(string name, int trickAnimGroup, float verticalForceMult, float horizontalForceMult) {

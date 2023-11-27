@@ -139,6 +139,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "helpToggle",
+                    "type": "Button",
+                    "id": "9a487e85-a6ca-41e9-8210-042b0799362d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "trickOverlayHide",
+                    "type": "Button",
+                    "id": "26bcd40d-f275-4e72-8918-6b67963d68ab",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -579,6 +597,28 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "manny",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0260b7ab-3fbf-4c58-9bef-f202e8c9454d",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "helpToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a635472b-3f0f-4cbd-80e1-318400fde2cb",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "trickOverlayHide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
