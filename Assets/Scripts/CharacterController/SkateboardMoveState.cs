@@ -67,6 +67,7 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["nollie"] += OnHopTrickInput;
         sm.ComboActions["nollieKickflip"] += OnHopTrickInput;
         sm.ComboActions["nollieHeelflip"] += OnHopTrickInput;
+        sm.ComboActions["treFlip"] += OnHopTrickInput;
 
         InitTrucks();
         // body.velocity = Vector3.zero;
@@ -92,6 +93,7 @@ public class SkateboardMoveState : SkateboardBaseState
         sm.ComboActions["nollie"] -= OnHopTrickInput;
         sm.ComboActions["nollieKickflip"] -= OnHopTrickInput;
         sm.ComboActions["nollieHeelflip"] -= OnHopTrickInput;
+        sm.ComboActions["treFlip"] -= OnHopTrickInput;
 
         StopRollingSFX();
         PassDataToPointSystem();

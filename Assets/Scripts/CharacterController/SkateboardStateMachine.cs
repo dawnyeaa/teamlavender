@@ -115,7 +115,8 @@ public class SkateboardStateMachine : StateMachine {
     { "popShuvit", null },
     { "nollie", null },
     { "nollieKickflip", null },
-    { "nollieHeelflip", null }
+    { "nollieHeelflip", null },
+    { "treFlip", null }
   };
   [ReadOnly] public int RollingHardClipIndex = -1;
   [ReadOnly] public DebugFrame debugFrame;
@@ -178,6 +179,7 @@ public class SkateboardStateMachine : StateMachine {
   public UnityEvent OnNosePop;
   public UnityEvent OnTailPop;
   public UnityEvent OnPickupPickup;
+  public UnityEvent OnTrick;
 
   [Space]
   public SkateboardCollisionProcessor collisionProcessor;
@@ -213,6 +215,10 @@ public class SkateboardStateMachine : StateMachine {
 
   public void OnPickup() {
     OnPickupPickup?.Invoke();
+  }
+
+  public void OnTrickPeak() {
+    OnTrick?.Invoke();
   }
 
   public void StartPushForce(float duration) {

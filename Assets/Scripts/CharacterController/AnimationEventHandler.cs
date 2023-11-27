@@ -40,5 +40,6 @@ public class AnimationEventHandler : MonoBehaviour {
   public void ComboStarted() {
     CoolTime();
     DisplayCombo();
+    sm.OnTrickPeak();
   }
 }

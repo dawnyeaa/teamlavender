@@ -41,9 +41,6 @@ public class StrokeyFeature : ScriptableRendererFeature {
     int SobelOutRT = Shader.PropertyToID("_sobelOutRT");
     int VoronoiOutRT = Shader.PropertyToID("_voronoiOutRT");
 
-    Debug.Log(_poissonPoints.points);
-    Debug.Log($"buffer: {_poissonPointsBuffer}");
-
     if (_poissonPointsBuffer == null || !_poissonPointsBuffer.IsValid())
       _poissonPointsBuffer = new ComputeBuffer(_poissonPoints.points.Length, Marshal.SizeOf(typeof(Vector4)));
     _poissonPointsBuffer.SetData(_poissonPoints.points);

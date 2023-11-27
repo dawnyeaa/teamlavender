@@ -155,7 +155,7 @@ half4 fragParticleUnlit(VaryingsParticle input) : SV_Target
 
     half4 finalColor;
 
-    finalColor.rgb = lerp(input.color.rgb, _DropShadColor.rgb, 1-topTex.a);
+    finalColor.rgb = lerp(input.color.rgb, _DropShadColor.rgb, 1-bottomTex.a);
     finalColor.a = saturate(topTex.a+bottomTex.a)*input.color.a;
 
     return finalColor;

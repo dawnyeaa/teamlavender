@@ -318,5 +318,5 @@ Shader "VFX/FlipbookInFrontDropShadowEmptyID"
     }
 
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
-    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.ParticlesUnlitShader"
+    // CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.ParticlesUnlitShader"
 }
