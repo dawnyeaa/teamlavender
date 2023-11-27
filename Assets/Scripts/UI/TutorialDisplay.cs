@@ -64,7 +64,7 @@ public class TutorialDisplay : MonoBehaviour {
   }
 
   private void SetTutorialDisplays() {
-    if (!overriding) {
+    if (!overriding && starterTrickDisplay && helpScreenPrompt && helpScreen) {
       starterTrickDisplay.SetActive(showingTrickDisplay);
       helpScreenPrompt.SetActive(showingHelpScreenPrompt);
       helpScreen.SetActive(showingHelpScreen);

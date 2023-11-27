@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PickupManager : MonoBehaviour {
   public SkateboardStateMachine sm;
+  public PointManager pointManager;
   public List<Pickup> pickups;
   public int currentlyEnabled = 0;
 
@@ -28,7 +29,7 @@ public class PickupManager : MonoBehaviour {
   public void Pickup() {
     sm.OnPickup();
     ChooseNextPickup();
-    PointManager.instance.UpdatePickupDisplay();
+    pointManager.UpdatePickupDisplay();
   }
 
   public void SetFrankMode(bool enabled) {

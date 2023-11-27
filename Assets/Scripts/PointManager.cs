@@ -11,7 +11,6 @@ public class LineMessages {
 }
 
 public class PointManager : MonoBehaviour {
-  public static PointManager instance;
   public TextMeshProUGUI pendingPointsDisplay, newPointsDisplay, totalPointsDisplay;
   public TextMeshProUGUI newPointsMessageDisplay;
   public TextMeshProUGUI pendingPointsDebugDisplay, newPointsDebugDisplay, currentLinePointsDebugDisplay, totalPointsDebugDisplay;
@@ -52,10 +51,6 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public float lineDecreaseSpeed = 0;
   [ReadOnly] public float lineCooldownTimer = 0;
   [ReadOnly] public int linePickups = 0;
-
-  void Awake() {
-    instance ??= this;
-  }
   public void Start() {
     pendingPoints = 0;
     newPoints = 0;
