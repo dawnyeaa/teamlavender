@@ -139,6 +139,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "helpToggle",
+                    "type": "Button",
+                    "id": "9a487e85-a6ca-41e9-8210-042b0799362d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -579,6 +588,17 @@
                     "processors": "",
                     "groups": "gamepad",
                     "action": "manny",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0260b7ab-3fbf-4c58-9bef-f202e8c9454d",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "helpToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

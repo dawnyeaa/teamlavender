@@ -161,6 +161,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""helpToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""9a487e85-a6ca-41e9-8210-042b0799362d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -601,6 +610,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""gamepad"",
                     ""action"": ""manny"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0260b7ab-3fbf-4c58-9bef-f202e8c9454d"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""helpToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1272,6 +1292,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_player_debugflyMode = m_player.FindAction("debug.flyMode", throwIfNotFound: true);
         m_player_comboInputButton = m_player.FindAction("comboInputButton", throwIfNotFound: true);
         m_player_comboInputStick = m_player.FindAction("comboInputStick", throwIfNotFound: true);
+        m_player_helpToggle = m_player.FindAction("helpToggle", throwIfNotFound: true);
         // debugFly
         m_debugFly = asset.FindActionMap("debugFly", throwIfNotFound: true);
         m_debugFly_look = m_debugFly.FindAction("look", throwIfNotFound: true);
@@ -1368,6 +1389,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_debugflyMode;
     private readonly InputAction m_player_comboInputButton;
     private readonly InputAction m_player_comboInputStick;
+    private readonly InputAction m_player_helpToggle;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -1387,6 +1409,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @debugflyMode => m_Wrapper.m_player_debugflyMode;
         public InputAction @comboInputButton => m_Wrapper.m_player_comboInputButton;
         public InputAction @comboInputStick => m_Wrapper.m_player_comboInputStick;
+        public InputAction @helpToggle => m_Wrapper.m_player_helpToggle;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1441,6 +1464,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @comboInputStick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputStick;
                 @comboInputStick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputStick;
                 @comboInputStick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnComboInputStick;
+                @helpToggle.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHelpToggle;
+                @helpToggle.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHelpToggle;
+                @helpToggle.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHelpToggle;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -1490,6 +1516,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @comboInputStick.started += instance.OnComboInputStick;
                 @comboInputStick.performed += instance.OnComboInputStick;
                 @comboInputStick.canceled += instance.OnComboInputStick;
+                @helpToggle.started += instance.OnHelpToggle;
+                @helpToggle.performed += instance.OnHelpToggle;
+                @helpToggle.canceled += instance.OnHelpToggle;
             }
         }
     }
@@ -1723,6 +1752,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnDebugflyMode(InputAction.CallbackContext context);
         void OnComboInputButton(InputAction.CallbackContext context);
         void OnComboInputStick(InputAction.CallbackContext context);
+        void OnHelpToggle(InputAction.CallbackContext context);
     }
     public interface IDebugFlyActions
     {

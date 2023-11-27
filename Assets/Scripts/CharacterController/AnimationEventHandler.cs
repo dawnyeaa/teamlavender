@@ -41,5 +41,6 @@ public class AnimationEventHandler : MonoBehaviour {
     CoolTime();
     DisplayCombo();
     sm.OnTrickPeak();
+    sm.HideTuteTrickHint();
   }
 }
