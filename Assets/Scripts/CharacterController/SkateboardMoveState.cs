@@ -485,7 +485,6 @@ public class SkateboardMoveState : SkateboardBaseState
                 sm.TimeToLand = 0;
                 sm.LandVFXTier = 0;
                 sm.CurrentJumpAirtime = 0;
-                sm.CurrentlyPlayingTrick = null;
             }
             
             upVector = up.normalized;

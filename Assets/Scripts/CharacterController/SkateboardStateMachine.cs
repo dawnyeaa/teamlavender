@@ -127,6 +127,7 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public bool CanDie = true;
   [ReadOnly] public int LandVFXTier = 0;
   [ReadOnly] public Combo CurrentlyPlayingTrick;
+  private CinemachineImpulseSource impulseSource;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -237,6 +238,10 @@ public class SkateboardStateMachine : StateMachine {
   public void PushingEnd() {
     PushingAnim = false;
     Pushing = false;
+  }
+
+  public void CompleteTrick() {
+    CurrentlyPlayingTrick = null;
   }
 
   public void TryLandVFXTier(int tier) {

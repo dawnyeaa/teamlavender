@@ -10,7 +10,7 @@ public class CharacterPointHandler : MonoBehaviour {
   // 4. manny time
   // 5. air turns
   // 6. ???
-  PointManager pointSystem;
+  public PointManager pointSystem;
   SkateboardStateMachine sm;
   [SerializeField] TextMeshProUGUI groundSpeedDisplay, slowSpeedDisplay, maxSpeedDisplay;
   [SerializeField] Image speedometerDisplay;
@@ -36,7 +36,6 @@ public class CharacterPointHandler : MonoBehaviour {
 
   void Start() {
     sm = GetComponent<SkateboardStateMachine>();
-    pointSystem = PointManager.instance;
     speedometerDisplayMat = new(speedometerDisplay.material);
     speedometerDisplay.material = speedometerDisplayMat;
     if (slowSpeedDisplay != null)
@@ -57,6 +56,7 @@ public class CharacterPointHandler : MonoBehaviour {
     pointSystem.StartLine();
     // depending on the trick, add points corresponding to that trick
     pointSystem.AddPoints(trick._ComboTrickValue);
+    sm.CompleteTrick();
   }
 
   public void ValidateTricks() {

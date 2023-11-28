@@ -28,7 +28,7 @@ public class TutorialDisplay : MonoBehaviour {
 
   private async void ShowTrickDisplay() {
     await Task.Delay((int)(5000));
-    if (newbie) {
+    if (newbie && Application.isPlaying) {
       showingTrickDisplay = true;
       SetTutorialDisplays();
     }
@@ -37,8 +37,10 @@ public class TutorialDisplay : MonoBehaviour {
 
   private async void ShowHelpButton() {
     await Task.Delay((int)(5000));
-    showingHelpScreenPrompt = true;
-    SetTutorialDisplays();
+    if (Application.isPlaying) {
+      showingHelpScreenPrompt = true;
+      SetTutorialDisplays();
+    }
   }
   public void ToggleHelpScreen() {
     showingHelpScreen = !showingHelpScreen;
@@ -62,7 +64,7 @@ public class TutorialDisplay : MonoBehaviour {
   }
 
   private void SetTutorialDisplays() {
-    if (!overriding) {
+    if (!overriding && starterTrickDisplay && helpScreenPrompt && helpScreen) {
       starterTrickDisplay.SetActive(showingTrickDisplay);
       helpScreenPrompt.SetActive(showingHelpScreenPrompt);
       helpScreen.SetActive(showingHelpScreen);

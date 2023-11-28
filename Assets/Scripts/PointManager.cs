@@ -11,13 +11,12 @@ public class LineMessages {
 }
 
 public class PointManager : MonoBehaviour {
-  public static PointManager instance;
   public TextMeshProUGUI pendingPointsDisplay, newPointsDisplay, totalPointsDisplay;
   public TextMeshProUGUI newPointsMessageDisplay;
   public TextMeshProUGUI pendingPointsDebugDisplay, newPointsDebugDisplay, currentLinePointsDebugDisplay, totalPointsDebugDisplay;
   public TextMeshProUGUI pendingPointsDebugTimerDisplay;
   public TextMeshProUGUI lineMessageDisplay, lineTimeDisplay, linePickupDisplay;
-  [SerializeField] Renderer lineLineBarImage, lineLineBarImage2;
+  public LineLineBarDisplay lineLineBarDisplay;
 
   public GameObject pointsDebugContainer;
 
@@ -37,7 +36,6 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public float newPoints;
   [ReadOnly] public float currentLinePoints;
   [ReadOnly] public float totalPoints;
-  [ReadOnly] public Material lineLineBarMat, lineLineBarMat2;
 
   [ReadOnly] public float pointHeat;
   
@@ -48,14 +46,11 @@ public class PointManager : MonoBehaviour {
   [ReadOnly] public float newPointsDisplayTimer;
   [ReadOnly] public bool inLine = false;
   [ReadOnly] public float lineValue = 0;
+  [ReadOnly] public float lineValueDelta = 0;
   [ReadOnly] public float lineTimer = 0;
   [ReadOnly] public float lineDecreaseSpeed = 0;
   [ReadOnly] public float lineCooldownTimer = 0;
   [ReadOnly] public int linePickups = 0;
-
-  void Awake() {
-    instance ??= this;
-  }
   public void Start() {
     pendingPoints = 0;
     newPoints = 0;
@@ -80,6 +75,7 @@ public class PointManager : MonoBehaviour {
     }
     UpdateLineValue();
     DrawLineValue();
+    lineValueDelta = 0;
     lineCooldownTimer -= Time.deltaTime;
     lineTimer += Time.deltaTime;
   }
@@ -109,7 +105,10 @@ public class PointManager : MonoBehaviour {
     newPoints = pendingPoints;
     currentLinePoints += newPoints;
     totalPoints += newPoints;
-    if (inLine) lineValue += newPoints;
+    if (inLine) {
+      lineValue += newPoints;
+      lineValueDelta += newPoints;
+    }
     TrashPending();
     showPoints = true;
     pendingNewToggle = true;
@@ -157,14 +156,7 @@ public class PointManager : MonoBehaviour {
   }
 
   private void DrawLineValue() {
-    lineLineBarMat = new(lineLineBarImage.material);
-    lineLineBarMat2 = new(lineLineBarImage2.material);
-    lineLineBarImage.material = lineLineBarMat;
-    lineLineBarImage2.material = lineLineBarMat2;
-    if (lineLineBarMat)
-      lineLineBarMat.SetFloat("_current", lineValue);
-    if (lineLineBarMat2)
-      lineLineBarMat2.SetFloat("_current", lineValue);
+    lineLineBarDisplay.UpdatePoints(lineValueDelta, lineValue);
   }
 
   private void UpdateLineTimeDisplay() {
