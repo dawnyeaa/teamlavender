@@ -33,6 +33,8 @@ public class PickupManager : MonoBehaviour {
   }
 
   public void SetFrankMode(bool enabled) {
-    
+    foreach (var pickup in pickups) {
+      pickup.SetFrankMode(enabled);
+    }
   }
 }

@@ -127,7 +127,8 @@ public class SkateboardStateMachine : StateMachine {
   [ReadOnly] public bool CanDie = true;
   [ReadOnly] public int LandVFXTier = 0;
   [ReadOnly] public Combo CurrentlyPlayingTrick;
-  private CinemachineImpulseSource impulseSource;
+  [ReadOnly] public CinemachineImpulseSource PopImpulseSource;
+  [ReadOnly] public CinemachineImpulseSource LandImpulseSource;
 
   // Objects to link
   [Header("Link Slot Objects")]
@@ -198,12 +199,23 @@ public class SkateboardStateMachine : StateMachine {
 
     CurrentAnimTrickIndexes = new int[Enum.GetValues(typeof(TrickAnimationGroup)).Length];
 
+    var impulseSources = GetComponents<CinemachineImpulseSource>();
+
+    if (impulseSources.Length < 2) {
+      Debug.Log("uh oh");
+      return;
+    }
+
+    PopImpulseSource = impulseSources[0];
+    LandImpulseSource = impulseSources[1];
+
     SwitchState(new SkateboardMoveState(this));
 
     Input.OnSlamPerformed += Die;
   }
 
   public void OnOllieForce() {
+    PopImpulseSource.GenerateImpulse();
     if (IsGoofy ^ IsNollie) {
       OnNosePop?.Invoke();
     }
@@ -259,8 +271,10 @@ public class SkateboardStateMachine : StateMachine {
   public async void EnterDead(Vector3? velocityOverride) {
     SwitchState(new SkateboardDeadState(this, velocityOverride));
     await Task.Delay((int)(DeadTime*1000));
-    SoundEffectsManager.instance.PlaySoundFXClip(FartClip, transform, 1);
-    SwitchState(new SkateboardMoveState(this));
+    if (this != null) {
+      SoundEffectsManager.instance.PlaySoundFXClip(FartClip, transform, 1);
+      SwitchState(new SkateboardMoveState(this));
+    }
   }
 
   public void EnterRail() {
