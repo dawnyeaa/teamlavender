@@ -465,11 +465,11 @@ public class SkateboardMoveState : SkateboardBaseState
                     {
                         case 1:
                             sm.OnMedLanding?.Invoke();
-                            sm.LandImpulseSource.GenerateImpulse(1.5f);
+                            sm.LandImpulseSource.GenerateImpulse(2f);
                             break;
                         case 2:
                             sm.OnBigLanding?.Invoke();
-                            sm.LandImpulseSource.GenerateImpulse(10f);
+                            sm.LandImpulseSource.GenerateImpulse(4f);
                             break;
                         default:
                             sm.OnSmallLanding?.Invoke();
